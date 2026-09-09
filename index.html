@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile Gallery — Buy Phones, Tablets and Gadgets in Bangladesh</title>
+<meta name="description" content="Mobile Gallery is an online store for smartphones, tablets, laptops and gadgets in Bangladesh. Honest condition grades, warranty backed, cash on delivery nationwide.">
+<meta name="theme-color" content="#4f46e5">
+<meta property="og:title" content="Mobile Gallery — Buy Phones and Gadgets in Bangladesh">
+<meta property="og:description" content="Phones, tablets, laptops and gadgets with warranty and cash on delivery across Bangladesh.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%234f46e5'/><rect x='34' y='18' width='32' height='64' rx='8' fill='white'/><rect x='44' y='72' width='12' height='4' rx='2' fill='%234f46e5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+<a class="skip-link" href="#browse">Skip to products</a>
+
+<!-- ══════════════════════════════════════════════════════════ header ══ -->
+<header class="header">
+  <div class="topbar">
+    <div class="wrap topbar__inner">
+      <span class="topbar__dot"></span>
+      <span><b>Free delivery</b> on every order over ৳30,000 — cash on delivery available nationwide.</span>
+    </div>
+  </div>
+
+  <div class="wrap nav">
+    <a class="logo" href="index.html" aria-label="Mobile Gallery home">
+      <span class="logo__mark">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>
+        </svg>
+      </span>
+      <span class="logo__text">Mobile Gallery<small>Shop · Gadget Store</small></span>
+    </a>
+
+    <nav class="nav__links" aria-label="Main">
+      <a href="index.html#browse" class="is-active">Shop</a>
+      <a href="index.html#categories">Categories</a>
+      <a href="index.html#why">Why us</a>
+      <a href="index.html#faq">Help</a>
+      <a href="orders.html">Orders</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+
+    <span class="nav__spacer"></span>
+
+    <div class="nav__actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle theme"></button>
+      <button class="icon-btn has-badge" id="favToggle" aria-label="Show wishlist only">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20.5 4.7 13.2a4.6 4.6 0 0 1 6.5-6.5l.8.8.8-.8a4.6 4.6 0 1 1 6.5 6.5z"/>
+        </svg>
+        <span class="fav-count" id="favCount">0</span>
+      </button>
+      <button class="icon-btn has-badge" id="cartBtn" aria-label="Open cart" data-icon="cart">
+        <span class="fav-count" id="cartCount" style="background:var(--brand-600)">0</span>
+      </button>
+      <button class="icon-btn burger" id="burger" aria-label="Open menu" data-icon="menu"></button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" role="dialog" aria-label="Menu">
+  <div class="drawer__panel">
+    <div class="drawer__head">
+      <b>Menu</b>
+      <button class="icon-btn" data-close aria-label="Close menu" data-icon="close"></button>
+    </div>
+    <a href="index.html#browse">Shop all products</a>
+    <a href="index.html#categories">Categories</a>
+    <a href="index.html#why">Why us</a>
+    <a href="index.html#faq">Help &amp; delivery</a>
+    <a href="orders.html">My orders</a>
+    <a href="admin.html">Admin panel</a>
+  </div>
+</div>
+
+<main>
+<!-- ════════════════════════════════════════════════════════════ hero ══ -->
+<section class="hero">
+  <span class="hero__glow hero__glow--1"></span>
+  <span class="hero__glow hero__glow--2"></span>
+
+  <div class="wrap hero__grid">
+    <div>
+      <span class="pill-badge"><span class="tag">NEW</span> Cash on delivery in all 64 districts</span>
+
+      <h1>Buy your next phone the <span class="grad-text">honest</span> way.</h1>
+
+      <p class="hero__lead">
+        A hand-picked store of smartphones, tablets, laptops and gadgets — every product graded
+        honestly, warranty backed and delivered to your door. Pay cash when it arrives, and send
+        it back within 7 days if it is not right.
+      </p>
+
+      <form class="searchbar" id="searchForm" role="search">
+        <label class="searchbar__field">
+          <span style="color:var(--muted-2);display:flex" data-icon="search"></span>
+          
+          <input id="searchInput" type="search" aria-label="Search products" placeholder="Search for a phone, laptop or gadget…" autocomplete="off">
+        </label>
+        <select id="heroCat" aria-label="Quick category jump" data-hero-cat>
+          <option value="all">All categories</option>
+          <option value="phone">Smartphones</option>
+          <option value="tablet">Tablets</option>
+          <option value="laptop">Laptops</option>
+          <option value="watch">Watches</option>
+          <option value="audio">Audio</option>
+          <option value="gaming">Gaming</option>
+        </select>
+        <button class="btn btn--primary" type="submit">Search</button>
+      </form>
+
+      <div class="hero__tags">
+        <span>Popular:</span>
+        <button class="chip-mini" data-quick="iPhone">iPhone</button>
+        <button class="chip-mini" data-quick="Samsung">Samsung</button>
+        <button class="chip-mini" data-quick="Pixel">Pixel</button>
+        <button class="chip-mini" data-quick="Brand New">Brand new</button>
+        <button class="chip-mini" data-quick="MacBook">MacBook</button>
+      </div>
+
+      <div class="hero__stats">
+        <div class="stat"><b data-count="12400" data-suffix="+">0</b><span>Orders delivered</span></div>
+        <div class="stat"><b data-count="98" data-suffix="%">0</b><span>Delivered on time</span></div>
+        <div class="stat"><b data-count="4.8" data-suffix="/5">0</b><span>Customer rating</span></div>
+      </div>
+    </div>
+
+    <div class="hero__visual" aria-hidden="true">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="ps-row"><i></i><div><b style="width:70%"></b><s></s></div></div>
+          <div class="ps-row"><i></i><div><b style="width:85%"></b><s></s></div></div>
+          <div class="ps-row"><i></i><div><b style="width:60%"></b><s></s></div></div>
+        </div>
+      </div>
+
+      <div class="float-card float-card--a">
+        <span class="float-card__icon" style="background:rgba(16,185,129,.14);color:#10b981" data-icon="checkCircle"></span>
+        <div>Warranty backed<small>Service centre support</small></div>
+      </div>
+      <div class="float-card float-card--b">
+        <span class="float-card__icon" style="background:rgba(99,102,241,.14);color:#6366f1" data-icon="bolt"></span>
+        <div>2-4 day delivery<small>All 64 districts</small></div>
+      </div>
+      <div class="float-card float-card--c">
+        <span class="float-card__icon" style="background:rgba(245,158,11,.16);color:#f59e0b" data-icon="wallet"></span>
+        <div>Cash on delivery<small>Pay when it arrives</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════ trustbar ══ -->
+<section class="trustbar">
+  <div class="wrap trustbar__inner">
+    <div class="trust-item"><span class="ic" data-icon="shield"></span><div><b>Genuine products</b><small>Sourced &amp; checked by us</small></div></div>
+    <div class="trust-item"><span class="ic" data-icon="refresh"></span><div><b>7-day returns</b><small>Unused, in original box</small></div></div>
+    <div class="trust-item"><span class="ic" data-icon="truck"></span><div><b>Nationwide delivery</b><small>64 districts covered</small></div></div>
+    <div class="trust-item"><span class="ic" data-icon="wallet"></span><div><b>Cash on delivery</b><small>Pay when it arrives</small></div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════ categories ══ -->
+<section class="section section--tight" id="categories">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Browse by category</span>
+        <h2>What are you shopping for?</h2>
+        <p>Every product is graded by real condition — Brand new, Like new, Good or Fair — so you always know what you are paying for.</p>
+      </div>
+      <button class="btn btn--ghost" data-cat="all">View everything</button>
+    </div>
+
+    <div class="cat-rail reveal" id="catRail"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ browse ══ -->
+<section class="section" id="browse" style="padding-top:20px">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Our catalogue</span>
+        <h2>Everything currently in stock</h2>
+      </div>
+      <button class="btn btn--ghost filter-toggle" id="filterToggle" data-icon="filter">Filters</button>
+    </div>
+
+    <div class="browse">
+      <!-- ─────────────────────────── filters ─────────────────────────── -->
+      <aside class="filters" aria-label="Filter products">
+        <div class="filters__head">
+          <h3>Filters</h3>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="link-btn" id="resetFilters">Reset</button>
+            <button class="icon-btn filters__mobile-close" id="filterClose" aria-label="Close filters" data-icon="close" style="width:34px;height:34px"></button>
+          </div>
+        </div>
+
+        <div class="fgroup">
+          <h4>Category</h4>
+          <div class="seg" id="catSeg">
+            <button class="is-on" data-cat="all">All</button>
+            <button data-cat="phone">Phones</button>
+            <button data-cat="tablet">Tablets</button>
+            <button data-cat="laptop">Laptops</button>
+            <button data-cat="watch">Watches</button>
+            <button data-cat="audio">Audio</button>
+            <button data-cat="gaming">Gaming</button>
+            <button data-cat="accessory">Accessories</button>
+          </div>
+        </div>
+
+        <div class="fgroup">
+          <h4>Max budget</h4>
+          <div class="range-out">
+            <span>Up to</span>
+            <b id="priceOut">৳2,00,000+</b>
+          </div>
+          <input type="range" id="priceRange" min="3000" max="200000" step="1000" value="200000" aria-label="Maximum price">
+        </div>
+
+        <div class="fgroup">
+          <h4>Brand</h4>
+          <div id="brandFilters"></div>
+        </div>
+
+        <div class="fgroup">
+          <h4>Condition</h4>
+          <div id="condFilters"></div>
+        </div>
+
+        <div class="fgroup">
+          <h4>Availability</h4>
+          <label class="check">
+            <input type="checkbox" id="inStockOnly">
+            <span>In stock only</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="onSaleOnly">
+            <span>On sale</span>
+          </label>
+        </div>
+      </aside>
+
+      <!-- ─────────────────────────── results ─────────────────────────── -->
+      <div>
+        <div class="results__bar">
+          <h3><span id="resultCount">0</span> <span class="muted">products</span></h3>
+          <span class="nav__spacer"></span>
+          <div class="seg" role="group" aria-label="Layout">
+            <button class="is-on" data-view="grid" aria-label="Grid view" data-icon="grid" data-icon-size="16"></button>
+            <button data-view="list" aria-label="List view" data-icon="list" data-icon-size="16"></button>
+          </div>
+          <select class="select" id="sortSelect" aria-label="Sort products">
+            <option value="relevant">Sort: Recommended</option>
+            <option value="newest">New arrivals</option>
+            <option value="price-a">Price: low to high</option>
+            <option value="price-d">Price: high to low</option>
+            <option value="discount">Biggest discount</option>
+            <option value="popular">Most popular</option>
+          </select>
+        </div>
+
+        <div class="active-chips" id="activeChips" hidden></div>
+
+        <div class="grid-cards" id="grid"></div>
+
+        <div style="text-align:center;margin-top:34px">
+          <button class="btn btn--ghost btn--lg" id="loadMore" hidden>Show more products</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════ recently viewed ══ -->
+<section class="section section--tight" id="recentSection" hidden>
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:22px">
+      <div>
+        <span class="eyebrow">Picked up where you left off</span>
+        <h2 style="font-size:clamp(1.3rem,2.6vw,1.7rem)">Recently viewed</h2>
+      </div>
+    </div>
+    <div class="related__row" id="recentRow"></div>
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════════════════════════ why ══ -->
+<section class="section" id="why" style="background:var(--bg-soft)">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Why Mobile Gallery</span>
+        <h2>Built for people who hate getting cheated</h2>
+        <p>Buying a phone online runs on trust. We put the boring, important details front and centre.</p>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature reveal">
+        <div class="feature__ic" data-icon="shield" data-icon-size="24"></div>
+        <h3>Real condition grades</h3>
+        <p>Every product lists its real battery health, warranty status and condition grade. No vague "fresh condition" claims.</p>
+      </article>
+      <article class="feature reveal">
+        <div class="feature__ic" data-icon="checkCircle" data-icon-size="24"></div>
+        <h3>Checked before dispatch</h3>
+        <p>Each unit is inspected and tested by our team before it ships, and the IMEI is recorded on your invoice.</p>
+      </article>
+      <article class="feature reveal">
+        <div class="feature__ic" data-icon="bolt" data-icon-size="24"></div>
+        <h3>Delivered in days</h3>
+        <p>Orders leave the warehouse the same working day and reach anywhere in the country within 2-4 days.</p>
+      </article>
+      <article class="feature reveal">
+        <div class="feature__ic" data-icon="wallet" data-icon-size="24"></div>
+        <h3>Nothing upfront</h3>
+        <p>Pay the courier in cash when the box is in your hands. Free delivery on every order over ৳30,000.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════════════════════════ how ══ -->
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">How it works</span>
+        <h2>Ordering takes three steps</h2>
+      </div>
+      <a class="btn btn--primary" href="#browse" data-icon="arrow">Start shopping</a>
+    </div>
+
+    <div class="steps">
+      <article class="step reveal">
+        <div class="step__ic" data-icon="search" data-icon-size="22"></div>
+        <h3>Find your device</h3>
+        <p>Filter by brand, condition and budget until you land on the one that fits. Every spec is on the card.</p>
+      </article>
+      <article class="step reveal">
+        <div class="step__ic" data-icon="cart" data-icon-size="22"></div>
+        <h3>Place the order</h3>
+        <p>Add it to your cart and give us a delivery address. No account needed and no advance payment.</p>
+      </article>
+      <article class="step reveal">
+        <div class="step__ic" data-icon="truck" data-icon-size="22"></div>
+        <h3>Check it, then pay</h3>
+        <p>Open the box in front of the courier. If something is wrong, send it straight back — you pay nothing.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════ reviews ══ -->
+<section class="section" style="background:var(--bg-soft)">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">From the community</span>
+        <h2>What our customers say</h2>
+      </div>
+    </div>
+
+    <div class="quotes">
+      <article class="quote reveal">
+        <div class="stars" data-stars="5"></div>
+        <p>"Ordered an S24 Ultra on a Sunday and it arrived in Khulna on Tuesday. Sealed box, official warranty card,
+        and I paid the courier in cash. Exactly what was advertised."</p>
+        <div class="quote__who">
+          <i class="avatar" style="width:38px;height:38px;font-size:.85rem;background:linear-gradient(135deg,#6366f1,#06b6d4)">MR</i>
+          <div><b>Mahmudur Rahman</b><small>Verified purchase · Khulna</small></div>
+        </div>
+      </article>
+      <article class="quote reveal">
+        <div class="stars" data-stars="5"></div>
+        <p>"I was nervous buying a used iPhone online. The listed battery health matched exactly what the phone
+        reported, and the IMEI was on the invoice. No surprises at all."</p>
+        <div class="quote__who">
+          <i class="avatar" style="width:38px;height:38px;font-size:.85rem;background:linear-gradient(135deg,#f43f5e,#f59e0b)">SK</i>
+          <div><b>Sanjida Karim</b><small>Verified purchase · Chattogram</small></div>
+        </div>
+      </article>
+      <article class="quote reveal">
+        <div class="stars" data-stars="4"></div>
+        <p>"The MacBook Air arrived a day early and the cycle count was even lower than listed. Returned a case that
+        did not fit and the refund came through in two days."</p>
+        <div class="quote__who">
+          <i class="avatar" style="width:38px;height:38px;font-size:.85rem;background:linear-gradient(135deg,#10b981,#0ea5e9)">GH</i>
+          <div><b>Ashiqur Rahman</b><small>Verified purchase · Uttara</small></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════════════════════════ faq ══ -->
+<section class="section" id="faq">
+  <div class="wrap" style="max-width:820px">
+    <div class="section-head reveal" style="justify-content:center;text-align:center">
+      <div>
+        <span class="eyebrow">Help &amp; delivery</span>
+        <h2>Questions people ask before ordering</h2>
+      </div>
+    </div>
+
+    <div class="feature-grid" style="grid-template-columns:1fr">
+      <details class="feature reveal" open>
+        <summary style="cursor:pointer;font-weight:800;font-size:1.02rem">Can I check the device before paying?</summary>
+        <p style="margin-top:10px">Yes — that is the point of cash on delivery. Open the box in front of the courier,
+        check the IMEI on the invoice against <b>Settings → About</b> (or dial <b>*#06#</b>), and power it on. If
+        anything does not match, hand it straight back and pay nothing.</p>
+      </details>
+      <details class="feature reveal">
+        <summary style="cursor:pointer;font-weight:800;font-size:1.02rem">How much is delivery, and how long?</summary>
+        <p style="margin-top:10px">Delivery is free on orders over ৳30,000, and a flat ৳120 below that. Dhaka orders
+        usually arrive within 2 days and the rest of the country within 4 working days.</p>
+      </details>
+      <details class="feature reveal">
+        <summary style="cursor:pointer;font-weight:800;font-size:1.02rem">What does battery health mean?</summary>
+        <p style="margin-top:10px">It is the maximum capacity remaining compared to a new battery. Above 90% is
+        excellent, 85–90% is normal for a two-year-old phone, and below 80% usually means you should budget for a
+        replacement soon.</p>
+      </details>
+      <details class="feature reveal">
+        <summary style="cursor:pointer;font-weight:800;font-size:1.02rem">What if I want to return something?</summary>
+        <p style="margin-top:10px">You have 7 days from delivery. The product needs to be unused and in its original
+        box with all accessories. Message us and we arrange the pickup — refunds land within 3 working days.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════════════════════════════════════════════════ cta ══ -->
+<section class="section section--tight">
+  <div class="wrap">
+    <div class="cta reveal">
+      <div style="position:relative;z-index:2">
+        <h2>Get the good deals before everyone else</h2>
+        <p>One weekly email with our sharpest price drops and new arrivals. Unsubscribe in one click.</p>
+      </div>
+      <form class="cta__form" id="ctaForm">
+        <input type="email" required placeholder="your@email.com" aria-label="Email address">
+        <button class="btn" type="submit">Notify me</button>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ══════════════════════════════════════════════════════════ footer ══ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <a class="logo" href="index.html">
+          <span class="logo__mark">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>
+            </svg>
+          </span>
+          <span class="logo__text">Mobile Gallery<small>Shop · Gadget Store</small></span>
+        </a>
+        <p>An online store for phones, tablets, laptops and gadgets in Bangladesh — honest condition grades,
+        warranty backed, with cash on delivery nationwide.</p>
+        <div class="socials">
+          <a class="icon-btn" href="#" aria-label="Facebook" data-icon="facebook"></a>
+          <a class="icon-btn" href="#" aria-label="X" data-icon="twitter"></a>
+          <a class="icon-btn" href="#" aria-label="Instagram" data-icon="instagram"></a>
+          <a class="icon-btn" href="#" aria-label="YouTube" data-icon="youtube"></a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#browse">All products</a></li>
+          <li><a href="#categories">Categories</a></li>
+          <li><a href="checkout.html">Your cart</a></li>
+          <li><a href="#browse">Today&rsquo;s deals</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#why">About us</a></li>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#faq">Help centre</a></li>
+          <li><a href="#faq">Delivery &amp; returns</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Terms of use</a></li>
+          <li><a href="#">Privacy policy</a></li>
+          <li><a href="#">Warranty policy</a></li>
+          <li><a href="orders.html">My orders</a>
+    <a href="admin.html">Admin panel</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>© <span id="year">2026</span> Mobile Gallery. A demo store — products and orders are sample data.</span>
+      <span>Made with care in Bangladesh 🇧🇩</span>
+    </div>
+  </div>
+</footer>
+
+<!-- detail modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Listing details">
+  <div class="modal__box" style="position:relative"></div>
+</div>
+
+
+<!-- cart panel -->
+<div class="cart" id="cartPanel" role="dialog" aria-label="Shopping cart">
+  <div class="cart__panel">
+    <div class="cart__head">
+      <h3>Your cart</h3>
+      <button class="icon-btn" data-cart-close aria-label="Close cart" data-icon="close"></button>
+    </div>
+    <div class="cart__body" id="cartBody"></div>
+    <div class="cart__foot" id="cartFoot" hidden></div>
+  </div>
+</div>
+
+<script src="tools/sheet-endpoint.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+  /* Small page-local touches: category rail + star rows + hero category select. */
+  document.addEventListener('DOMContentLoaded', () => {
+    const rail = document.getElementById('catRail');
+    if (rail) {
+      rail.innerHTML = CATEGORIES.map(c => `
+        <button class="cat-card" data-cat="${c.id}">
+          <span class="cat-card__ic">${icon(c.icon, 24)}</span>
+          <b>${c.name}</b><span>${c.note}</span>
+        </button>`).join('');
+    }
+
+    document.querySelectorAll('[data-stars]').forEach(el => {
+      el.innerHTML = Array.from({ length: 5 }, (_, i) =>
+        `<span style="opacity:${i < +el.dataset.stars ? 1 : .25}">${icon('star', 15)}</span>`).join('');
+    });
+
+    const heroCat = document.getElementById('heroCat');
+    if (heroCat) {
+      heroCat.addEventListener('change', () => {
+        const target = document.querySelector(`#catSeg [data-cat="${heroCat.value}"]`);
+        if (target) target.click();
+      });
+    }
+  });
+</script>
+</body>
+</html>

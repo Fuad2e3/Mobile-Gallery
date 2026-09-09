@@ -1,0 +1,13 @@
+node_modules/
+package-lock.json
+package.json
+.DS_Store
+*.log
+
+# Local environment & secret files
+.env
+.env.*
+*.local
+
+# Private source code (only obfuscated assets/ are published to GitHub)
+src/

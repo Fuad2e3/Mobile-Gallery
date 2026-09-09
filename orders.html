@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Orders — Mobile Gallery</title>
+<meta name="description" content="Track your Mobile Gallery orders: delivery progress, what you ordered, and reorder in one tap.">
+<meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%234f46e5'/><rect x='34' y='18' width='32' height='64' rx='8' fill='white'/><rect x='44' y='72' width='12' height='4' rx='2' fill='%234f46e5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+<header class="header">
+  <div class="wrap nav">
+    <a class="logo" href="index.html" aria-label="Mobile Gallery home">
+      <span class="logo__mark">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>
+        </svg>
+      </span>
+      <span class="logo__text">Mobile Gallery<small>Shop · Gadget Store</small></span>
+    </a>
+
+    <nav class="nav__links" aria-label="Main">
+      <a href="index.html#browse">Shop</a>
+      <a href="index.html#categories">Categories</a>
+      <a href="index.html#why">Why us</a>
+      <a href="index.html#faq">Help</a>
+      <a href="orders.html" class="is-active">Orders</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+
+    <span class="nav__spacer"></span>
+
+    <div class="nav__actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle theme"></button>
+      <button class="icon-btn has-badge" id="favToggle" aria-label="Show wishlist only">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20.5 4.7 13.2a4.6 4.6 0 0 1 6.5-6.5l.8.8.8-.8a4.6 4.6 0 1 1 6.5 6.5z"/>
+        </svg>
+        <span class="fav-count" id="favCount">0</span>
+      </button>
+      <button class="icon-btn has-badge" id="cartBtn" aria-label="Open cart" data-icon="cart">
+        <span class="fav-count" id="cartCount" style="background:var(--brand-600)">0</span>
+      </button>
+      <button class="icon-btn burger" id="burger" aria-label="Open menu" data-icon="menu"></button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" role="dialog" aria-label="Menu">
+  <div class="drawer__panel">
+    <div class="drawer__head">
+      <b>Menu</b>
+      <button class="icon-btn" data-close aria-label="Close menu" data-icon="close"></button>
+    </div>
+    <a href="index.html#browse">Shop all products</a>
+    <a href="index.html#categories">Categories</a>
+    <a href="index.html#why">Why us</a>
+    <a href="index.html#faq">Help &amp; delivery</a>
+    <a href="orders.html">My orders</a>
+    <a href="admin.html">Admin panel</a>
+  </div>
+</div>
+
+<main>
+<section class="section" style="padding-top:44px">
+  <div class="wrap" style="max-width:900px">
+    <div style="margin-bottom:26px">
+      <span class="eyebrow">Your account</span>
+      <h1 style="font-size:clamp(1.7rem,4vw,2.4rem)">My orders</h1>
+      <p style="color:var(--muted);margin-top:8px">
+        Everything you have ordered from this browser, newest first.
+      </p>
+    </div>
+
+    <div class="order-stats" id="orderStats" hidden>
+      <div><b id="orderCount">0</b><small>Orders placed</small></div>
+      <div><b id="orderSpend">৳0</b><small>Total spent</small></div>
+      <div><b>Free</b><small>Returns within 7 days</small></div>
+    </div>
+
+    <div id="orderList" style="margin-top:22px"></div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__bottom" style="border:0;padding-top:0">
+      <span>© <span id="year">2026</span> Mobile Gallery. A demo store — products and orders are sample data.</span>
+      <a href="index.html" style="color:var(--brand-600);font-weight:700">Back to shop</a>
+    </div>
+  </div>
+</footer>
+
+<!-- cart panel -->
+<div class="cart" id="cartPanel" role="dialog" aria-label="Shopping cart">
+  <div class="cart__panel">
+    <div class="cart__head">
+      <h3>Your cart</h3>
+      <button class="icon-btn" data-cart-close aria-label="Close cart" data-icon="close"></button>
+    </div>
+    <div class="cart__body" id="cartBody"></div>
+    <div class="cart__foot" id="cartFoot" hidden></div>
+  </div>
+</div>
+
+<script src="tools/sheet-endpoint.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/orders.js"></script>
+</body>
+</html>

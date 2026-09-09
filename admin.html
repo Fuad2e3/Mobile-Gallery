@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Dashboard — Mobile Gallery</title>
+<meta name="description" content="Admin panel for Mobile Gallery: manage catalogue, products, customer orders, and Google Sheet synchronization.">
+<meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%234f46e5'/><rect x='34' y='18' width='32' height='64' rx='8' fill='white'/><rect x='44' y='72' width='12' height='4' rx='2' fill='%234f46e5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+<header class="header">
+  <div class="wrap nav">
+    <a class="logo" href="index.html" aria-label="Mobile Gallery home">
+      <span class="logo__mark">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>
+        </svg>
+      </span>
+      <span class="logo__text">Mobile Gallery<small>Shop · Gadget Store</small></span>
+    </a>
+
+    <nav class="nav__links" aria-label="Main">
+      <a href="index.html#browse">Shop</a>
+      <a href="index.html#categories">Categories</a>
+      <a href="index.html#why">Why us</a>
+      <a href="index.html#faq">Help</a>
+      <a href="orders.html">Orders</a>
+      <a href="admin.html" class="is-active">Admin</a>
+    </nav>
+
+    <span class="nav__spacer"></span>
+
+    <div class="nav__actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle theme"></button>
+      <button class="icon-btn has-badge" id="favToggle" aria-label="Show wishlist only">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20.5 4.7 13.2a4.6 4.6 0 0 1 6.5-6.5l.8.8.8-.8a4.6 4.6 0 1 1 6.5 6.5z"/>
+        </svg>
+        <span class="fav-count" id="favCount">0</span>
+      </button>
+      <button class="icon-btn has-badge" id="cartBtn" aria-label="Open cart" data-icon="cart">
+        <span class="fav-count" id="cartCount" style="background:var(--brand-600)">0</span>
+      </button>
+      <button class="icon-btn burger" id="burger" aria-label="Open menu" data-icon="menu"></button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" role="dialog" aria-label="Menu">
+  <div class="drawer__panel">
+    <div class="drawer__head">
+      <b>Menu</b>
+      <button class="icon-btn" data-close aria-label="Close menu" data-icon="close"></button>
+    </div>
+    <a href="index.html#browse">Shop all products</a>
+    <a href="index.html#categories">Categories</a>
+    <a href="index.html#why">Why us</a>
+    <a href="index.html#faq">Help &amp; delivery</a>
+    <a href="orders.html">My orders</a>
+    <a href="admin.html">Admin panel</a>
+  </div>
+</div>
+
+<main>
+  <!-- ═════════════════════════════════════════════════════════ 1. LOGIN VIEW ══ -->
+  <section id="adminLoginView" class="admin-login-wrap">
+    <div class="admin-login-card">
+      <div class="admin-login-card__header">
+        <div class="admin-login-card__icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="4.5" y="10" width="15" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>
+          </svg>
+        </div>
+        <h1 style="font-size:1.5rem;margin-bottom:6px">Admin Portal</h1>
+        <p style="color:var(--muted);font-size:.88rem">Sign in with fixed credentials to manage products and orders.</p>
+      </div>
+
+      <div class="safety" style="margin-bottom:20px;font-size:.82rem">
+        <b>Fixed Credentials:</b><br>
+        Gmail: <code style="font-weight:700">admin@mobilegallery.com</code><br>
+        Password: <code style="font-weight:700">admin123</code>
+      </div>
+
+      <form id="adminLoginForm" novalidate>
+        <div class="field" style="margin-bottom:14px">
+          <label for="adminEmail">Admin Gmail <span>*</span></label>
+          <input class="input" type="email" id="adminEmail" name="adminEmail" placeholder="admin@mobilegallery.com" value="admin@mobilegallery.com" required>
+        </div>
+
+        <div class="field" style="margin-bottom:20px">
+          <label for="adminPassword">Password <span>*</span></label>
+          <input class="input" type="password" id="adminPassword" name="adminPassword" placeholder="Enter admin password" value="admin123" required>
+        </div>
+
+        <div id="loginErrorMsg" class="err is-on" style="display:none;margin-bottom:14px"></div>
+
+        <button class="btn btn--primary btn--lg" type="submit" style="width:100%">
+          Sign In to Admin Panel
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════ 2. DASHBOARD VIEW ══ -->
+  <section id="adminDashboardView" class="section" style="padding-top:34px;display:none">
+    <div class="wrap">
+      <!-- Admin Topbar -->
+      <div class="admin-topbar">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span class="admin-badge">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4.5" y="10" width="15" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>
+            </svg>
+            ADMIN LOGGED IN
+          </span>
+          <span style="font-size:.88rem;color:var(--muted)">admin@mobilegallery.com</span>
+          <span id="sheetStatusPill" class="status-badge status-badge--confirmed">
+            🟢 Sheet Connected
+          </span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px">
+          <a class="btn btn--ghost btn--sm" href="index.html#browse" target="_blank">View Shop ↗</a>
+          <button class="btn btn--soft btn--sm" id="adminLogoutBtn">Log Out</button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="admin-tabs" role="tablist">
+        <button type="button" class="admin-tab-btn is-active" data-tab="addProduct">
+          ➕ Add Product
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="manageProducts">
+          📱 Manage Products (<span id="tabProductCount">0</span>)
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="manageOrders">
+          📦 Orders &amp; Confirmation (<span id="tabOrderCount">0</span>)
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="manageUsers">
+          👥 Customers &amp; Access (<span id="tabUserCount">0</span>)
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="sheetSettings">
+          ⚙️ Sheet Sync &amp; Rules
+        </button>
+      </div>
+
+      <!-- ─────── TAB 1: ADD PRODUCT ─────── -->
+      <div id="paneAddProduct" class="admin-tab-pane">
+        <!-- Active Product Editing Banner -->
+        <div id="adminEditBanner" style="display:none;background:rgba(79,70,229,.08);border:1.5px dashed var(--brand-600);border-radius:var(--r-md);padding:14px 18px;margin-bottom:18px;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="background:var(--brand-600);color:#fff;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em">Editing Mode</span>
+              <span id="adminEditingProductTitle" style="font-weight:700;font-size:1rem;color:var(--ink)">Product Title</span>
+            </div>
+            <small style="color:var(--muted);font-size:.82rem">
+              Product ID: <code id="adminEditingProductId" style="font-weight:600"></code> · Changes will update in the shop and Google Sheet (Col I–Y).
+            </small>
+          </div>
+          <button class="btn btn--soft btn--sm" type="button" id="cancelEditBtn" style="color:var(--rose);font-weight:600">
+            ✕ Cancel Edit
+          </button>
+        </div>
+
+        <div class="sell-grid">
+          <form id="adminForm" novalidate>
+            <div class="panel">
+              <h3>Product details</h3>
+              <p class="hint">What are you putting on the shelf? Syncs automatically to Google Sheet.</p>
+
+              <div class="form-grid">
+                <div class="field field--full">
+                  <label for="f-title">Product name <span>*</span></label>
+                  <input class="input" id="f-title" name="title" placeholder="e.g. iPhone 15 Pro 256GB — Blue Titanium" maxlength="80">
+                  <small>Include model, storage and colour — this is what customers search for.</small>
+                  <span class="err"></span>
+                </div>
+
+                <div class="field">
+                  <label for="f-brand">Brand</label>
+                  <select class="input" id="f-brand" name="brand">
+                    <option>Apple</option><option>Samsung</option><option>Google</option>
+                    <option>Xiaomi</option><option>OnePlus</option><option>Realme</option>
+                    <option>Vivo</option><option>Oppo</option><option>Sony</option>
+                    <option>Asus</option><option>Nintendo</option><option>Anker</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="f-category">Category</label>
+                  <select class="input" id="f-category" name="category">
+                    <option value="phone">Smartphone</option>
+                    <option value="tablet">Tablet</option>
+                    <option value="laptop">Laptop</option>
+                    <option value="watch">Smartwatch</option>
+                    <option value="audio">Audio</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="accessory">Accessory</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="conditionField">Condition</label>
+                  <select class="input" id="conditionField" name="condition"></select>
+                </div>
+
+                <div class="field">
+                  <label for="f-warranty">Warranty</label>
+                  <select class="input" id="f-warranty" name="warranty">
+                    <option>1 year official</option>
+                    <option>6 months official</option>
+                    <option>3 months</option>
+                    <option>International warranty</option>
+                    <option>No warranty</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="f-storage">Storage</label>
+                  <select class="input" id="f-storage" name="storage">
+                    <option>64GB</option><option selected>128GB</option><option>256GB</option>
+                    <option>512GB</option><option>1TB SSD</option><option>N/A</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="f-ram">Memory</label>
+                  <select class="input" id="f-ram" name="ram">
+                    <option>4GB</option><option>6GB</option><option selected>8GB</option>
+                    <option>12GB</option><option>16GB</option><option>N/A</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="f-battery">Battery</label>
+                  <input class="input" id="f-battery" name="battery" value="100% health" placeholder="e.g. 100% health">
+                </div>
+
+                <div class="field">
+                  <label for="f-chip">Processor</label>
+                  <input class="input" id="f-chip" name="chip" placeholder="e.g. A17 Pro">
+                </div>
+
+                <div class="field field--full">
+                  <label>Colour <small style="font-weight:500">(sets the product artwork)</small></label>
+                  <div class="color-swatches" id="swatches"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Price &amp; stock</h3>
+              <p class="hint">The old price, if set, shows customers a discount badge.</p>
+
+              <div class="form-grid">
+                <div class="field">
+                  <label for="f-price">Selling price (৳) <span>*</span></label>
+                  <input class="input" id="f-price" name="price" type="number" min="0" placeholder="145000" inputmode="numeric">
+                  <span class="err"></span>
+                </div>
+
+                <div class="field">
+                  <label for="f-oldPrice">Was price (৳)</label>
+                  <input class="input" id="f-oldPrice" name="oldPrice" type="number" min="0" placeholder="Optional — shows a discount badge" inputmode="numeric">
+                </div>
+
+                <div class="field">
+                  <label for="f-stock">Units in stock <span>*</span></label>
+                  <input class="input" id="f-stock" name="stock" type="number" min="0" max="9999" value="5" inputmode="numeric">
+                  <small>Customers cannot order more than this.</small>
+                  <span class="err"></span>
+                </div>
+
+                <div class="field" style="justify-content:flex-end">
+                  <p class="safety" id="priceHint" style="background:transparent;border-style:solid;margin:0"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Product Photos (Multi-Photo Gallery)</h3>
+              <p class="hint">Upload 1 to 5 product photos. Optimized directly in the browser via canvas for 0% server load.</p>
+
+              <div class="field field--full">
+                <label>Upload Images (1–5 photos)</label>
+                <div class="file-drop-zone" id="fileDropZone">
+                  <input type="file" id="adminImageInput" accept="image/*" multiple style="display:none">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 16px;text-align:center;cursor:pointer" onclick="document.getElementById('adminImageInput').click()">
+                    <span style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(79,70,229,.1);color:var(--brand-600)">
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </span>
+                    <b style="font-size:.95rem">Click or drag photos here</b>
+                    <small style="color:var(--muted);font-size:.82rem">JPEG, PNG, WebP supported. Auto-compressed (zero server load).</small>
+                  </div>
+                </div>
+
+                <div class="image-preview-strip" id="adminImagePreviewStrip" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"></div>
+              </div>
+
+              <div class="field field--full" style="margin-top:12px">
+                <label for="adminImageUrlInput">Or Add Image by URL <small style="font-weight:500">(comma-separated)</small></label>
+                <div style="display:flex;gap:8px">
+                  <input class="input" id="adminImageUrlInput" placeholder="https://images.unsplash.com/... or image link">
+                  <button type="button" class="btn btn--soft" id="adminAddImageUrlBtn">Add URL</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Description</h3>
+              <p class="hint">What the customer reads on the product page.</p>
+              <div class="field">
+                <label for="f-desc">Product description <span>*</span></label>
+                <textarea class="textarea" id="f-desc" name="desc" maxlength="900"
+                  placeholder="Describe what makes this product worth buying — the display, the chip, the camera, and what is included in the box."></textarea>
+                <span class="err"></span>
+              </div>
+
+              <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px">
+                <button class="btn btn--primary btn--lg" type="submit" id="addProductSubmitBtn">
+                  Add to Shop &amp; Google Sheet
+                </button>
+                <button class="btn btn--ghost btn--lg" type="button" onclick="document.getElementById('adminForm').reset();paintPreview();">
+                  Reset Form
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <aside class="preview-sticky">
+            <div class="panel">
+              <h3>Live preview</h3>
+              <p class="hint">Exactly how the product card will look in the shop.</p>
+              <div id="preview"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- ─────── TAB 2: MANAGE PRODUCTS ─────── -->
+      <div id="paneManageProducts" class="admin-tab-pane" hidden>
+        <div class="panel" style="margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+            <div>
+              <h3>Products in Catalogue</h3>
+              <p class="hint" style="margin:0">All products currently active. Edit (✏️) or delete (🗑️) any product with instant Google Sheet sync.</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn btn--soft btn--sm" id="seedProductsBtn" title="Upload all built-in catalogue items to Google Sheet">
+                📤 Upload All to Sheet
+              </button>
+              <button class="btn btn--soft btn--sm" id="refreshProductsBtn">
+                🔄 Sync from Sheet
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div id="adminList"></div>
+        </div>
+      </div>
+
+      <!-- ─────── TAB 3: MANAGE ORDERS & CONFIRMATION ─────── -->
+      <div id="paneManageOrders" class="admin-tab-pane" hidden>
+        <div class="order-stats" style="margin-bottom:24px">
+          <div><b id="adminOrdersCount">0</b><small>Total Orders</small></div>
+          <div><b id="adminOrdersRevenue">৳0</b><small>Total Revenue</small></div>
+          <div><b id="adminPendingCount" style="color:var(--amber)">0</b><small>Pending Orders</small></div>
+        </div>
+
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+            <div>
+              <h3 style="font-size:1.15rem">Customer Orders</h3>
+              <p class="hint" style="margin:0">View placed orders, customer details, and confirm orders to sync status to Google Sheet.</p>
+            </div>
+            <button class="btn btn--soft btn--sm" id="refreshOrdersBtn">
+              🔄 Refresh Orders from Sheet
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Order Ref</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Contact</th>
+                  <th>Location</th>
+                  <th>Payment</th>
+                  <th>Items</th>
+                  <th>Total (৳)</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <tr>
+                  <td colspan="10" style="text-align:center;color:var(--muted);padding:24px">
+                    Loading orders...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────── TAB 4: MANAGE USERS & ACCESS ─────── -->
+      <div id="paneManageUsers" class="admin-tab-pane" hidden>
+        <div class="order-stats" style="margin-bottom:24px">
+          <div><b id="adminUsersTotal">0</b><small>Registered Accounts</small></div>
+          <div><b id="adminUsersActive" style="color:var(--mint)">0</b><small>Active Customers</small></div>
+          <div><b id="adminUsersInactive" style="color:var(--rose)">0</b><small>Inactive / Suspended</small></div>
+        </div>
+
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+            <div>
+              <h3 style="font-size:1.15rem">Registered Customer Accounts (Google Sheet Cols A–G)</h3>
+              <p class="hint" style="margin:0">Control customer access in real-time. Selecting <b>Inactive</b> or <b>Suspended</b> immediately blocks account login and updates Google Sheet Column G.</p>
+            </div>
+            <button class="btn btn--soft btn--sm" id="refreshUsersBtn">
+              🔄 Refresh Users from Sheet
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Registered Date</th>
+                  <th>Customer Name</th>
+                  <th>Email</th>
+                  <th>Mobile Number</th>
+                  <th>Status (Col G)</th>
+                  <th>Change Access</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="7" style="text-align:center;color:var(--muted);padding:24px">
+                    Fetching users from Google Sheet...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─────── TAB 5: SHEET SETTINGS & RULES ─────── -->
+      <div id="paneSheetSettings" class="admin-tab-pane" hidden>
+        <div class="panel" style="max-width:760px">
+          <h3>Google Sheet &amp; Apps Script Settings</h3>
+          <p class="hint">Verify or change the Google Apps Script Web App endpoint URL.</p>
+
+          <div class="field" style="margin-bottom:16px">
+            <label for="cfgSheetUrl">Apps Script Web App /exec URL</label>
+            <input class="input" id="cfgSheetUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec">
+            <small>This URL points to your deployed Google Apps Script.</small>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">
+            <button class="btn btn--primary btn--sm" id="saveSheetUrlBtn">Save URL</button>
+            <button class="btn btn--soft btn--sm" id="testSheetConnBtn">Test Connection</button>
+          </div>
+
+          <div id="sheetTestOutput" style="display:none;padding:12px 14px;border-radius:var(--r-md);font-size:.85rem;margin-bottom:24px"></div>
+
+          <h4 style="margin-top:24px;margin-bottom:10px">Documentation &amp; Workflow Rules</h4>
+          <p style="color:var(--muted);font-size:.9rem;line-height:1.6">
+            All system architecture, multi-sheet tabs (<code>Users</code>, <code>Products</code>, <code>Orders</code>),
+            rules, and tracking logs are recorded in <a href="tools/rules.md" style="color:var(--brand-600);font-weight:700">tools/rules.md</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__bottom" style="border:0;padding-top:0">
+      <span>© <span id="year">2026</span> Mobile Gallery. Admin Portal.</span>
+      <a href="index.html" style="color:var(--brand-600);font-weight:700">Back to shop</a>
+    </div>
+  </div>
+</footer>
+
+<!-- cart panel -->
+<div class="cart" id="cartPanel" role="dialog" aria-label="Shopping cart">
+  <div class="cart__panel">
+    <div class="cart__head">
+      <h3>Your cart</h3>
+      <button class="icon-btn" data-cart-close aria-label="Close cart" data-icon="close"></button>
+    </div>
+    <div class="cart__body" id="cartBody"></div>
+    <div class="cart__foot" id="cartFoot" hidden></div>
+  </div>
+</div>
+
+<script src="tools/sheet-endpoint.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
