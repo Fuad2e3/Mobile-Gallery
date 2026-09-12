@@ -79,37 +79,20 @@
           </svg>
         </div>
         <h1 style="font-size:1.5rem;margin-bottom:6px">Admin Portal</h1>
-        <p style="color:var(--muted);font-size:.88rem">Sign in with fixed credentials to manage products and orders.</p>
+        <p style="color:var(--muted);font-size:.88rem">Click below to directly access the admin dashboard.</p>
       </div>
 
-      <div class="safety" style="margin-bottom:20px;font-size:.82rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <div>
-          <b>Fixed Credentials:</b><br>
-          Gmail: <code style="font-weight:700">admin@mobilegallery.com</code><br>
-          Password: <code style="font-weight:700">admin123</code>
-        </div>
-        <button type="button" class="btn btn--secondary btn--sm" id="autoFillAdminBtn" style="padding:4px 10px;font-size:.78rem">
-          Auto Fill
-        </button>
+      <div class="safety" style="margin-bottom:20px;font-size:.84rem;background:rgba(79,70,229,0.06);border-color:rgba(79,70,229,0.2);color:var(--brand-700)">
+        <b>Direct Access Enabled:</b><br>
+        No credentials required — simply click the button below to enter the Admin Panel.
       </div>
 
-      <form id="adminLoginForm" action="javascript:void(0);" onsubmit="return false;" novalidate>
-        <div class="field" style="margin-bottom:14px">
-          <label for="adminEmail">Admin Gmail <span>*</span></label>
-          <input class="input" type="email" id="adminEmail" name="adminEmail" placeholder="admin@mobilegallery.com" value="admin@mobilegallery.com" required>
-        </div>
-
-        <div class="field" style="margin-bottom:20px">
-          <label for="adminPassword">Password <span>*</span></label>
-          <input class="input" type="password" id="adminPassword" name="adminPassword" placeholder="Enter admin password" value="admin123" required>
-        </div>
-
-        <div id="loginErrorMsg" class="err is-on" style="display:none;margin-bottom:14px"></div>
-
-        <button class="btn btn--primary btn--lg" id="adminLoginSubmitBtn" type="submit" style="width:100%">
-          Sign In to Admin Panel
-        </button>
-      </form>
+      <button class="btn btn--primary btn--lg" id="adminLoginSubmitBtn" type="button" style="width:100%;font-size:1.05rem;padding:14px;display:flex;align-items:center;justify-content:center;gap:10px">
+        <span>Sign In to Admin Panel</span>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
     </div>
   </section>
 
