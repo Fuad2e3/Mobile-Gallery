@@ -152,41 +152,113 @@ function paintPreview() {
       </div>
     </article>`;
 }
-function compressImageFile(file, maxWidth = 800, maxHeight = 800, quality = 0.75) {
-  return new Promise((resolve, reject) => {
-    if (!file || !file.type.startsWith('\x69\x6d\x61\x67\x65\x2f')) {
-      return reject(new Error('\x46\x69\x6c\x65\x20\x69\x73\x20\x6e\x6f\x74\x20\x61\x6e\x20\x69\x6d\x61\x67\x65'));
+class ImageOptimizer {
+  static DEFAULT_OPTIONS = {
+    maxWidth: 720,
+    maxHeight: 720,
+    initialQuality: 0.72,
+    minQuality: 0.48,
+    maxTargetKB: 65,
+    preferFormat: '\x69\x6d\x61\x67\x65\x2f\x77\x65\x62\x70',
+    fallbackFormat: '\x69\x6d\x61\x67\x65\x2f\x6a\x70\x65\x67'
+  };
+  static async optimize(file, customOptions = {}) {
+    if (!file || !file.type || !file.type.startsWith('\x69\x6d\x61\x67\x65\x2f')) {
+      throw new Error('\x50\x72\x6f\x76\x69\x64\x65\x64\x20\x66\x69\x6c\x65\x20\x69\x73\x20\x6e\x6f\x74\x20\x61\x6e\x20\x69\x6d\x61\x67\x65');
     }
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        let { width, height } = img;
-        if (width > maxWidth || height > maxHeight) {
-          const ratio = Math.min(maxWidth / width, maxHeight / height);
-          width = Math.round(width * ratio);
-          height = Math.round(height * ratio);
-        }
-        const canvas = document.createElement('\x63\x61\x6e\x76\x61\x73');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('\x32\x64');
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = '\x68\x69\x67\x68';
-        ctx.drawImage(img, 0, 0, width, height);
-        let dataUrl = canvas.toDataURL('\x69\x6d\x61\x67\x65\x2f\x77\x65\x62\x70', quality);
-        if (!dataUrl.startsWith('\x64\x61\x74\x61\x3a\x69\x6d\x61\x67\x65\x2f\x77\x65\x62\x70')) {
-          dataUrl = canvas.toDataURL('\x69\x6d\x61\x67\x65\x2f\x6a\x70\x65\x67', quality);
-        }
-        resolve(dataUrl);
-      };
-      img.onerror = () => reject(new Error('\x49\x6d\x61\x67\x65\x20\x66\x61\x69\x6c\x65\x64\x20\x74\x6f\x20\x6c\x6f\x61\x64'));
-      img.src = e.target.result;
+    const opts = { ...this.DEFAULT_OPTIONS, ...customOptions };
+    const originalBytes = file.size || 0;
+    const img = await this.loadImageFromFile(file);
+    const result = await this.compressMultiPass(img, opts);
+    const optimizedBytes = this.estimateBase64Bytes(result.dataUrl);
+    const savingsPercent = originalBytes > 0
+      ? Math.max(0, Math.round(((originalBytes - optimizedBytes) / originalBytes) * 100))
+      : 0;
+    return {
+      dataUrl: result.dataUrl,
+      originalBytes,
+      optimizedBytes,
+      savingsPercent,
+      width: result.width,
+      height: result.height,
+      mimeType: result.mimeType
     };
-    reader.onerror = () => reject(new Error('\x46\x61\x69\x6c\x65\x64\x20\x74\x6f\x20\x72\x65\x61\x64\x20\x66\x69\x6c\x65'));
-    reader.readAsDataURL(file);
-  });
+  }
+  static async optimizeBatch(files, options = {}) {
+    if (!Array.isArray(files) || files.length === 0) return [];
+    return Promise.all(files.map(f => this.optimize(f, options)));
+  }
+  static loadImageFromFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('\x46\x61\x69\x6c\x65\x64\x20\x74\x6f\x20\x64\x65\x63\x6f\x64\x65\x20\x69\x6d\x61\x67\x65\x20\x64\x61\x74\x61'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('\x46\x61\x69\x6c\x65\x64\x20\x74\x6f\x20\x72\x65\x61\x64\x20\x66\x69\x6c\x65'));
+      reader.readAsDataURL(file);
+    });
+  }
+  static async compressMultiPass(img, opts) {
+    let curWidth = img.naturalWidth || img.width;
+    let curHeight = img.naturalHeight || img.height;
+    if (curWidth > opts.maxWidth || curHeight > opts.maxHeight) {
+      const ratio = Math.min(opts.maxWidth / curWidth, opts.maxHeight / curHeight);
+      curWidth = Math.round(curWidth * ratio);
+      curHeight = Math.round(curHeight * ratio);
+    }
+    const canvas = document.createElement('\x63\x61\x6e\x76\x61\x73');
+    canvas.width = curWidth;
+    canvas.height = curHeight;
+    const ctx = canvas.getContext('\x32\x64');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = '\x68\x69\x67\x68';
+    ctx.drawImage(img, 0, 0, curWidth, curHeight);
+    let quality = opts.initialQuality;
+    let mimeType = opts.preferFormat;
+    let dataUrl = canvas.toDataURL(mimeType, quality);
+    if (!dataUrl.startsWith(`data:${opts.preferFormat}`)) {
+      mimeType = opts.fallbackFormat;
+      dataUrl = canvas.toDataURL(mimeType, quality);
+    }
+    let estimatedBytes = this.estimateBase64Bytes(dataUrl);
+    const maxTargetBytes = opts.maxTargetKB * 1024;
+    let passes = 0;
+    while (estimatedBytes > maxTargetBytes && quality > opts.minQuality && passes < 3) {
+      passes++;
+      quality = Math.max(opts.minQuality, quality - 0.10);
+      curWidth = Math.round(curWidth * 0.88);
+      curHeight = Math.round(curHeight * 0.88);
+      canvas.width = curWidth;
+      canvas.height = curHeight;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = '\x68\x69\x67\x68';
+      ctx.drawImage(img, 0, 0, curWidth, curHeight);
+      dataUrl = canvas.toDataURL(mimeType, quality);
+      estimatedBytes = this.estimateBase64Bytes(dataUrl);
+    }
+    return { dataUrl, width: curWidth, height: curHeight, mimeType };
+  }
+  static estimateBase64Bytes(dataUrl) {
+    if (!dataUrl) return 0;
+    const commaIdx = dataUrl.indexOf('\x2c');
+    const base64Len = commaIdx > -1 ? dataUrl.length - (commaIdx + 1) : dataUrl.length;
+    return Math.round(base64Len * 0.75);
+  }
+  static formatBytes(bytes) {
+    if (!bytes || bytes <= 0) return '\x30\x20\x42';
+    if (bytes < 1024) return bytes + '\x20\x42';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + '\x20\x4b\x42';
+    return (bytes / (1024 * 1024)).toFixed(1) + '\x20\x4d\x42';
+  }
 }
+function compressImageFile(file, maxWidth = 720, maxHeight = 720, quality = 0.72) {
+  return ImageOptimizer.optimize(file, { maxWidth, maxHeight, initialQuality: quality })
+    .then(res => res.dataUrl);
+}
+window.ImageOptimizer = ImageOptimizer;
 function renderAdminImagePreviews() {
   const strip = document.getElementById('\x61\x64\x6d\x69\x6e\x49\x6d\x61\x67\x65\x50\x72\x65\x76\x69\x65\x77\x53\x74\x72\x69\x70');
   if (!strip) return;
@@ -224,19 +296,24 @@ function initAdminPhotos() {
       return toast('\x4d\x61\x78\x69\x6d\x75\x6d\x20\x35\x20\x70\x68\x6f\x74\x6f\x73\x20\x61\x6c\x6c\x6f\x77\x65\x64\x20\x70\x65\x72\x20\x70\x72\x6f\x64\x75\x63\x74', '\x63\x6c\x6f\x73\x65');
     }
     const filesToProcess = Array.from(files).slice(0, remainingSlots);
-    toast(`Optimizing ${filesToProcess.length} image(s)...`, '\x63\x68\x65\x63\x6b');
+    toast(`⚡ Optimizing ${filesToProcess.length} photo(s) for minimal cloud storage...`, '\x63\x68\x65\x63\x6b');
     try {
-      const compressedUrls = await Promise.all(
-        filesToProcess.map(file => compressImageFile(file))
-      );
+      const results = await ImageOptimizer.optimizeBatch(filesToProcess);
+      const totalOrig = results.reduce((sum, r) => sum + r.originalBytes, 0);
+      const totalOpt = results.reduce((sum, r) => sum + r.optimizedBytes, 0);
+      const avgSavings = totalOrig > 0 ? Math.round(((totalOrig - totalOpt) / totalOrig) * 100) : 0;
       draft.images = draft.images || [];
-      draft.images.push(...compressedUrls);
+      draft.images.push(...results.map(r => r.dataUrl));
       renderAdminImagePreviews();
       paintPreview();
-      toast(`${compressedUrls.length} photo(s) added and optimized!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+      const perPhotoKB = results.length ? Math.round((totalOpt / results.length) / 1024) : 0;
+      const savingsMsg = avgSavings > 0
+        ? `${results.length} photo(s) optimized! Saved ${avgSavings}% space (~${perPhotoKB} KB/photo)`
+        : `${results.length} photo(s) added and optimized!`;
+      toast(savingsMsg, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
     } catch (err) {
-      console.error('\x49\x6d\x61\x67\x65\x20\x63\x6f\x6d\x70\x72\x65\x73\x73\x69\x6f\x6e\x20\x65\x72\x72\x6f\x72\x3a', err);
-      toast('\x46\x61\x69\x6c\x65\x64\x20\x74\x6f\x20\x70\x72\x6f\x63\x65\x73\x73\x20\x6f\x6e\x65\x20\x6f\x72\x20\x6d\x6f\x72\x65\x20\x69\x6d\x61\x67\x65\x73', '\x63\x6c\x6f\x73\x65');
+      console.error('\x49\x6d\x61\x67\x65\x20\x6f\x70\x74\x69\x6d\x69\x7a\x61\x74\x69\x6f\x6e\x20\x65\x72\x72\x6f\x72\x3a', err);
+      toast('\x46\x61\x69\x6c\x65\x64\x20\x74\x6f\x20\x6f\x70\x74\x69\x6d\x69\x7a\x65\x20\x69\x6d\x61\x67\x65\x3a\x20' + (err.message || '\x45\x72\x72\x6f\x72'), '\x63\x6c\x6f\x73\x65');
     }
   };
   if (fileInput) {
