@@ -778,6 +778,8 @@ function updateOrderStatus_(sheet, data) {
     newStatus = 'Delivered';
   } else if (rawStatus === 'confirmed') {
     newStatus = 'Confirmed';
+  } else if (rawStatus === 'cancel' || rawStatus === 'cancelled') {
+    newStatus = 'Cancel';
   } else {
     newStatus = 'Pending';
   }

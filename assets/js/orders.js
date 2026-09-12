@@ -1,6 +1,13 @@
 /* Mobile Gallery v1.0.0 - Production Protected Build. (c) 2026 Mobile Gallery Inc. All Rights Reserved. Reverse-engineering, redistribution or copying is prohibited. */
 function stageTrack(order) {
   const stage = orderStage(order);
+  if (stage === '\x43\x61\x6e\x63\x65\x6c') {
+    return `
+      <div class="track is-cancelled" role="alert">
+        <span style="font-size:1.1rem">❌</span>
+        <span>Order Cancelled</span>
+      </div>`;
+  }
   const at = ORDER_STAGES.indexOf(stage);
   return `
     <div class="track" role="img" aria-label="Status: ${esc(stage)}">

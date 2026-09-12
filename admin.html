@@ -421,7 +421,7 @@
             <b>Orders Section Live Sync</b>
           </div>
           <span style="color:var(--muted);font-size:.8rem">
-            Matches Sheet Columns: Order Ref (AA), Customer (AC–AE), Total (AK), Status (AM: Pending / Confirmed / Delivered)
+            Matches Sheet Columns: Order Ref (AA), Customer (AC–AE), Total (AK), Status (AM: Pending / Confirmed / Cancel / Delivered)
           </span>
         </div>
 
@@ -435,7 +435,7 @@
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px">
             <div>
               <h3 style="font-size:1.15rem">Customer Orders</h3>
-              <p class="hint" style="margin:0">View placed orders, customer details, and confirm orders to sync status to Google Sheet.</p>
+              <p class="hint" style="margin:0">View placed orders, customer details, and update status (Pending, Confirmed, Cancel, Delivered) to sync to Google Sheet Column AM in real-time.</p>
             </div>
             <button class="btn btn--soft btn--sm" id="refreshOrdersBtn">
               🔄 Refresh Orders from Sheet

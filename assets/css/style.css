@@ -2022,15 +2022,31 @@ input[type="range"]::-moz-range-thumb {
 .order__stage--pending   { background: rgba(245, 158, 11, .16); color: #b45309; }
 .order__stage--confirmed { background: rgba(99, 102, 241, .14); color: var(--brand-600); }
 .order__stage--delivered { background: rgba(16, 185, 129, .15); color: #059669; }
+.order__stage--cancel,
+.order__stage--cancelled { background: rgba(244, 63, 94, .16); color: #e11d48; }
 [data-theme="dark"] .order__stage--pending   { color: #fbbf24; }
 [data-theme="dark"] .order__stage--confirmed { color: var(--brand-300); }
 [data-theme="dark"] .order__stage--delivered { color: #34d399; }
+[data-theme="dark"] .order__stage--cancel,
+[data-theme="dark"] .order__stage--cancelled { color: #fb7185; }
 
 /* delivery progress */
 .track {
   display: flex;
   margin-bottom: 18px;
   padding: 0 4px;
+}
+.track.is-cancelled {
+  background: rgba(244, 63, 94, .08);
+  border: 1px dashed rgba(244, 63, 94, .35);
+  border-radius: var(--r-md);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e11d48;
+  font-weight: 700;
+  font-size: .84rem;
 }
 .track__step {
   flex: 1;
@@ -2296,7 +2312,8 @@ input[type="range"]::-moz-range-thumb {
 .status-badge--confirmed { background: rgba(16, 185, 129, .15); color: #059669; }
 .status-badge--shipped   { background: rgba(6, 182, 212, .15); color: #0891b2; }
 .status-badge--delivered { background: rgba(99, 102, 241, .15); color: var(--brand-600); }
-.status-badge--cancelled { background: rgba(244, 63, 94, .15); color: #e11d48; }
+.status-badge--cancelled,
+.status-badge--cancel    { background: rgba(244, 63, 94, .15); color: #e11d48; }
 
 /* User dropdown and auth modal */
 .user-menu-wrap {

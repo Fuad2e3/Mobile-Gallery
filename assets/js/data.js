@@ -496,6 +496,7 @@ const ORDER_STAGES = ['\x50\x65\x6e\x64\x69\x6e\x67', '\x43\x6f\x6e\x66\x69\x72\
 function orderStage(order) {
   if (order && order.status) {
     const s = String(order.status).trim();
+    if (s.toLowerCase() === '\x63\x61\x6e\x63\x65\x6c' || s.toLowerCase() === '\x63\x61\x6e\x63\x65\x6c\x6c\x65\x64') return '\x43\x61\x6e\x63\x65\x6c';
     const match = ORDER_STAGES.find(st => st.toLowerCase() === s.toLowerCase());
     if (match) return match;
   }
