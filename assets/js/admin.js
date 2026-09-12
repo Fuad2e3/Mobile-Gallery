@@ -152,17 +152,17 @@ function paintPreview() {
       </div>
     </article>`;
 }
-class ImageOptimizer {
+class Optimization {
   static DEFAULT_OPTIONS = {
     maxWidth: 720,
     maxHeight: 720,
     initialQuality: 0.72,
     minQuality: 0.48,
-    maxTargetKB: 65,
+    maxTargetKB: 60,
     preferFormat: '\x69\x6d\x61\x67\x65\x2f\x77\x65\x62\x70',
     fallbackFormat: '\x69\x6d\x61\x67\x65\x2f\x6a\x70\x65\x67'
   };
-  static async optimize(file, customOptions = {}) {
+  static async photo(file, customOptions = {}) {
     if (!file || !file.type || !file.type.startsWith('\x69\x6d\x61\x67\x65\x2f')) {
       throw new Error('\x50\x72\x6f\x76\x69\x64\x65\x64\x20\x66\x69\x6c\x65\x20\x69\x73\x20\x6e\x6f\x74\x20\x61\x6e\x20\x69\x6d\x61\x67\x65');
     }
@@ -184,9 +184,15 @@ class ImageOptimizer {
       mimeType: result.mimeType
     };
   }
-  static async optimizeBatch(files, options = {}) {
+  static async optimize(file, customOptions = {}) {
+    return this.photo(file, customOptions);
+  }
+  static async batch(files, options = {}) {
     if (!Array.isArray(files) || files.length === 0) return [];
-    return Promise.all(files.map(f => this.optimize(f, options)));
+    return Promise.all(files.map(f => this.photo(f, options)));
+  }
+  static async optimizeBatch(files, options = {}) {
+    return this.batch(files, options);
   }
   static loadImageFromFile(file) {
     return new Promise((resolve, reject) => {
@@ -254,11 +260,13 @@ class ImageOptimizer {
     return (bytes / (1024 * 1024)).toFixed(1) + '\x20\x4d\x42';
   }
 }
+const ImageOptimizer = Optimization;
 function compressImageFile(file, maxWidth = 720, maxHeight = 720, quality = 0.72) {
-  return ImageOptimizer.optimize(file, { maxWidth, maxHeight, initialQuality: quality })
+  return Optimization.photo(file, { maxWidth, maxHeight, initialQuality: quality })
     .then(res => res.dataUrl);
 }
-window.ImageOptimizer = ImageOptimizer;
+window.Optimization = Optimization;
+window.ImageOptimizer = Optimization;
 function renderAdminImagePreviews() {
   const strip = document.getElementById('\x61\x64\x6d\x69\x6e\x49\x6d\x61\x67\x65\x50\x72\x65\x76\x69\x65\x77\x53\x74\x72\x69\x70');
   if (!strip) return;
@@ -298,7 +306,7 @@ function initAdminPhotos() {
     const filesToProcess = Array.from(files).slice(0, remainingSlots);
     toast(`⚡ Optimizing ${filesToProcess.length} photo(s) for minimal cloud storage...`, '\x63\x68\x65\x63\x6b');
     try {
-      const results = await ImageOptimizer.optimizeBatch(filesToProcess);
+      const results = await Optimization.batch(filesToProcess);
       const totalOrig = results.reduce((sum, r) => sum + r.originalBytes, 0);
       const totalOpt = results.reduce((sum, r) => sum + r.optimizedBytes, 0);
       const avgSavings = totalOrig > 0 ? Math.round(((totalOrig - totalOpt) / totalOrig) * 100) : 0;
@@ -308,12 +316,12 @@ function initAdminPhotos() {
       paintPreview();
       const perPhotoKB = results.length ? Math.round((totalOpt / results.length) / 1024) : 0;
       const savingsMsg = avgSavings > 0
-        ? `${results.length} photo(s) optimized! Saved ${avgSavings}% space (~${perPhotoKB} KB/photo)`
-        : `${results.length} photo(s) added and optimized!`;
+        ? `${results.length} photo(s) auto-optimized! Saved ${avgSavings}% space (~${perPhotoKB} KB/photo)`
+        : `${results.length} photo(s) added!`;
       toast(savingsMsg, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
     } catch (err) {
-      console.error('\x49\x6d\x61\x67\x65\x20\x6f\x70\x74\x69\x6d\x69\x7a\x61\x74\x69\x6f\x6e\x20\x65\x72\x72\x6f\x72\x3a', err);
-      toast('\x46\x61\x69\x6c\x65\x64\x20\x74\x6f\x20\x6f\x70\x74\x69\x6d\x69\x7a\x65\x20\x69\x6d\x61\x67\x65\x3a\x20' + (err.message || '\x45\x72\x72\x6f\x72'), '\x63\x6c\x6f\x73\x65');
+      console.error('\x4f\x70\x74\x69\x6d\x69\x7a\x61\x74\x69\x6f\x6e\x20\x65\x72\x72\x6f\x72\x3a', err);
+      toast('\x46\x61\x69\x6c\x65\x64\x20\x74\x6f\x20\x6f\x70\x74\x69\x6d\x69\x7a\x65\x20\x70\x68\x6f\x74\x6f\x3a\x20' + (err.message || '\x45\x72\x72\x6f\x72'), '\x63\x6c\x6f\x73\x65');
     }
   };
   if (fileInput) {
