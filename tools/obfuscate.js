@@ -101,27 +101,28 @@ function run() {
   let successCount = 0;
   for (const file of files) {
     const srcFile = path.join(SRC_DIR, file);
-    const distFile = (file === 'sheet-endpoint.js')
-      ? path.resolve(__dirname, '../tools/sheet-endpoint.js')
-      : path.join(DIST_DIR, file);
+    const targets = (file === 'sheet-endpoint.js')
+      ? [path.resolve(__dirname, '../tools/sheet-endpoint.js'), path.join(DIST_DIR, file)]
+      : [path.join(DIST_DIR, file)];
 
     const sourceCode = fs.readFileSync(srcFile, 'utf8');
 
     try {
       const obfuscated = obfuscateCode(sourceCode);
-      fs.writeFileSync(distFile, obfuscated, 'utf8');
-
-      // Syntax validation check with node -c
-      execSync(`node -c "${distFile}"`, { stdio: 'pipe' });
+      for (const target of targets) {
+        fs.writeFileSync(target, obfuscated, 'utf8');
+        execSync(`node -c "${target}"`, { stdio: 'pipe' });
+      }
 
       const srcSize = (sourceCode.length / 1024).toFixed(1);
       const distSize = (obfuscated.length / 1024).toFixed(1);
-      console.log(`  [OK] ${file}: Obfuscated & validated (${srcSize} KB -> ${distSize} KB)`);
+      console.log(`  [OK] ${file}: Obfuscated & validated (${srcSize} KB -> ${distSize} KB) [${targets.length} target(s)]`);
       successCount++;
     } catch (err) {
       console.error(`  [ERROR] Syntax validation failed for ${file}:`, err.message);
-      // Revert if error
-      fs.writeFileSync(distFile, sourceCode, 'utf8');
+      for (const target of targets) {
+        fs.writeFileSync(target, sourceCode, 'utf8');
+      }
     }
   }
 
