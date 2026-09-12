@@ -306,30 +306,70 @@ class SheetEndpoint {
       const res = await this.get('\x67\x65\x74\x5f\x6f\x72\x64\x65\x72\x73');
       if (res.ok && Array.isArray(res.orders) && res.orders.length > 0) {
         const local = this.getLocal(LOCAL_ORDERS_KEY, []);
-        const sheetRefs = new Set(res.orders.map(o => o.ref));
-        const merged = [...res.orders, ...local.filter(o => !sheetRefs.has(o.ref))];
+        const localMap = new Map();
+        local.forEach(o => {
+          if (o && o.ref) localMap.set(String(o.ref).trim().toUpperCase(), o);
+        });
+        const merged = res.orders.map(so => {
+          const key = String(so.ref).trim().toUpperCase();
+          const lo = localMap.get(key);
+          if (lo) {
+            return {
+              ...lo,
+              status: so.status || lo.status,
+              total: so.total !== undefined ? so.total : lo.total,
+              details: so.details || lo.details,
+              placedAt: so.placedAt || lo.placedAt,
+              name: so.name || lo.name,
+              email: so.email || lo.email,
+              phone: so.phone || lo.phone,
+              address: so.address || lo.address,
+              area: so.area || lo.area,
+              city: so.city || lo.city,
+              payment: so.payment || lo.payment
+            };
+          }
+          return so;
+        });
+        const sheetRefs = new Set(res.orders.map(o => String(o.ref).trim().toUpperCase()));
+        local.forEach(lo => {
+          if (lo && lo.ref && !sheetRefs.has(String(lo.ref).trim().toUpperCase())) {
+            merged.push(lo);
+          }
+        });
         this.setLocal(LOCAL_ORDERS_KEY, merged);
+        try {
+          window.dispatchEvent(new CustomEvent('\x6d\x67\x3a\x6f\x72\x64\x65\x72\x73\x2d\x75\x70\x64\x61\x74\x65\x64', { detail: { orders: merged } }));
+        } catch (_) {}
         return merged;
       }
     }
     return this.getLocal(LOCAL_ORDERS_KEY, []);
   }
   static async updateOrderStatus(orderRef, newStatus) {
+    let cleanStatus = '\x50\x65\x6e\x64\x69\x6e\x67';
+    const s = String(newStatus || '').trim().toLowerCase();
+    if (s === '\x64\x65\x6c\x69\x76\x65\x72\x65\x64') cleanStatus = '\x44\x65\x6c\x69\x76\x65\x72\x65\x64';
+    else if (s === '\x63\x6f\x6e\x66\x69\x72\x6d\x65\x64') cleanStatus = '\x43\x6f\x6e\x66\x69\x72\x6d\x65\x64';
+    else cleanStatus = '\x50\x65\x6e\x64\x69\x6e\x67';
     const orders = this.getLocal(LOCAL_ORDERS_KEY, []);
-    const target = orders.find(o => o.ref === orderRef);
+    const target = orders.find(o => String(o.ref).trim().toUpperCase() === String(orderRef).trim().toUpperCase());
     if (target) {
-      target.status = newStatus;
+      target.status = cleanStatus;
       this.setLocal(LOCAL_ORDERS_KEY, orders);
     }
+    try {
+      window.dispatchEvent(new CustomEvent('\x6d\x67\x3a\x6f\x72\x64\x65\x72\x73\x2d\x75\x70\x64\x61\x74\x65\x64', { detail: { ref: orderRef, status: cleanStatus } }));
+    } catch (_) {}
     if (this.isReady()) {
       const res = await this.request({
         action: '\x75\x70\x64\x61\x74\x65\x5f\x6f\x72\x64\x65\x72\x5f\x73\x74\x61\x74\x75\x73',
         ref: orderRef,
-        status: newStatus
+        status: cleanStatus
       });
-      return { ok: true, sheetSync: res.ok, note: res.error };
+      return { ok: true, sheetSync: res.ok, status: cleanStatus, note: res.error };
     }
-    return { ok: true, localOnly: true };
+    return { ok: true, localOnly: true, status: cleanStatus };
   }
   static getLocal(key, fallback) {
     try {

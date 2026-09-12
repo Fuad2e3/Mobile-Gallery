@@ -71,12 +71,22 @@
 <main>
 <section class="section" style="padding-top:44px">
   <div class="wrap" style="max-width:900px">
-    <div style="margin-bottom:26px">
-      <span class="eyebrow">Your account</span>
-      <h1 style="font-size:clamp(1.7rem,4vw,2.4rem)">My orders</h1>
-      <p style="color:var(--muted);margin-top:8px">
-        Everything you have ordered from this browser, newest first.
-      </p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:26px">
+      <div>
+        <span class="eyebrow">Your account</span>
+        <h1 style="font-size:clamp(1.7rem,4vw,2.4rem)">My orders</h1>
+        <p style="color:var(--muted);margin-top:8px">
+          Live delivery tracking for your orders — synchronized in real-time with Google Sheets.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span id="orderSyncBadge" class="status-badge status-badge--confirmed" style="font-size:.78rem">
+          🟢 Live Synced
+        </span>
+        <button class="btn btn--soft btn--sm" id="syncOrdersBtn" style="gap:6px" title="Refresh order status from Google Sheet">
+          🔄 Refresh Status
+        </button>
+      </div>
     </div>
 
     <div class="order-stats" id="orderStats" hidden>

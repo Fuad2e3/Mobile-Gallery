@@ -786,19 +786,31 @@ function updateOrderStatus_(sheet, data) {
     return json_({ ok: false, error: 'Order reference required.' });
   }
 
-  var lastRow = getSectionLastRow_(sheet, COL_ORDER_START);
-  if (lastRow > 1) {
-    var refs = sheet.getRange(2, COL_ORDER_START, lastRow - 1, 1).getValues();
-    for (var i = 0; i < refs.length; i++) {
-      if (String(refs[i][0] || '').trim() === ref) {
-        // Status is in Col AM (Col 39)
-        sheet.getRange(i + 2, 39).setValue(newStatus);
-        return json_({ ok: true, message: 'Order status updated to ' + newStatus, ref: ref });
+  var maxRow = Math.max(sheet.getLastRow(), getSectionLastRow_(sheet, COL_ORDER_START));
+  if (maxRow >= 2) {
+    var rows = sheet.getRange(1, COL_ORDER_START, maxRow, 1).getValues();
+    for (var r = 0; r < rows.length; r++) {
+      var rowRef = String(rows[r][0] || '').trim();
+      if (!rowRef || rowRef.toLowerCase() === 'order ref' || rowRef.toLowerCase().indexOf('section') > -1) {
+        continue;
+      }
+
+      if (rowRef.toLowerCase() === ref.toLowerCase()) {
+        var targetRow = r + 1; // 1-indexed sheet row
+        // Col AM is Column 39 (Order Status in Google Sheet)
+        sheet.getRange(targetRow, 39).setValue(newStatus);
+        return json_({
+          ok: true,
+          message: 'Order ' + ref + ' status updated to ' + newStatus + ' in Google Sheet row ' + targetRow,
+          ref: ref,
+          status: newStatus,
+          row: targetRow
+        });
       }
     }
   }
 
-  return json_({ ok: false, error: 'Order ref not found: ' + ref });
+  return json_({ ok: false, error: 'Order ref not found in Google Sheet: ' + ref });
 }
 
 /* =========================================================================

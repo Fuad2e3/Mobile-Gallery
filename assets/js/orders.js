@@ -14,14 +14,24 @@ function stageTrack(order) {
 function orderCard(order) {
   const stage = orderStage(order);
   const stageClass = stage.toLowerCase();
-  const linesMarkup = Array.isArray(order.lines) ? order.lines.map(l => `
-    <div class="order__line">
-      <span>${esc(l.qty || 1)} ×</span>
-      <b>${esc(l.title || 'Product')}</b>
-      <span class="order__lineprice">${money((l.price || 0) * (l.qty || 1))}</span>
-    </div>`).join('') : (order.details ? `<div class="order__line"><b>${esc(order.details)}</b></div>` : '');
+  let linesMarkup = '';
+  if (Array.isArray(order.lines) && order.lines.length) {
+    linesMarkup = order.lines.map(l => `
+      <div class="order__line">
+        <span>${esc(l.qty || 1)} ×</span>
+        <b>${esc(l.title || 'Product')}</b>
+        <span class="order__lineprice">${money((l.price || 0) * (l.qty || 1))}</span>
+      </div>`).join('');
+  } else if (order.details) {
+    const parts = String(order.details).split('\x3b').map(s => s.trim()).filter(Boolean);
+    linesMarkup = parts.map(part => `
+      <div class="order__line">
+        <span style="color:var(--brand-600);font-weight:700">•</span>
+        <b>${esc(part)}</b>
+      </div>`).join('');
+  }
   return `
-    <article class="order">
+    <article class="order" id="order-${esc(order.ref)}">
       <div class="order__head">
         <div>
           <b class="order__ref">${esc(order.ref)}</b>
@@ -74,26 +84,58 @@ function paintOrders() {
     box.innerHTML = `
       <div class="empty">
         <h3>No orders yet</h3>
-        <p>${user ? 'You have not placed any orders yet. Once placed, your orders will appear here.' : 'When you place an order it will appear here, with its delivery progress.'}</p>
+        <p>${user ? 'You have not placed any orders yet. Once placed, your orders will appear here with live Google Sheet status tracking.' : 'When you place an order it will appear here, with its live delivery progress.'}</p>
         <a class="btn btn--primary btn--sm" href="index.html#browse" style="margin-top:16px">Start shopping</a>
       </div>`;
     return;
   }
   box.innerHTML = orders.map(orderCard).join('');
 }
+async function syncOrdersFromSheet(showToast = false) {
+  const badge = document.getElementById('\x6f\x72\x64\x65\x72\x53\x79\x6e\x63\x42\x61\x64\x67\x65');
+  if (window.SheetEndpoint && window.SheetEndpoint.isReady()) {
+    try {
+      if (badge) badge.textContent = '\ud83d\udfe1\x20\x53\x79\x6e\x63\x69\x6e\x67\x2e\x2e\x2e';
+      const sheetOrders = await window.SheetEndpoint.fetchOrders();
+      if (badge) badge.textContent = '\ud83d\udfe2\x20\x4c\x69\x76\x65\x20\x53\x79\x6e\x63\x65\x64';
+      paintOrders();
+      if (showToast) toast('\x4f\x72\x64\x65\x72\x20\x73\x74\x61\x74\x75\x73\x20\x75\x70\x64\x61\x74\x65\x64\x20\x66\x72\x6f\x6d\x20\x47\x6f\x6f\x67\x6c\x65\x20\x53\x68\x65\x65\x74\x21', '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+      return sheetOrders;
+    } catch (_) {
+      if (badge) badge.textContent = '\u26aa\x20\x4c\x6f\x63\x61\x6c\x20\x43\x61\x63\x68\x65';
+    }
+  } else {
+    if (badge) badge.textContent = '\u26aa\x20\x4c\x6f\x63\x61\x6c\x20\x43\x61\x63\x68\x65';
+    paintOrders();
+  }
+}
 async function initOrders() {
   const orderList = document.getElementById('\x6f\x72\x64\x65\x72\x4c\x69\x73\x74');
   if (!orderList) return;
   paintOrders();
-  window.addEventListener('\x6d\x67\x3a\x61\x75\x74\x68\x2d\x63\x68\x61\x6e\x67\x65\x64', paintOrders);
-  if (window.SheetEndpoint && window.SheetEndpoint.isReady()) {
-    try {
-      const sheetOrders = await window.SheetEndpoint.fetchOrders();
-      if (sheetOrders && sheetOrders.length) {
-        paintOrders();
-      }
-    } catch (_) {}
+  window.addEventListener('\x6d\x67\x3a\x61\x75\x74\x68\x2d\x63\x68\x61\x6e\x67\x65\x64', () => {
+    paintOrders();
+    syncOrdersFromSheet();
+  });
+  window.addEventListener('\x6d\x67\x3a\x6f\x72\x64\x65\x72\x73\x2d\x75\x70\x64\x61\x74\x65\x64', paintOrders);
+  await syncOrdersFromSheet();
+  const syncBtn = document.getElementById('\x73\x79\x6e\x63\x4f\x72\x64\x65\x72\x73\x42\x74\x6e');
+  if (syncBtn) {
+    syncBtn.addEventListener('\x63\x6c\x69\x63\x6b', async () => {
+      syncBtn.disabled = true;
+      syncBtn.textContent = '\x52\x65\x66\x72\x65\x73\x68\x69\x6e\x67\x2e\x2e\x2e';
+      await syncOrdersFromSheet(true);
+      syncBtn.disabled = false;
+      syncBtn.textContent = '\ud83d\udd04\x20\x52\x65\x66\x72\x65\x73\x68\x20\x53\x74\x61\x74\x75\x73';
+    });
   }
+  window.addEventListener('\x66\x6f\x63\x75\x73', () => syncOrdersFromSheet());
+  document.addEventListener('\x76\x69\x73\x69\x62\x69\x6c\x69\x74\x79\x63\x68\x61\x6e\x67\x65', () => {
+    if (!document.hidden) syncOrdersFromSheet();
+  });
+  setInterval(() => {
+    if (!document.hidden) syncOrdersFromSheet();
+  }, 20000);
   orderList.addEventListener('\x63\x6c\x69\x63\x6b', e => {
     const again = e.target.closest('\x5b\x64\x61\x74\x61\x2d\x72\x65\x6f\x72\x64\x65\x72\x5d');
     if (!again) return;
