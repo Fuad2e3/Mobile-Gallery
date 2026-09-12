@@ -492,8 +492,13 @@ function orderDate(iso) {
     hour: '\x6e\x75\x6d\x65\x72\x69\x63', minute: '\x32\x2d\x64\x69\x67\x69\x74', hour12: true
   });
 }
-const ORDER_STAGES = ['\x43\x6f\x6e\x66\x69\x72\x6d\x65\x64', '\x50\x61\x63\x6b\x65\x64', '\x53\x68\x69\x70\x70\x65\x64', '\x44\x65\x6c\x69\x76\x65\x72\x65\x64'];
+const ORDER_STAGES = ['\x50\x65\x6e\x64\x69\x6e\x67', '\x43\x6f\x6e\x66\x69\x72\x6d\x65\x64', '\x44\x65\x6c\x69\x76\x65\x72\x65\x64'];
 function orderStage(order) {
+  if (order && order.status) {
+    const s = String(order.status).trim();
+    const match = ORDER_STAGES.find(st => st.toLowerCase() === s.toLowerCase());
+    if (match) return match;
+  }
   const days = (Date.now() - new Date(order.placedAt).getTime()) / 86400000;
   if (isNaN(days)) return ORDER_STAGES[0];
   return ORDER_STAGES[Math.min(Math.floor(days), ORDER_STAGES.length - 1)];

@@ -12,8 +12,7 @@ function stageTrack(order) {
     </div>`;
 }
 function orderCard(order) {
-  const customStatus = order.status || '';
-  const stage = customStatus ? customStatus : orderStage(order);
+  const stage = orderStage(order);
   const stageClass = stage.toLowerCase();
   const linesMarkup = Array.isArray(order.lines) ? order.lines.map(l => `
     <div class="order__line">

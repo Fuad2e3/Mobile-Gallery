@@ -47,6 +47,7 @@
       <button class="icon-btn has-badge" id="cartBtn" aria-label="Open cart" data-icon="cart">
         <span class="fav-count" id="cartCount" style="background:var(--brand-600)">0</span>
       </button>
+      <div id="userAuthNav"></div>
       <button class="icon-btn burger" id="burger" aria-label="Open menu" data-icon="menu"></button>
     </div>
   </div>
@@ -120,7 +121,7 @@
             ADMIN LOGGED IN
           </span>
           <span style="font-size:.88rem;color:var(--muted)">admin@mobilegallery.com</span>
-          <span id="sheetStatusPill" class="status-badge status-badge--confirmed">
+          <span id="sheetStatusPill" class="status-badge status-badge--confirmed" style="cursor:pointer" title="Click to view Google Sheet Settings">
             🟢 Sheet Connected
           </span>
         </div>
@@ -128,6 +129,40 @@
         <div style="display:flex;align-items:center;gap:10px">
           <a class="btn btn--ghost btn--sm" href="index.html#browse" target="_blank">View Shop ↗</a>
           <button class="btn btn--soft btn--sm" id="adminLogoutBtn">Log Out</button>
+        </div>
+      </div>
+
+      <!-- Google Sheet Live API Monitor Card -->
+      <div class="sheet-sync-monitor" id="sheetSyncMonitor">
+        <div class="sheet-sync-monitor__info">
+          <div class="sheet-sync-monitor__icon" id="syncMonitorIcon">📊</div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <b style="font-size:1rem" id="syncMonitorTitle">Google Sheet API Status</b>
+              <span id="syncMonitorBadge" class="status-badge status-badge--confirmed">🟢 Live Connected</span>
+            </div>
+            <small style="color:var(--muted);font-size:.82rem" id="syncMonitorSubtitle">
+              Single-Sheet Database (Cols A–G, I–Y, AA–AM) · Latency: <span id="syncLatencyText">Checking...</span>
+            </small>
+          </div>
+        </div>
+
+        <div class="sheet-sync-monitor__actions">
+          <div class="sheet-stat-chip" title="Active products in Google Sheet Columns I–Y">
+            <span class="sheet-stat-chip__label">Sheet Products:</span>
+            <b class="sheet-stat-chip__val" id="monitorProdCount">—</b>
+          </div>
+          <div class="sheet-stat-chip" title="Orders recorded in Google Sheet Columns AA–AM">
+            <span class="sheet-stat-chip__label">Sheet Orders:</span>
+            <b class="sheet-stat-chip__val" id="monitorOrderCount">—</b>
+          </div>
+          <div class="sheet-stat-chip" title="Customers recorded in Google Sheet Columns A–G">
+            <span class="sheet-stat-chip__label">Sheet Users:</span>
+            <b class="sheet-stat-chip__val" id="monitorUserCount">—</b>
+          </div>
+          <button class="btn btn--soft btn--sm" id="monitorSyncNowBtn" style="gap:6px" title="Test Google Sheet API and sync all data">
+            🔄 Check &amp; Sync Now
+          </button>
         </div>
       </div>
 
@@ -346,6 +381,16 @@
 
       <!-- ─────── TAB 2: MANAGE PRODUCTS ─────── -->
       <div id="paneManageProducts" class="admin-tab-pane" hidden>
+        <div class="sheet-section-header-banner">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="badge-sheet-live">🟢 GOOGLE SHEET: COLS I – Y</span>
+            <b>Products Section Live Sync</b>
+          </div>
+          <span style="color:var(--muted);font-size:.8rem">
+            Matches Sheet Columns: Title (K), Storage (Q), RAM (R), Battery (S), Chip (T), Color (U), Warranty (V), Stock (W), Status (Y)
+          </span>
+        </div>
+
         <div class="panel" style="margin-bottom:20px">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
             <div>
@@ -370,6 +415,16 @@
 
       <!-- ─────── TAB 3: MANAGE ORDERS & CONFIRMATION ─────── -->
       <div id="paneManageOrders" class="admin-tab-pane" hidden>
+        <div class="sheet-section-header-banner">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="badge-sheet-live">🟢 GOOGLE SHEET: COLS AA – AM</span>
+            <b>Orders Section Live Sync</b>
+          </div>
+          <span style="color:var(--muted);font-size:.8rem">
+            Matches Sheet Columns: Order Ref (AA), Customer (AC–AE), Total (AK), Status (AM: Pending / Confirmed / Delivered)
+          </span>
+        </div>
+
         <div class="order-stats" style="margin-bottom:24px">
           <div><b id="adminOrdersCount">0</b><small>Total Orders</small></div>
           <div><b id="adminOrdersRevenue">৳0</b><small>Total Revenue</small></div>
@@ -417,6 +472,16 @@
 
       <!-- ─────── TAB 4: MANAGE USERS & ACCESS ─────── -->
       <div id="paneManageUsers" class="admin-tab-pane" hidden>
+        <div class="sheet-section-header-banner">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="badge-sheet-live">🟢 GOOGLE SHEET: COLS A – G</span>
+            <b>Registered Users Section Live Sync</b>
+          </div>
+          <span style="color:var(--muted);font-size:.8rem">
+            Matches Sheet Columns: User ID (A), Registered Date (B), Name (C), Email (D), Phone (E), Password (F), Status (G)
+          </span>
+        </div>
+
         <div class="order-stats" style="margin-bottom:24px">
           <div><b id="adminUsersTotal">0</b><small>Registered Accounts</small></div>
           <div><b id="adminUsersActive" style="color:var(--mint)">0</b><small>Active Customers</small></div>

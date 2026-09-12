@@ -50,7 +50,7 @@
  *     - AJ: Items Count
  *     - AK: Total Amount
  *     - AL: Items Details
- *     - AM: Status
+ *     - AM: Status (Pending / Confirmed / Delivered)
  *
  * =========================================================================
  */
@@ -279,13 +279,18 @@ function loginUser_(sheet, data) {
     return json_({ ok: false, error: 'Email and password required.' });
   }
 
-  var lastRow = getSectionLastRow_(sheet, COL_USER_START);
-  if (lastRow > 1) {
-    var userData = sheet.getRange(2, COL_USER_START, lastRow - 1, COL_USER_LEN).getValues();
-    for (var i = 0; i < userData.length; i++) {
-      var rowEmail = String(userData[i][3] || '').trim().toLowerCase(); // Col D
-      var rowPass = String(userData[i][5] || '').trim();              // Col F
-      var status = String(userData[i][6] || 'Active').trim();         // Col G
+  var maxRow = Math.max(sheet.getLastRow(), getSectionLastRow_(sheet, COL_USER_START));
+  if (maxRow >= 2) {
+    var allUserRows = sheet.getRange(1, COL_USER_START, maxRow, COL_USER_LEN).getValues();
+    for (var r = 0; r < allUserRows.length; r++) {
+      var rowId = String(allUserRows[r][0] || '').trim();
+      if (!rowId || rowId.toLowerCase() === 'user id' || rowId.toLowerCase().indexOf('section') > -1) {
+        continue;
+      }
+
+      var rowEmail = String(allUserRows[r][3] || '').trim().toLowerCase();
+      var rowPass = String(allUserRows[r][5] || '').trim();
+      var status = String(allUserRows[r][6] || 'Active').trim();
 
       if (rowEmail === email && rowPass === password) {
         if (status.toLowerCase() === 'suspended' || status.toLowerCase() === 'inactive') {
@@ -294,10 +299,11 @@ function loginUser_(sheet, data) {
         return json_({
           ok: true,
           user: {
-            id: String(userData[i][0] || ''),
-            name: String(userData[i][2] || ''),
+            id: rowId,
+            name: String(allUserRows[r][2] || ''),
             email: rowEmail,
-            phone: String(userData[i][4] || '').replace(/^'/, '')
+            phone: String(allUserRows[r][4] || '').replace(/^'/, ''),
+            status: status
           }
         });
       }
@@ -308,21 +314,27 @@ function loginUser_(sheet, data) {
 }
 
 function getUsersList_(sheet) {
-  var lastRow = getSectionLastRow_(sheet, COL_USER_START);
+  var maxRow = Math.max(sheet.getLastRow(), getSectionLastRow_(sheet, COL_USER_START));
   var users = [];
-  if (lastRow <= 1) return users;
+  if (maxRow < 2) return users;
 
-  var userData = sheet.getRange(2, COL_USER_START, lastRow - 1, COL_USER_LEN).getValues();
-  for (var i = 0; i < userData.length; i++) {
-    var id = String(userData[i][0] || '').trim();
-    if (!id) continue;
+  var allUserRows = sheet.getRange(1, COL_USER_START, maxRow, COL_USER_LEN).getValues();
+  for (var r = 0; r < allUserRows.length; r++) {
+    var id = String(allUserRows[r][0] || '').trim();
+    var email = String(allUserRows[r][3] || '').trim().toLowerCase();
+
+    // Skip empty, banner, or header rows
+    if (!id || id.toLowerCase() === 'user id' || id.toLowerCase().indexOf('section') > -1) {
+      continue;
+    }
+
     users.push({
       id: id,
-      registeredAt: String(userData[i][1] || ''),
-      name: String(userData[i][2] || ''),
-      email: String(userData[i][3] || '').trim().toLowerCase(),
-      phone: String(userData[i][4] || '').replace(/^'/, ''),
-      status: String(userData[i][6] || 'Active').trim()
+      registeredAt: String(allUserRows[r][1] || ''),
+      name: String(allUserRows[r][2] || ''),
+      email: email,
+      phone: String(allUserRows[r][4] || '').replace(/^'/, ''),
+      status: String(allUserRows[r][6] || 'Active').trim()
     });
   }
   return users;
@@ -331,26 +343,44 @@ function getUsersList_(sheet) {
 function updateUserStatus_(sheet, data) {
   var email = String(data.email || '').trim().toLowerCase();
   var id = String(data.id || data.userId || '').trim();
-  var newStatus = String(data.status || 'Active').trim();
+  var rawStatus = String(data.status || 'Active').trim();
+  var newStatus = 'Active';
+  if (rawStatus.toLowerCase() === 'inactive') newStatus = 'Inactive';
+  else if (rawStatus.toLowerCase() === 'suspended') newStatus = 'Suspended';
+  else newStatus = 'Active';
 
   if (!email && !id) {
     return json_({ ok: false, error: 'User Email or ID is required.' });
   }
 
-  var lastRow = getSectionLastRow_(sheet, COL_USER_START);
-  if (lastRow > 1) {
-    var userData = sheet.getRange(2, COL_USER_START, lastRow - 1, COL_USER_LEN).getValues();
-    for (var i = 0; i < userData.length; i++) {
-      var rowId = String(userData[i][0] || '').trim();
-      var rowEmail = String(userData[i][3] || '').trim().toLowerCase();
-      if ((id && rowId === id) || (email && rowEmail === email)) {
-        // Col G is User Status (Col 7)
-        sheet.getRange(i + 2, 7).setValue(newStatus);
-        return json_({ ok: true, message: 'User status updated to ' + newStatus, email: rowEmail, status: newStatus });
+  var maxRow = Math.max(sheet.getLastRow(), getSectionLastRow_(sheet, COL_USER_START));
+  if (maxRow >= 2) {
+    var allUserRows = sheet.getRange(1, COL_USER_START, maxRow, COL_USER_LEN).getValues();
+    for (var r = 0; r < allUserRows.length; r++) {
+      var rowId = String(allUserRows[r][0] || '').trim();
+      var rowEmail = String(allUserRows[r][3] || '').trim().toLowerCase();
+
+      // Skip header rows
+      if (rowId.toLowerCase() === 'user id' || rowId.toLowerCase().indexOf('section') > -1) {
+        continue;
+      }
+
+      if ((id && rowId.toLowerCase() === id.toLowerCase()) || (email && rowEmail === email)) {
+        // Col G is User Status (Column 7 in sheet)
+        var targetRow = r + 1; // 1-indexed sheet row
+        sheet.getRange(targetRow, 7).setValue(newStatus);
+        return json_({
+          ok: true,
+          message: 'User status updated to ' + newStatus + ' in Google Sheet row ' + targetRow,
+          userId: rowId,
+          email: rowEmail,
+          status: newStatus,
+          row: targetRow
+        });
       }
     }
   }
-  return json_({ ok: false, error: 'User not found in sheet.' });
+  return json_({ ok: false, error: 'User not found in Google Sheet (Email: ' + email + ', ID: ' + id + ').' });
 }
 
 /* =========================================================================
@@ -567,15 +597,31 @@ function seedProducts_(sheet, data) {
 }
 
 function getProductsList_(sheet) {
-  var lastRow = getSectionLastRow_(sheet, COL_PROD_START);
+  var maxRow = Math.max(sheet.getLastRow(), getSectionLastRow_(sheet, COL_PROD_START));
   var products = [];
-  if (lastRow <= 1) return products;
+  if (maxRow < 2) return products;
 
-  var rows = sheet.getRange(2, COL_PROD_START, lastRow - 1, COL_PROD_LEN).getValues();
+  var rows = sheet.getRange(1, COL_PROD_START, maxRow, COL_PROD_LEN).getValues();
   for (var i = 0; i < rows.length; i++) {
     var id = String(rows[i][0] || '').trim();
-    var status = String(rows[i][16] || 'Active').trim();
-    if (!id || status.toLowerCase() === 'deleted') continue;
+    var title = String(rows[i][2] || '').trim();
+
+    // Skip empty rows, banner, or header rows
+    if (!title || id.toLowerCase() === 'product id' || id.toLowerCase().indexOf('section') > -1 || title.toLowerCase() === 'title') {
+      continue;
+    }
+
+    if (!id) {
+      id = 'mg-sh' + (i + 1);
+    }
+
+    var status = String(rows[i][16] || '').trim();
+    if (status.toLowerCase() === 'deleted') continue;
+
+    var stockVal = Number(rows[i][14] !== undefined && rows[i][14] !== '' ? rows[i][14] : 5);
+    if (!status) {
+      status = getStockStatus_(stockVal);
+    }
 
     var rawDesc = String(rows[i][15] || '');
     var images = [];
@@ -590,8 +636,8 @@ function getProductsList_(sheet) {
 
     products.push({
       id: id,
-      title: String(rows[i][2] || ''),
-      brand: String(rows[i][3] || ''),
+      title: title,
+      brand: String(rows[i][3] || 'Other'),
       category: String(rows[i][4] || 'phone'),
       price: Number(rows[i][5] || 0),
       oldPrice: Number(rows[i][6] || 0),
@@ -602,7 +648,7 @@ function getProductsList_(sheet) {
       chip: String(rows[i][11] || 'N/A'),
       color: String(rows[i][12] || 'midnight'),
       warranty: String(rows[i][13] || '1 year official'),
-      stock: Number(rows[i][14] || 0),
+      stock: stockVal,
       desc: cleanDesc,
       images: images,
       status: status
@@ -696,14 +742,14 @@ function placeOrder_(sheet, data) {
 }
 
 function getOrdersList_(sheet) {
-  var lastRow = getSectionLastRow_(sheet, COL_ORDER_START);
+  var maxRow = Math.max(sheet.getLastRow(), getSectionLastRow_(sheet, COL_ORDER_START));
   var orders = [];
-  if (lastRow <= 1) return orders;
+  if (maxRow < 2) return orders;
 
-  var rows = sheet.getRange(2, COL_ORDER_START, lastRow - 1, COL_ORDER_LEN).getValues();
+  var rows = sheet.getRange(1, COL_ORDER_START, maxRow, COL_ORDER_LEN).getValues();
   for (var i = 0; i < rows.length; i++) {
     var ref = String(rows[i][0] || '').trim();
-    if (!ref) continue;
+    if (!ref || ref.toLowerCase() === 'order ref' || ref.toLowerCase().indexOf('section') > -1) continue;
 
     orders.push({
       ref: ref,
@@ -726,7 +772,15 @@ function getOrdersList_(sheet) {
 
 function updateOrderStatus_(sheet, data) {
   var ref = String(data.ref || data.orderRef || '').trim();
-  var newStatus = String(data.status || 'Confirmed').trim();
+  var rawStatus = String(data.status || 'Confirmed').trim().toLowerCase();
+  var newStatus = 'Pending';
+  if (rawStatus === 'delivered') {
+    newStatus = 'Delivered';
+  } else if (rawStatus === 'confirmed') {
+    newStatus = 'Confirmed';
+  } else {
+    newStatus = 'Pending';
+  }
 
   if (!ref) {
     return json_({ ok: false, error: 'Order reference required.' });
@@ -811,6 +865,12 @@ function initSingleSheetLayout_(sheet) {
         .setAllowInvalid(true)
         .build();
       sheet.getRange('G2:G').setDataValidation(userRule);
+
+      var orderRule = SpreadsheetApp.newDataValidation()
+        .requireValueInList(['Pending', 'Confirmed', 'Delivered'], true)
+        .setAllowInvalid(true)
+        .build();
+      sheet.getRange('AM2:AM').setDataValidation(orderRule);
     } catch (_) {}
     return;
   }
@@ -867,6 +927,15 @@ function initSingleSheetLayout_(sheet) {
       .setAllowInvalid(true)
       .build();
     sheet.getRange('Y2:Y').setDataValidation(statusRule);
+  } catch (_) {}
+
+  // 🎯 Set Data Validation Dropdown for Column AM (Order Status - ONLY 3: Pending, Confirmed, Delivered)
+  try {
+    var orderRule = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['Pending', 'Confirmed', 'Delivered'], true)
+      .setAllowInvalid(true)
+      .build();
+    sheet.getRange('AM2:AM').setDataValidation(orderRule);
   } catch (_) {}
 
   sheet.setFrozenRows(1);

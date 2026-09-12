@@ -33,8 +33,8 @@ The admin stocks the catalogue; customers browse, add to cart and order.
 - Order confirmation with a reference number; orders are saved to `localStorage`
 
 **Order history — `orders.html`**
-- Every order placed from this browser, newest first, with a four-stage delivery
-  tracker (Confirmed → Packed → Shipped → Delivered) that advances with time
+- Every order placed, newest first, with a three-stage delivery
+  tracker (Pending → Confirmed → Delivered) synced live with Google Sheet
 - Order totals, delivery address and payment method on each
 - **Order again** rebuilds the cart, skipping anything no longer stocked
 - Prints cleanly: a dedicated print stylesheet strips the chrome down to the receipt
@@ -105,11 +105,16 @@ assets/js/app.js       search, filtering, sorting, product grid, detail modal
 assets/js/checkout.js  order summary, validation, order placement
 assets/js/orders.js    order history, delivery tracker, reorder
 assets/js/admin.js     product form, live preview, price hint, product list
+tools/sheet-endpoint.gs Google Apps Script 1-sheet database backend
+tools/sheet-endpoint.js Central client API wrapper with local fallback
+tools/rules.md         Master rules, architecture, and tracking log
 ```
 
-## Notes
+## Backend & Database Architecture
 
-This is a front-end demo with no backend. The admin panel has **no authentication** —
-a real shop would put it behind a login. Products added by the admin and orders placed
-by customers are stored in the browser's `localStorage`, so they exist only on the
-device that created them and are not shared between visitors. No payment is taken.
+Mobile Gallery uses a **Google Sheet** as its backend database via **Google Apps Script** (`tools/sheet-endpoint.gs`):
+- **Single-Sheet Layout**: `Users` (Cols A–G), `Products` (Cols I–Y), and `Orders` (Cols AA–AM) live in one sheet with independent row insertions.
+- **Fixed Admin Portal**: Secure login at `admin.html` with fixed credentials (`admin@mobilegallery.com` / `admin123`).
+- **Live Inventory & Auto-Stock Decrement**: Purchasing decrements available stock directly in Column W of the Google Sheet.
+- **3-Stage Order Lifecycle**: Orders progress through `Pending` → `Confirmed` → `Delivered`.
+- **Source Protection**: Production scripts in `assets/js/` are compiled and obfuscated via `tools/obfuscate.js`.

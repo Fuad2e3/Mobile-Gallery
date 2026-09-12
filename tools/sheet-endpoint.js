@@ -6,9 +6,18 @@ const LOCAL_AUTH_KEY     = '\x6d\x67\x2e\x61\x75\x74\x68\x2e\x75\x73\x65\x72\x2e
 class SheetEndpoint {
   static url = '\x68\x74\x74\x70\x73\x3a\x2f\x2f\x73\x63\x72\x69\x70\x74\x2e\x67\x6f\x6f\x67\x6c\x65\x2e\x63\x6f\x6d\x2f\x6d\x61\x63\x72\x6f\x73\x2f\x73\x2f\x41\x4b\x66\x79\x63\x62\x79\x71\x43\x47\x5f\x50\x6e\x6b\x6c\x46\x43\x38\x67\x55\x75\x44\x34\x30\x66\x6c\x46\x39\x50\x78\x57\x6d\x30\x77\x7a\x72\x4f\x56\x63\x62\x41\x71\x6a\x53\x67\x58\x76\x51\x75\x65\x78\x79\x31\x56\x34\x6d\x4e\x75\x30\x59\x67\x37\x67\x55\x58\x56\x64\x4f\x7a\x65\x70\x34\x2f\x65\x78\x65\x63';
   static isReady() {
-    return typeof this.url === '\x73\x74\x72\x69\x6e\x67' && this.url.trim().startsWith('\x68\x74\x74\x70\x73\x3a\x2f\x2f\x73\x63\x72\x69\x70\x74\x2e\x67\x6f\x6f\x67\x6c\x65\x2e\x63\x6f\x6d\x2f\x6d\x61\x63\x72\x6f\x73\x2f\x73\x2f');
+    const u = this.getUrl();
+    return typeof u === '\x73\x74\x72\x69\x6e\x67' && u.startsWith('\x68\x74\x74\x70\x73\x3a\x2f\x2f\x73\x63\x72\x69\x70\x74\x2e\x67\x6f\x6f\x67\x6c\x65\x2e\x63\x6f\x6d\x2f\x6d\x61\x63\x72\x6f\x73\x2f\x73\x2f');
   }
   static getUrl() {
+    try {
+      if (typeof localStorage !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64') {
+        const saved = localStorage.getItem('\x6d\x67\x2e\x73\x68\x65\x65\x74\x2e\x75\x72\x6c');
+        if (saved && typeof saved === '\x73\x74\x72\x69\x6e\x67' && saved.trim().startsWith('\x68\x74\x74\x70\x73\x3a\x2f\x2f\x73\x63\x72\x69\x70\x74\x2e\x67\x6f\x6f\x67\x6c\x65\x2e\x63\x6f\x6d\x2f\x6d\x61\x63\x72\x6f\x73\x2f\x73\x2f')) {
+          return saved.trim();
+        }
+      }
+    } catch (_) {}
     return (this.url || '').trim();
   }
   static async request(payload) {
@@ -52,6 +61,19 @@ class SheetEndpoint {
       console.warn(`SheetEndpoint: GET ${action} failed, attempting POST fallback:`, err);
     }
     return await this.request({ action });
+  }
+  static async ping() {
+    if (!this.isReady()) {
+      return { ok: false, error: '\x45\x6e\x64\x70\x6f\x69\x6e\x74\x20\x55\x52\x4c\x20\x6e\x6f\x74\x20\x63\x6f\x6e\x66\x69\x67\x75\x72\x65\x64\x2e' };
+    }
+    const start = Date.now();
+    try {
+      const res = await this.get('\x70\x69\x6e\x67');
+      const latency = Date.now() - start;
+      return { ...res, latency };
+    } catch (err) {
+      return { ok: false, error: err.message, latency: Date.now() - start };
+    }
   }
   static async registerUser(userData) {
     const userPayload = {
@@ -129,24 +151,47 @@ class SheetEndpoint {
     }
     return this.getLocal(LOCAL_USERS_KEY, []);
   }
-  static async updateUserStatus(emailOrId, newStatus) {
+  static async updateUserStatus(emailOrId, newStatus, optionalId) {
+    const cleanStatus = String(newStatus || '\x41\x63\x74\x69\x76\x65').trim();
+    const queryEmail = String(emailOrId || '').trim().toLowerCase();
+    const queryId = String(optionalId || emailOrId || '').trim();
     const users = this.getLocal(LOCAL_USERS_KEY, []);
-    const user = users.find(u => u.email === emailOrId || u.id === emailOrId);
+    const user = users.find(u =>
+      (u.email && u.email.toLowerCase() === queryEmail) ||
+      (u.id && (u.id === queryId || u.id === emailOrId))
+    );
     if (user) {
-      user.status = newStatus;
+      user.status = cleanStatus;
       this.setLocal(LOCAL_USERS_KEY, users);
     }
+    try {
+      if (typeof localStorage !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64') {
+        const cacheRaw = localStorage.getItem('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31');
+        if (cacheRaw) {
+          const cache = JSON.parse(cacheRaw);
+          const cu = cache.find(u =>
+            (u.email && u.email.toLowerCase() === queryEmail) ||
+            (u.id && (u.id === queryId || u.id === emailOrId))
+          );
+          if (cu) {
+            cu.status = cleanStatus;
+            localStorage.setItem('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', JSON.stringify(cache));
+          }
+        }
+      }
+    } catch (_) {}
     if (this.isReady()) {
       const payload = {
         action: '\x75\x70\x64\x61\x74\x65\x5f\x75\x73\x65\x72\x5f\x73\x74\x61\x74\x75\x73',
-        email: user ? user.email : emailOrId,
-        id: user ? user.id : emailOrId,
-        status: newStatus
+        email: (user && user.email) ? user.email : queryEmail,
+        id: (user && user.id) ? user.id : queryId,
+        userId: (user && user.id) ? user.id : queryId,
+        status: cleanStatus
       };
       const res = await this.request(payload);
       return res;
     }
-    return { ok: true, localOnly: true, status: newStatus };
+    return { ok: true, localOnly: true, status: cleanStatus };
   }
   static getCurrentUser() {
     return this.getLocal(LOCAL_AUTH_KEY, null);
@@ -166,6 +211,18 @@ class SheetEndpoint {
   }
   static logoutUser() {
     this.setCurrentUser(null);
+  }
+  static async fetchUsers() {
+    if (this.isReady()) {
+      const res = await this.get('\x67\x65\x74\x5f\x75\x73\x65\x72\x73');
+      if (res.ok && Array.isArray(res.users) && res.users.length > 0) {
+        this.setLocal(LOCAL_USERS_KEY, res.users);
+        try { localStorage.setItem('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', JSON.stringify(res.users)); } catch (_) {}
+        return res.users;
+      }
+    }
+    const local = this.getLocal(LOCAL_USERS_KEY, []);
+    return local.length ? local : this.getLocal('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', []);
   }
   static async addProduct(product) {
     const payload = {

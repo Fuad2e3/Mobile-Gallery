@@ -564,22 +564,32 @@ async function renderAdminProductsList() {
     const isCustom = String(p.id).startsWith('\x6d\x67\x2d\x61');
     const stockNum = Number(p.stock !== undefined ? p.stock : 0);
     const stockBadge = stockNum === 0
-      ? '\x3c\x73\x70\x61\x6e\x20\x63\x6c\x61\x73\x73\x3d\x22\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x61\x6e\x63\x65\x6c\x6c\x65\x64\x22\x20\x73\x74\x79\x6c\x65\x3d\x22\x66\x6f\x6e\x74\x2d\x73\x69\x7a\x65\x3a\x2e\x37\x34\x72\x65\x6d\x3b\x70\x61\x64\x64\x69\x6e\x67\x3a\x32\x70\x78\x20\x38\x70\x78\x22\x3e\x4f\x75\x74\x20\x6f\x66\x20\x53\x74\x6f\x63\x6b\x20\x28\x30\x29\x3c\x2f\x73\x70\x61\x6e\x3e'
+      ? '\x3c\x73\x70\x61\x6e\x20\x63\x6c\x61\x73\x73\x3d\x22\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x61\x6e\x63\x65\x6c\x6c\x65\x64\x22\x20\x73\x74\x79\x6c\x65\x3d\x22\x66\x6f\x6e\x74\x2d\x73\x69\x7a\x65\x3a\x2e\x37\x34\x72\x65\x6d\x3b\x70\x61\x64\x64\x69\x6e\x67\x3a\x32\x70\x78\x20\x38\x70\x78\x22\x3e\x4f\x75\x74\x20\x6f\x66\x20\x53\x74\x6f\x63\x6b\x20\x28\x43\x6f\x6c\x20\x59\x3a\x20\x30\x29\x3c\x2f\x73\x70\x61\x6e\x3e'
       : stockNum <= 8
         ? `<span class="status-badge status-badge--pending" style="font-size:.74rem;padding:2px 8px">Low Stock (${stockNum})</span>`
         : `<span class="status-badge status-badge--confirmed" style="font-size:.74rem;padding:2px 8px">In Stock (${stockNum})</span>`;
+    const specsInfo = [
+      p.storage ? `Storage: <b>${esc(p.storage)}</b>` : '',
+      p.ram ? `RAM: <b>${esc(p.ram)}</b>` : '',
+      p.chip ? `Chip: <b>${esc(p.chip)}</b>` : '',
+      p.battery ? `Battery: <b>${esc(p.battery)}</b>` : '',
+      p.color ? `Color: <b>${esc(p.color)}</b>` : '',
+      p.warranty ? `Warranty: <b>${esc(p.warranty)}</b>` : ''
+    ].filter(Boolean).join('\x20\u00b7\x20');
     return `
-      <div class="admin-row" style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap">
+      <div class="admin-row" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap">
         <span class="admin-row__art" style="flex-shrink:0">${deviceArt(p, 48)}</span>
-        <span style="flex:1;min-width:200px">
+        <span style="flex:1;min-width:260px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <b>${esc(p.title)}</b>
+            <b style="font-size:.96rem">${esc(p.title)}</b>
             <code style="font-size:.74rem;color:var(--muted)">${esc(p.id)}</code>
-            ${isCustom ? '<span style="background:var(--brand-600);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:3px;font-weight:700">NEW</span>' : '<span style="background:var(--surface-sunken);color:var(--muted);font-size:.65rem;padding:1px 6px;border-radius:3px">BUILT-IN</span>'}
+            <span class="badge-sheet-live">🟢 Sheet Cols I–Y</span>
+            ${isCustom ? '<span style="background:var(--brand-600);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:3px;font-weight:700">NEW</span>' : ''}
           </div>
-          <small style="display:block;color:var(--muted);margin-top:2px">
+          <div style="font-size:.82rem;color:var(--muted);margin-top:4px">
             ${esc(p.brand)} · ${esc(p.category)} · ${esc(p.condition)} · ${stockBadge}
-          </small>
+          </div>
+          ${specsInfo ? `<div style="\x66\x6f\x6e\x74\x2d\x73\x69\x7a\x65\x3a\x2e\x37\x38\x72\x65\x6d\x3b\x63\x6f\x6c\x6f\x72\x3a\x76\x61\x72\x28\x2d\x2d\x6d\x75\x74\x65\x64\x29\x3b\x6d\x61\x72\x67\x69\x6e\x2d\x74\x6f\x70\x3a\x33\x70\x78">${specsInfo}</div>` : ''}
         </span>
         <b class="admin-row__price" style="font-size:1.05rem;white-space:nowrap">${money(p.price)}</b>
         <div style="display:flex;gap:6px;align-items:center">
@@ -653,13 +663,14 @@ async function renderAdminOrdersList() {
     const badgeClass = {
       pending: '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x70\x65\x6e\x64\x69\x6e\x67',
       confirmed: '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x6f\x6e\x66\x69\x72\x6d\x65\x64',
-      shipped: '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x73\x68\x69\x70\x70\x65\x64',
-      delivered: '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x64\x65\x6c\x69\x76\x65\x72\x65\x64',
-      cancelled: '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x61\x6e\x63\x65\x6c\x6c\x65\x64'
+      delivered: '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x64\x65\x6c\x69\x76\x65\x72\x65\x64'
     }[status.toLowerCase()] || '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x70\x65\x6e\x64\x69\x6e\x67';
     return `
       <tr>
-        <td><b>${esc(o.ref)}</b></td>
+        <td>
+          <b>${esc(o.ref)}</b>
+          <div style="margin-top:2px"><span class="badge-sheet-live" style="font-size:.65rem;padding:1px 6px">Cols AA–AM</span></div>
+        </td>
         <td><small style="color:var(--muted);white-space:nowrap">${esc(orderDate(o.placedAt))}</small></td>
         <td>
           <b>${esc(o.name)}</b>
@@ -685,11 +696,9 @@ async function renderAdminOrdersList() {
             </button>
           ` : ''}
           <select class="input" data-change-status="${esc(o.ref)}" style="display:inline-block;width:auto;padding:5px 8px;font-size:.78rem">
-            <option ${status === 'Pending' ? 'selected' : ''}>Pending</option>
-            <option ${status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
-            <option ${status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-            <option ${status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-            <option ${status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+            <option value="Pending" ${status === 'Pending' ? 'selected' : ''}>Pending</option>
+            <option value="Confirmed" ${status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+            <option value="Delivered" ${status === 'Delivered' ? 'selected' : ''}>Delivered</option>
           </select>
         </td>
       </tr>`;
@@ -730,9 +739,9 @@ async function renderAdminUsersList() {
   }
   if (!users || !users.length) {
     users = readStore('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', [
-      { id: '\x55\x53\x52\x2d\x31\x30\x31', registeredAt: '\x32\x30\x32\x36\x2d\x30\x39\x2d\x30\x38\x20\x31\x31\x3a\x32\x30\x3a\x30\x30', name: '\x54\x61\x6e\x76\x69\x72\x20\x41\x68\x6d\x65\x64', email: '\x74\x61\x6e\x76\x69\x72\x40\x67\x6d\x61\x69\x6c\x2e\x63\x6f\x6d', phone: '\x30\x31\x37\x31\x31\x32\x32\x33\x33\x34\x34', status: '\x41\x63\x74\x69\x76\x65' },
-      { id: '\x55\x53\x52\x2d\x31\x30\x32', registeredAt: '\x32\x30\x32\x36\x2d\x30\x39\x2d\x30\x38\x20\x31\x34\x3a\x34\x35\x3a\x30\x30', name: '\x4e\x75\x73\x72\x61\x74\x20\x4a\x61\x68\x61\x6e', email: '\x6e\x75\x73\x72\x61\x74\x40\x67\x6d\x61\x69\x6c\x2e\x63\x6f\x6d', phone: '\x30\x31\x38\x31\x39\x38\x37\x36\x35\x34\x33', status: '\x41\x63\x74\x69\x76\x65' },
-      { id: '\x55\x53\x52\x2d\x31\x30\x33', registeredAt: '\x32\x30\x32\x36\x2d\x30\x39\x2d\x30\x39\x20\x31\x30\x3a\x31\x35\x3a\x30\x30', name: '\x52\x61\x6b\x69\x62\x20\x48\x61\x73\x61\x6e', email: '\x72\x61\x6b\x69\x62\x40\x67\x6d\x61\x69\x6c\x2e\x63\x6f\x6d', phone: '\x30\x31\x39\x31\x32\x33\x34\x35\x36\x37\x38', status: '\x49\x6e\x61\x63\x74\x69\x76\x65' }
+      { id: '\x55\x53\x52\x2d\x31\x30\x30\x31', registeredAt: '\x32\x30\x32\x36\x2d\x30\x31\x2d\x31\x35\x20\x31\x30\x3a\x33\x30\x3a\x30\x30', name: '\x54\x61\x6e\x76\x69\x72\x20\x41\x68\x6d\x65\x64', email: '\x74\x61\x6e\x76\x69\x72\x2e\x61\x68\x6d\x65\x64\x40\x65\x78\x61\x6d\x70\x6c\x65\x2e\x63\x6f\x6d', phone: '\x38\x38\x30\x31\x37\x31\x31\x32\x32\x33\x33\x34\x34', status: '\x41\x63\x74\x69\x76\x65' },
+      { id: '\x55\x53\x52\x2d\x31\x30\x30\x32', registeredAt: '\x32\x30\x32\x36\x2d\x30\x32\x2d\x30\x31\x20\x31\x34\x3a\x31\x35\x3a\x30\x30', name: '\x4e\x75\x73\x72\x61\x74\x20\x4a\x61\x68\x61\x6e', email: '\x6e\x75\x73\x72\x61\x74\x2e\x6a\x61\x68\x61\x6e\x40\x65\x78\x61\x6d\x70\x6c\x65\x2e\x63\x6f\x6d', phone: '\x38\x38\x30\x31\x38\x31\x39\x38\x37\x36\x35\x34\x33', status: '\x49\x6e\x61\x63\x74\x69\x76\x65' },
+      { id: '\x55\x53\x52\x2d\x31\x30\x30\x33', registeredAt: '\x32\x30\x32\x36\x2d\x30\x32\x2d\x32\x30\x20\x30\x39\x3a\x34\x35\x3a\x30\x30', name: '\x52\x61\x6b\x69\x62\x75\x6c\x20\x48\x61\x73\x61\x6e', email: '\x72\x61\x6b\x69\x62\x75\x6c\x2e\x68\x40\x65\x78\x61\x6d\x70\x6c\x65\x2e\x63\x6f\x6d', phone: '\x38\x38\x30\x31\x39\x31\x32\x33\x34\x35\x36\x37\x38', status: '\x49\x6e\x61\x63\x74\x69\x76\x65' }
     ]);
   }
   const totalEl = document.getElementById('\x61\x64\x6d\x69\x6e\x55\x73\x65\x72\x73\x54\x6f\x74\x61\x6c');
@@ -759,7 +768,10 @@ async function renderAdminUsersList() {
     const badgeClass = isActive ? '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x6f\x6e\x66\x69\x72\x6d\x65\x64' : '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x61\x6e\x63\x65\x6c\x6c\x65\x64';
     return `
       <tr>
-        <td><b>${esc(u.id || '—')}</b></td>
+        <td>
+          <b>${esc(u.id || '—')}</b>
+          <div style="margin-top:2px"><span class="badge-sheet-live" style="font-size:.65rem;padding:1px 6px">Cols A–G</span></div>
+        </td>
         <td><small style="color:var(--muted);white-space:nowrap">${esc(u.registeredAt || '—')}</small></td>
         <td><b>${esc(u.name || 'User')}</b></td>
         <td><a href="mailto:${esc(u.email)}" style="color:var(--brand-600);font-weight:600">${esc(u.email)}</a></td>
@@ -770,10 +782,10 @@ async function renderAdminUsersList() {
           </span>
         </td>
         <td style="white-space:nowrap">
-          <select class="input" data-user-status="${esc(u.email)}" style="display:inline-block;width:auto;padding:5px 8px;font-size:.8rem">
-            <option value="Active" ${status === 'Active' ? 'selected' : ''}>Active</option>
-            <option value="Inactive" ${status === 'Inactive' ? 'selected' : ''}>Inactive</option>
-            <option value="Suspended" ${status === 'Suspended' ? 'selected' : ''}>Suspended</option>
+          <select class="input" data-user-status="${esc(u.email)}" data-user-id="${esc(u.id)}" style="display:inline-block;width:auto;padding:5px 8px;font-size:.8rem">
+            <option value="Active" ${status.toLowerCase() === 'active' ? 'selected' : ''}>Active</option>
+            <option value="Inactive" ${status.toLowerCase() === 'inactive' ? 'selected' : ''}>Inactive</option>
+            <option value="Suspended" ${status.toLowerCase() === 'suspended' ? 'selected' : ''}>Suspended</option>
           </select>
         </td>
       </tr>`;
@@ -781,12 +793,18 @@ async function renderAdminUsersList() {
   tbody.querySelectorAll('\x5b\x64\x61\x74\x61\x2d\x75\x73\x65\x72\x2d\x73\x74\x61\x74\x75\x73\x5d').forEach(sel => {
     sel.addEventListener('\x63\x68\x61\x6e\x67\x65', async () => {
       const email = sel.dataset.userStatus;
+      const userId = sel.dataset.userId;
       const newStatus = sel.value;
       sel.disabled = true;
+      toast(`Updating ${email || userId} to ${newStatus}...`, '\x63\x68\x65\x63\x6b');
       if (window.SheetEndpoint) {
-        await window.SheetEndpoint.updateUserStatus(email, newStatus);
+        const res = await window.SheetEndpoint.updateUserStatus(email, newStatus, userId);
+        if (res && res.ok) {
+          toast(`User ${email || userId} status updated to ${newStatus} in Google Sheet!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+        } else {
+          toast(res && res.error ? `Status: ${res.error}` : `User status changed to ${newStatus}`, '\x63\x68\x65\x63\x6b');
+        }
       }
-      toast(`User ${email} status changed to ${newStatus}`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
       renderAdminUsersList();
     });
   });
@@ -879,15 +897,97 @@ function initSheetSettings() {
     });
   }
 }
-function updateConnectionPill() {
+async function updateConnectionPill() {
   const pill = document.getElementById('\x73\x68\x65\x65\x74\x53\x74\x61\x74\x75\x73\x50\x69\x6c\x6c');
-  if (!pill) return;
+  const monitor = document.getElementById('\x73\x68\x65\x65\x74\x53\x79\x6e\x63\x4d\x6f\x6e\x69\x74\x6f\x72');
+  const monitorBadge = document.getElementById('\x73\x79\x6e\x63\x4d\x6f\x6e\x69\x74\x6f\x72\x42\x61\x64\x67\x65');
+  const latencyText = document.getElementById('\x73\x79\x6e\x63\x4c\x61\x74\x65\x6e\x63\x79\x54\x65\x78\x74');
+  const prodCountEl = document.getElementById('\x6d\x6f\x6e\x69\x74\x6f\x72\x50\x72\x6f\x64\x43\x6f\x75\x6e\x74');
+  const orderCountEl = document.getElementById('\x6d\x6f\x6e\x69\x74\x6f\x72\x4f\x72\x64\x65\x72\x43\x6f\x75\x6e\x74');
+  const userCountEl = document.getElementById('\x6d\x6f\x6e\x69\x74\x6f\x72\x55\x73\x65\x72\x43\x6f\x75\x6e\x74');
+  if (pill && !pill.dataset.wired) {
+    pill.dataset.wired = '\x74\x72\x75\x65';
+    pill.addEventListener('\x63\x6c\x69\x63\x6b', () => switchTab('\x73\x68\x65\x65\x74\x53\x65\x74\x74\x69\x6e\x67\x73'));
+  }
+  const syncTitle = document.getElementById('\x73\x79\x6e\x63\x4d\x6f\x6e\x69\x74\x6f\x72\x54\x69\x74\x6c\x65');
+  if (syncTitle && !syncTitle.dataset.wired) {
+    syncTitle.dataset.wired = '\x74\x72\x75\x65';
+    syncTitle.style.cursor = '\x70\x6f\x69\x6e\x74\x65\x72';
+    syncTitle.addEventListener('\x63\x6c\x69\x63\x6b', () => switchTab('\x73\x68\x65\x65\x74\x53\x65\x74\x74\x69\x6e\x67\x73'));
+  }
+  const prods = allProducts();
+  const orders = readStore('\x6d\x67\x2e\x6f\x72\x64\x65\x72\x73\x2e\x76\x31', []);
+  const users = readStore('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x76\x31', readStore('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', []));
+  if (prodCountEl) prodCountEl.textContent = prods.length;
+  if (orderCountEl) orderCountEl.textContent = orders.length;
+  if (userCountEl) userCountEl.textContent = users.length;
   if (window.SheetEndpoint && window.SheetEndpoint.isReady()) {
-    pill.className = '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x6f\x6e\x66\x69\x72\x6d\x65\x64';
-    pill.textContent = '\ud83d\udfe2\x20\x53\x68\x65\x65\x74\x20\x43\x6f\x6e\x6e\x65\x63\x74\x65\x64';
+    if (pill) {
+      pill.className = '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x6f\x6e\x66\x69\x72\x6d\x65\x64';
+      pill.textContent = '\ud83d\udfe2\x20\x53\x68\x65\x65\x74\x20\x43\x6f\x6e\x6e\x65\x63\x74\x65\x64';
+    }
+    if (monitor) monitor.classList.remove('\x69\x73\x2d\x6f\x66\x66\x6c\x69\x6e\x65');
+    if (monitorBadge) {
+      monitorBadge.className = '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x6f\x6e\x66\x69\x72\x6d\x65\x64';
+      monitorBadge.textContent = '\ud83d\udfe2\x20\x4c\x69\x76\x65\x20\x43\x6f\x6e\x6e\x65\x63\x74\x65\x64';
+    }
+    try {
+      const pingRes = await window.SheetEndpoint.ping();
+      if (pingRes && pingRes.ok) {
+        if (latencyText) latencyText.textContent = `${pingRes.latency}ms (Fast)`;
+        if (pill) pill.textContent = `🟢 Sheet Connected (${pingRes.latency}ms)`;
+      } else {
+        if (latencyText) latencyText.textContent = '\x43\x6f\x6e\x66\x69\x67\x75\x72\x65\x64\x20\x28\x41\x63\x74\x69\x76\x65\x29';
+      }
+    } catch (_) {
+      if (latencyText) latencyText.textContent = '\x4f\x6e\x6c\x69\x6e\x65';
+    }
   } else {
-    pill.className = '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x70\x65\x6e\x64\x69\x6e\x67';
-    pill.textContent = '\u26aa\x20\x4c\x6f\x63\x61\x6c\x20\x43\x61\x63\x68\x65\x20\x4d\x6f\x64\x65';
+    if (pill) {
+      pill.className = '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x70\x65\x6e\x64\x69\x6e\x67';
+      pill.textContent = '\u26aa\x20\x4c\x6f\x63\x61\x6c\x20\x43\x61\x63\x68\x65\x20\x4d\x6f\x64\x65';
+    }
+    if (monitor) monitor.classList.add('\x69\x73\x2d\x6f\x66\x66\x6c\x69\x6e\x65');
+    if (monitorBadge) {
+      monitorBadge.className = '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x70\x65\x6e\x64\x69\x6e\x67';
+      monitorBadge.textContent = '\u26aa\x20\x4c\x6f\x63\x61\x6c\x20\x43\x61\x63\x68\x65\x20\x4d\x6f\x64\x65';
+    }
+    if (latencyText) latencyText.textContent = '\x4f\x66\x66\x6c\x69\x6e\x65\x20\x2f\x20\x4c\x6f\x63\x61\x6c';
+  }
+  const monitorSyncBtn = document.getElementById('\x6d\x6f\x6e\x69\x74\x6f\x72\x53\x79\x6e\x63\x4e\x6f\x77\x42\x74\x6e');
+  if (monitorSyncBtn && !monitorSyncBtn.dataset.wired) {
+    monitorSyncBtn.dataset.wired = '\x74\x72\x75\x65';
+    monitorSyncBtn.addEventListener('\x63\x6c\x69\x63\x6b', async () => {
+      monitorSyncBtn.disabled = true;
+      monitorSyncBtn.textContent = '\x53\x79\x6e\x63\x69\x6e\x67\x2e\x2e\x2e';
+      toast('\x54\x65\x73\x74\x69\x6e\x67\x20\x47\x6f\x6f\x67\x6c\x65\x20\x53\x68\x65\x65\x74\x20\x41\x50\x49\x20\x61\x6e\x64\x20\x66\x65\x74\x63\x68\x69\x6e\x67\x20\x6c\x61\x74\x65\x73\x74\x20\x64\x61\x74\x61\x2e\x2e\x2e', '\x63\x68\x65\x63\x6b');
+      if (window.SheetEndpoint && window.SheetEndpoint.isReady()) {
+        const pingRes = await window.SheetEndpoint.ping();
+        await renderAdminProductsList();
+        await renderAdminOrdersList();
+        await renderAdminUsersList();
+        const pCount = allProducts().length;
+        const oCount = readStore('\x6d\x67\x2e\x6f\x72\x64\x65\x72\x73\x2e\x76\x31', []).length;
+        const uCount = readStore('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x76\x31', readStore('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', [])).length;
+        if (prodCountEl) prodCountEl.textContent = pCount;
+        if (orderCountEl) orderCountEl.textContent = oCount;
+        if (userCountEl) userCountEl.textContent = uCount;
+        monitorSyncBtn.disabled = false;
+        monitorSyncBtn.textContent = '\ud83d\udd04\x20\x43\x68\x65\x63\x6b\x20\x26\x20\x53\x79\x6e\x63\x20\x4e\x6f\x77';
+        if (pingRes && pingRes.ok) {
+          toast(`Sheet API Live (${pingRes.latency}ms)! Synced ${pCount} products, ${oCount} orders, ${uCount} users.`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+        } else {
+          toast('\x53\x68\x65\x65\x74\x20\x65\x6e\x64\x70\x6f\x69\x6e\x74\x20\x73\x79\x6e\x63\x68\x72\x6f\x6e\x69\x7a\x65\x64\x20\x69\x6e\x20\x6c\x6f\x63\x61\x6c\x20\x63\x61\x63\x68\x65\x20\x6d\x6f\x64\x65\x2e', '\x63\x68\x65\x63\x6b');
+        }
+      } else {
+        await renderAdminProductsList();
+        await renderAdminOrdersList();
+        await renderAdminUsersList();
+        monitorSyncBtn.disabled = false;
+        monitorSyncBtn.textContent = '\ud83d\udd04\x20\x43\x68\x65\x63\x6b\x20\x26\x20\x53\x79\x6e\x63\x20\x4e\x6f\x77';
+        toast('\x4c\x6f\x63\x61\x6c\x20\x63\x61\x63\x68\x65\x20\x72\x65\x66\x72\x65\x73\x68\x65\x64\x2e\x20\x43\x6f\x6e\x66\x69\x67\x75\x72\x65\x20\x41\x70\x70\x73\x20\x53\x63\x72\x69\x70\x74\x20\x55\x52\x4c\x20\x74\x6f\x20\x63\x6f\x6e\x6e\x65\x63\x74\x20\x53\x68\x65\x65\x74\x2e', '\x63\x68\x65\x63\x6b');
+      }
+    });
   }
 }
 function initAdmin() {
