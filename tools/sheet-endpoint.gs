@@ -35,22 +35,42 @@
  *     - X: Description
  *     - Y: Status
  *
- *   [COLUMN Z] (Col 26)            : SEPARATOR (Products ➔ Orders)
+ *   [COLUMNS I - Z] (Cols 9 - 26)  : PRODUCTS SECTION
+ *     - I: Product ID
+ *     - J: Created At
+ *     - K: Title
+ *     - L: Brand
+ *     - M: Category
+ *     - N: Price
+ *     - O: Old Price
+ *     - P: Condition
+ *     - Q: Storage
+ *     - R: RAM
+ *     - S: Battery
+ *     - T: Chip
+ *     - U: Color
+ *     - V: Warranty
+ *     - W: Stock
+ *     - X: Description
+ *     - Y: Status
+ *     - Z: Photos Link
  *
- *   [COLUMNS AA - AM] (Cols 27 - 39): ORDERS SECTION
- *     - AA: Order Ref
- *     - AB: Placed At
- *     - AC: Customer Name
- *     - AD: Customer Email
- *     - AE: Customer Phone
- *     - AF: Address
- *     - AG: Area
- *     - AH: City
- *     - AI: Payment Method
- *     - AJ: Items Count
- *     - AK: Total Amount
- *     - AL: Items Details
- *     - AM: Status (Pending / Confirmed / Delivered)
+ *   [COLUMN AA] (Col 27)           : SEPARATOR (Products ➔ Orders)
+ *
+ *   [COLUMNS AB - AN] (Cols 28 - 40): ORDERS SECTION
+ *     - AB: Order Ref
+ *     - AC: Placed At
+ *     - AD: Customer Name
+ *     - AE: Customer Email
+ *     - AF: Customer Phone
+ *     - AG: Address
+ *     - AH: Area
+ *     - AI: City
+ *     - AJ: Payment Method
+ *     - AK: Items Count
+ *     - AL: Total Amount
+ *     - AM: Items Details
+ *     - AN: Order Status (Pending / Confirmed / Delivered)
  *
  * =========================================================================
  */
@@ -64,10 +84,12 @@ var COL_SEP1       = 8;      // Col H
 var COL_PROD_START = 9;      // Col I
 var COL_PROD_LEN   = 18;     // Cols I - Z (including Photos Link)
 
-var COL_ORDER_START= 27;     // Col AA
-var COL_ORDER_LEN  = 13;
+var COL_SEP2       = 27;     // Col AA (Separator between Products & Orders)
 
-var TOTAL_COLUMNS  = 39;     // Col AM
+var COL_ORDER_START= 28;     // Col AB
+var COL_ORDER_LEN  = 13;     // Cols AB - AN (13 columns: AB to AN)
+
+var TOTAL_COLUMNS  = 40;     // Col AN
 
 // Headers Definition
 var HEADERS_USERS = [
@@ -199,17 +221,17 @@ function doPost(e) {
       return json_({ ok: true, products: getProductsList_(sheet) });
     }
 
-    // 8. PLACE ORDER (Cols AA - AM) & AUTO-DECREMENT STOCK (Col W)
+    // 8. PLACE ORDER (Cols AB - AN) & AUTO-DECREMENT STOCK (Col W)
     if (action === 'place_order') {
       return placeOrder_(sheet, data);
     }
 
-    // 9. GET ORDERS (Cols AA - AM)
+    // 9. GET ORDERS (Cols AB - AN)
     if (action === 'get_orders') {
       return json_({ ok: true, orders: getOrdersList_(sheet) });
     }
 
-    // 10. UPDATE ORDER STATUS (Cols AA - AM)
+    // 10. UPDATE ORDER STATUS (Cols AB - AN)
     if (action === 'update_order_status') {
       return updateOrderStatus_(sheet, data);
     }
@@ -759,7 +781,7 @@ function getProductsList_(sheet) {
 }
 
 /* =========================================================================
-   3. ORDER HANDLERS (Columns AA - AM)
+   3. ORDER HANDLERS (Columns AB - AN)
    ========================================================================= */
 
 function placeOrder_(sheet, data) {
@@ -900,8 +922,8 @@ function updateOrderStatus_(sheet, data) {
 
       if (rowRef.toLowerCase() === ref.toLowerCase()) {
         var targetRow = r + 1; // 1-indexed sheet row
-        // Col AM is Column 39 (Order Status in Google Sheet)
-        sheet.getRange(targetRow, 39).setValue(newStatus);
+        // Col AN is Column 40 (Order Status in Google Sheet)
+        sheet.getRange(targetRow, 40).setValue(newStatus);
         return json_({
           ok: true,
           message: 'Order ' + ref + ' status updated to ' + newStatus + ' in Google Sheet row ' + targetRow,
@@ -973,7 +995,7 @@ function initSingleSheetLayout_(sheet) {
       sheet.getRange(1, COL_PROD_START, 1, HEADERS_PRODUCTS.length).setValues([HEADERS_PRODUCTS]);
       sheet.getRange(1, COL_ORDER_START, 1, HEADERS_ORDERS.length).setValues([HEADERS_ORDERS]);
       sheet.getRange('N2:O').setNumberFormat('"৳"#,##0');
-      sheet.getRange('AK2:AK').setNumberFormat('"৳"#,##0');
+      sheet.getRange('AL2:AL').setNumberFormat('"৳"#,##0');
 
       var userRule = SpreadsheetApp.newDataValidation()
         .requireValueInList(['Active', 'Inactive', 'Suspended'], true)
@@ -985,7 +1007,7 @@ function initSingleSheetLayout_(sheet) {
         .requireValueInList(['Pending', 'Confirmed', 'Delivered'], true)
         .setAllowInvalid(true)
         .build();
-      sheet.getRange('AM2:AM').setDataValidation(orderRule);
+      sheet.getRange('AN2:AN').setDataValidation(orderRule);
     } catch (_) {}
     return;
   }
@@ -1008,7 +1030,11 @@ function initSingleSheetLayout_(sheet) {
     .setBackground('#065F46')
     .setFontColor('#FFFFFF');
 
-  // 3. Orders Headers (Cols AA - AM) - Royal Purple
+  // Separator 2 (Col AA)
+  sheet.getRange(1, COL_SEP2).setValue('── ORDERS ➔ ──');
+  sheet.getRange(1, COL_SEP2).setFontWeight('bold').setBackground('#E2E8F0').setFontColor('#475569');
+
+  // 3. Orders Headers (Cols AB - AN) - Royal Purple
   sheet.getRange(1, COL_ORDER_START, 1, HEADERS_ORDERS.length).setValues([HEADERS_ORDERS]);
   sheet.getRange(1, COL_ORDER_START, 1, HEADERS_ORDERS.length)
     .setFontWeight('bold')
@@ -1016,10 +1042,10 @@ function initSingleSheetLayout_(sheet) {
     .setFontColor('#FFFFFF');
 
   // 🎯 Format Price & Total columns as Bangladeshi Taka (৳#,##0)
-  // Col N: Price (14), Col O: Old Price (15), Col AK: Total Amount (37)
+  // Col N: Price (14), Col O: Old Price (15), Col AL: Total Amount (38)
   try {
     sheet.getRange('N2:O').setNumberFormat('"৳"#,##0');
-    sheet.getRange('AK2:AK').setNumberFormat('"৳"#,##0');
+    sheet.getRange('AL2:AL').setNumberFormat('"৳"#,##0');
   } catch (_) {}
 
   // 🎯 Set Data Validation Dropdown for Column G (User Status)
@@ -1040,13 +1066,13 @@ function initSingleSheetLayout_(sheet) {
     sheet.getRange('Y2:Y').setDataValidation(statusRule);
   } catch (_) {}
 
-  // 🎯 Set Data Validation Dropdown for Column AM (Order Status - ONLY 3: Pending, Confirmed, Delivered)
+  // 🎯 Set Data Validation Dropdown for Column AN (Order Status - ONLY 3: Pending, Confirmed, Delivered)
   try {
     var orderRule = SpreadsheetApp.newDataValidation()
       .requireValueInList(['Pending', 'Confirmed', 'Delivered'], true)
       .setAllowInvalid(true)
       .build();
-    sheet.getRange('AM2:AM').setDataValidation(orderRule);
+    sheet.getRange('AN2:AN').setDataValidation(orderRule);
   } catch (_) {}
 
   sheet.setFrozenRows(1);
