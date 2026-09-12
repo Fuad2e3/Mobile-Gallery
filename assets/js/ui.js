@@ -301,7 +301,7 @@ function createAuthModal_() {
         <form id="registerForm" novalidate>
           <div style="margin-bottom:18px">
             <h3 style="font-size:1.25rem;margin-bottom:6px">Create an account</h3>
-            <p style="color:var(--muted);font-size:.88rem">Stored in Google Sheet & synced across your devices.</p>
+            <p style="color:var(--muted);font-size:.88rem">Secure account synced across your devices.</p>
           </div>
           <div class="field" style="margin-bottom:12px">
             <label for="regName">Full Name <span>*</span></label>
@@ -403,7 +403,7 @@ function createAuthModal_() {
         closeAuthModal();
         paintUserAuthNav();
         window.dispatchEvent(new CustomEvent('\x6d\x67\x3a\x61\x75\x74\x68\x2d\x63\x68\x61\x6e\x67\x65\x64', { detail: res.user }));
-        toast('\x41\x63\x63\x6f\x75\x6e\x74\x20\x63\x72\x65\x61\x74\x65\x64\x20\x61\x6e\x64\x20\x73\x61\x76\x65\x64\x20\x74\x6f\x20\x47\x6f\x6f\x67\x6c\x65\x20\x53\x68\x65\x65\x74\x21', '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+        toast('\x41\x63\x63\x6f\x75\x6e\x74\x20\x63\x72\x65\x61\x74\x65\x64\x20\x73\x75\x63\x63\x65\x73\x73\x66\x75\x6c\x6c\x79\x21', '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
         if (typeof window._onAuthSuccess === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') {
           const cb = window._onAuthSuccess;
           window._onAuthSuccess = null;

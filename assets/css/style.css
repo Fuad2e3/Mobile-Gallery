@@ -2817,7 +2817,7 @@ input[type="range"]::-moz-range-thumb {
   display: block;
 }
 
-/* ═════════════════════════════════════════ Google Sheet API Live Monitor ══ */
+/* ═════════════════════════════════════════ Cloud Database API Live Monitor ══ */
 .sheet-sync-monitor {
   display: flex;
   align-items: center;

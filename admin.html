@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin Dashboard — Mobile Gallery</title>
-<meta name="description" content="Admin panel for Mobile Gallery: manage catalogue, products, customer orders, and Google Sheet synchronization.">
+<meta name="description" content="Admin panel for Mobile Gallery: manage catalogue, products, customer orders, and database synchronization.">
 <meta name="theme-color" content="#4f46e5">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%234f46e5'/><rect x='34' y='18' width='32' height='64' rx='8' fill='white'/><rect x='44' y='72' width='12' height='4' rx='2' fill='%234f46e5'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -121,8 +121,8 @@
             ADMIN LOGGED IN
           </span>
           <span style="font-size:.88rem;color:var(--muted)">admin@mobilegallery.com</span>
-          <span id="sheetStatusPill" class="status-badge status-badge--confirmed" title="Google Sheet Live Status">
-            🟢 Sheet Connected
+          <span id="sheetStatusPill" class="status-badge status-badge--confirmed" title="Cloud Database Live Status">
+            🟢 Database Connected
           </span>
         </div>
 
@@ -132,35 +132,35 @@
         </div>
       </div>
 
-      <!-- Google Sheet Live API Monitor Card -->
+      <!-- Cloud Database Live API Monitor Card -->
       <div class="sheet-sync-monitor" id="sheetSyncMonitor">
         <div class="sheet-sync-monitor__info">
           <div class="sheet-sync-monitor__icon" id="syncMonitorIcon">📊</div>
           <div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <b style="font-size:1rem" id="syncMonitorTitle">Google Sheet API Status</b>
+              <b style="font-size:1rem" id="syncMonitorTitle">Cloud Database API Status</b>
               <span id="syncMonitorBadge" class="status-badge status-badge--confirmed">🟢 Live Connected</span>
             </div>
             <small style="color:var(--muted);font-size:.82rem" id="syncMonitorSubtitle">
-              Single-Sheet Database (Cols A–G, I–Y, AA–AM) · Latency: <span id="syncLatencyText">Checking...</span>
+              Cloud Database Sync · Latency: <span id="syncLatencyText">Checking...</span>
             </small>
           </div>
         </div>
 
         <div class="sheet-sync-monitor__actions">
-          <div class="sheet-stat-chip" title="Active products in Google Sheet Columns I–Y">
-            <span class="sheet-stat-chip__label">Sheet Products:</span>
+          <div class="sheet-stat-chip" title="Active products in database">
+            <span class="sheet-stat-chip__label">Total Products:</span>
             <b class="sheet-stat-chip__val" id="monitorProdCount">—</b>
           </div>
-          <div class="sheet-stat-chip" title="Orders recorded in Google Sheet Columns AA–AM">
-            <span class="sheet-stat-chip__label">Sheet Orders:</span>
+          <div class="sheet-stat-chip" title="Orders recorded in database">
+            <span class="sheet-stat-chip__label">Total Orders:</span>
             <b class="sheet-stat-chip__val" id="monitorOrderCount">—</b>
           </div>
-          <div class="sheet-stat-chip" title="Customers recorded in Google Sheet Columns A–G">
-            <span class="sheet-stat-chip__label">Sheet Users:</span>
+          <div class="sheet-stat-chip" title="Registered customer accounts">
+            <span class="sheet-stat-chip__label">Total Users:</span>
             <b class="sheet-stat-chip__val" id="monitorUserCount">—</b>
           </div>
-          <button class="btn btn--soft btn--sm" id="monitorSyncNowBtn" style="gap:6px" title="Test Google Sheet API and sync all data">
+          <button class="btn btn--soft btn--sm" id="monitorSyncNowBtn" style="gap:6px" title="Test database API and sync all data">
             🔄 Check &amp; Sync Now
           </button>
         </div>
@@ -192,7 +192,7 @@
               <span id="adminEditingProductTitle" style="font-weight:700;font-size:1rem;color:var(--ink)">Product Title</span>
             </div>
             <small style="color:var(--muted);font-size:.82rem">
-              Product ID: <code id="adminEditingProductId" style="font-weight:600"></code> · Changes will update in the shop and Google Sheet (Col I–Y).
+              Product ID: <code id="adminEditingProductId" style="font-weight:600"></code> · Changes will update in the shop and cloud database.
             </small>
           </div>
           <button class="btn btn--soft btn--sm" type="button" id="cancelEditBtn" style="color:var(--rose);font-weight:600">
@@ -204,7 +204,7 @@
           <form id="adminForm" novalidate>
             <div class="panel">
               <h3>Product details</h3>
-              <p class="hint">What are you putting on the shelf? Syncs automatically to Google Sheet.</p>
+              <p class="hint">What are you putting on the shelf? Syncs automatically to cloud database.</p>
 
               <div class="form-grid">
                 <div class="field field--full">
@@ -357,7 +357,7 @@
 
               <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px">
                 <button class="btn btn--primary btn--lg" type="submit" id="addProductSubmitBtn">
-                  Add to Shop &amp; Google Sheet
+                  Add to Shop &amp; Database
                 </button>
                 <button class="btn btn--ghost btn--lg" type="button" onclick="document.getElementById('adminForm').reset();paintPreview();">
                   Reset Form
@@ -380,11 +380,11 @@
       <div id="paneManageProducts" class="admin-tab-pane" hidden>
         <div class="sheet-section-header-banner">
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="badge-sheet-live">🟢 GOOGLE SHEET: COLS I – Y</span>
-            <b>Products Section Live Sync</b>
+            <span class="badge-sheet-live">🟢 CLOUD INVENTORY</span>
+            <b>Products Catalogue Live Sync</b>
           </div>
           <span style="color:var(--muted);font-size:.8rem">
-            Matches Sheet Columns: Title (K), Storage (Q), RAM (R), Battery (S), Chip (T), Color (U), Warranty (V), Stock (W), Status (Y)
+            Live catalogue inventory, stock management and pricing control
           </span>
         </div>
 
@@ -392,14 +392,14 @@
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
             <div>
               <h3>Products in Catalogue</h3>
-              <p class="hint" style="margin:0">All products currently active. Edit (✏️) or delete (🗑️) any product with instant Google Sheet sync.</p>
+              <p class="hint" style="margin:0">All products currently active. Edit (✏️) or delete (🗑️) any product with instant cloud sync.</p>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn btn--soft btn--sm" id="seedProductsBtn" title="Upload all built-in catalogue items to Google Sheet">
-                📤 Upload All to Sheet
+              <button class="btn btn--soft btn--sm" id="seedProductsBtn" title="Upload all built-in catalogue items to database">
+                📤 Upload All to Database
               </button>
               <button class="btn btn--soft btn--sm" id="refreshProductsBtn">
-                🔄 Sync from Sheet
+                🔄 Sync Products
               </button>
             </div>
           </div>
@@ -414,11 +414,11 @@
       <div id="paneManageOrders" class="admin-tab-pane" hidden>
         <div class="sheet-section-header-banner">
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="badge-sheet-live">🟢 GOOGLE SHEET: COLS AA – AM</span>
-            <b>Orders Section Live Sync</b>
+            <span class="badge-sheet-live">🟢 CLOUD DATABASE</span>
+            <b>Customer Orders Real-Time Sync</b>
           </div>
           <span style="color:var(--muted);font-size:.8rem">
-            Matches Sheet Columns: Order Ref (AA), Customer (AC–AE), Total (AK), Status (AM: Pending / Confirmed / Cancelled / Delivered)
+            Order Reference, Customer Details, Payment, Amount &amp; Status Tracking
           </span>
         </div>
 
@@ -432,10 +432,10 @@
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px">
             <div>
               <h3 style="font-size:1.15rem">Customer Orders</h3>
-              <p class="hint" style="margin:0">View placed orders, customer details, and update status (Pending, Confirmed, Cancelled, Delivered) to sync to Google Sheet Column AM in real-time.</p>
+              <p class="hint" style="margin:0">View placed orders, customer details, and update status (Pending, Confirmed, Cancelled, Delivered) in real-time.</p>
             </div>
             <button class="btn btn--soft btn--sm" id="refreshOrdersBtn">
-              🔄 Refresh Orders from Sheet
+              🔄 Refresh Orders
             </button>
           </div>
 
@@ -471,11 +471,11 @@
       <div id="paneManageUsers" class="admin-tab-pane" hidden>
         <div class="sheet-section-header-banner">
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="badge-sheet-live">🟢 GOOGLE SHEET: COLS A – G</span>
-            <b>Registered Users Section Live Sync</b>
+            <span class="badge-sheet-live">🟢 CLOUD DATABASE</span>
+            <b>Registered Customers Management</b>
           </div>
           <span style="color:var(--muted);font-size:.8rem">
-            Matches Sheet Columns: User ID (A), Registered Date (B), Name (C), Email (D), Phone (E), Password (F), Status (G)
+            Manage user accounts, roles and real-time security access control
           </span>
         </div>
 
@@ -488,11 +488,11 @@
         <div class="panel">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px">
             <div>
-              <h3 style="font-size:1.15rem">Registered Customer Accounts (Google Sheet Cols A–G)</h3>
-              <p class="hint" style="margin:0">Control customer access in real-time. Selecting <b>Inactive</b> or <b>Suspended</b> immediately blocks account login and updates Google Sheet Column G.</p>
+              <h3 style="font-size:1.15rem">Registered Customer Accounts</h3>
+              <p class="hint" style="margin:0">Control customer access in real-time. Selecting <b>Inactive</b> or <b>Suspended</b> immediately blocks account login.</p>
             </div>
             <button class="btn btn--soft btn--sm" id="refreshUsersBtn">
-              🔄 Refresh Users from Sheet
+              🔄 Refresh Users
             </button>
           </div>
 
@@ -505,14 +505,14 @@
                   <th>Customer Name</th>
                   <th>Email</th>
                   <th>Mobile Number</th>
-                  <th>Status (Col G)</th>
+                  <th>Status</th>
                   <th>Change Access</th>
                 </tr>
               </thead>
               <tbody id="usersTableBody">
                 <tr>
                   <td colspan="7" style="text-align:center;color:var(--muted);padding:24px">
-                    Fetching users from Google Sheet...
+                    Loading users...
                   </td>
                 </tr>
               </tbody>

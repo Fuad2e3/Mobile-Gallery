@@ -91,7 +91,7 @@ function paintOrders() {
     box.innerHTML = `
       <div class="empty">
         <h3>No orders yet</h3>
-        <p>${user ? 'You have not placed any orders yet. Once placed, your orders will appear here with live Google Sheet status tracking.' : 'When you place an order it will appear here, with its live delivery progress.'}</p>
+        <p>${user ? 'You have not placed any orders yet. Once placed, your orders will appear here with live order tracking.' : 'When you place an order it will appear here, with its live delivery progress.'}</p>
         <a class="btn btn--primary btn--sm" href="index.html#browse" style="margin-top:16px">Start shopping</a>
       </div>`;
     return;
@@ -106,7 +106,7 @@ async function syncOrdersFromSheet(showToast = false) {
       const sheetOrders = await window.SheetEndpoint.fetchOrders();
       if (badge) badge.textContent = '\ud83d\udfe2\x20\x4c\x69\x76\x65\x20\x53\x79\x6e\x63\x65\x64';
       paintOrders();
-      if (showToast) toast('\x4f\x72\x64\x65\x72\x20\x73\x74\x61\x74\x75\x73\x20\x75\x70\x64\x61\x74\x65\x64\x20\x66\x72\x6f\x6d\x20\x47\x6f\x6f\x67\x6c\x65\x20\x53\x68\x65\x65\x74\x21', '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+      if (showToast) toast('\x4f\x72\x64\x65\x72\x20\x73\x74\x61\x74\x75\x73\x20\x75\x70\x64\x61\x74\x65\x64\x21', '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
       return sheetOrders;
     } catch (_) {
       if (badge) badge.textContent = '\u26aa\x20\x4c\x6f\x63\x61\x6c\x20\x43\x61\x63\x68\x65';

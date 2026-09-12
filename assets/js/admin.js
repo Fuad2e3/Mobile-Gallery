@@ -412,7 +412,7 @@ function startEditProduct(id) {
     if (idEl) idEl.textContent = prod.id;
   }
   const btn = document.getElementById('\x61\x64\x64\x50\x72\x6f\x64\x75\x63\x74\x53\x75\x62\x6d\x69\x74\x42\x74\x6e');
-  if (btn) btn.textContent = '\ud83d\udcbe\x20\x53\x61\x76\x65\x20\x43\x68\x61\x6e\x67\x65\x73\x20\x26\x20\x55\x70\x64\x61\x74\x65\x20\x47\x6f\x6f\x67\x6c\x65\x20\x53\x68\x65\x65\x74';
+  if (btn) btn.textContent = '\ud83d\udcbe\x20\x53\x61\x76\x65\x20\x43\x68\x61\x6e\x67\x65\x73\x20\x26\x20\x55\x70\x64\x61\x74\x65\x20\x44\x61\x74\x61\x62\x61\x73\x65';
   switchTab('\x61\x64\x64\x50\x72\x6f\x64\x75\x63\x74');
   renderAdminImagePreviews();
   paintPreview();
@@ -424,7 +424,7 @@ function exitEditMode() {
   const banner = document.getElementById('\x61\x64\x6d\x69\x6e\x45\x64\x69\x74\x42\x61\x6e\x6e\x65\x72');
   if (banner) banner.style.display = '\x6e\x6f\x6e\x65';
   const btn = document.getElementById('\x61\x64\x64\x50\x72\x6f\x64\x75\x63\x74\x53\x75\x62\x6d\x69\x74\x42\x74\x6e');
-  if (btn) btn.textContent = '\x41\x64\x64\x20\x74\x6f\x20\x53\x68\x6f\x70\x20\x26\x20\x47\x6f\x6f\x67\x6c\x65\x20\x53\x68\x65\x65\x74';
+  if (btn) btn.textContent = '\x41\x64\x64\x20\x74\x6f\x20\x53\x68\x6f\x70\x20\x26\x20\x44\x61\x74\x61\x62\x61\x73\x65';
   const form = document.getElementById('\x61\x64\x6d\x69\x6e\x46\x6f\x72\x6d');
   if (form) form.reset();
   resetDraft();
@@ -483,7 +483,7 @@ function initProductForm() {
     const btn = document.getElementById('\x61\x64\x64\x50\x72\x6f\x64\x75\x63\x74\x53\x75\x62\x6d\x69\x74\x42\x74\x6e');
     if (btn) {
       btn.disabled = true;
-      btn.textContent = editingProductId ? '\x53\x61\x76\x69\x6e\x67\x20\x26\x20\x55\x70\x64\x61\x74\x69\x6e\x67\x20\x53\x68\x65\x65\x74\x2e\x2e\x2e' : '\x53\x61\x76\x69\x6e\x67\x20\x26\x20\x53\x79\x6e\x63\x69\x6e\x67\x2e\x2e\x2e';
+      btn.textContent = editingProductId ? '\x53\x61\x76\x69\x6e\x67\x20\x26\x20\x55\x70\x64\x61\x74\x69\x6e\x67\x20\x44\x61\x74\x61\x62\x61\x73\x65\x2e\x2e\x2e' : '\x53\x61\x76\x69\x6e\x67\x20\x26\x20\x53\x79\x6e\x63\x69\x6e\x67\x2e\x2e\x2e';
     }
     if (editingProductId) {
       const existingProd = productById(editingProductId) || {};
@@ -504,7 +504,7 @@ function initProductForm() {
         updateAnyProduct(updatedProduct);
       }
       if (btn) btn.disabled = false;
-      toast(`Product "${updatedProduct.title}" updated and synced to Google Sheet!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+      toast(`Product "${updatedProduct.title}" updated successfully!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
       exitEditMode();
       renderAdminProductsList();
       switchTab('\x6d\x61\x6e\x61\x67\x65\x50\x72\x6f\x64\x75\x63\x74\x73');
@@ -526,9 +526,9 @@ function initProductForm() {
       }
       if (btn) {
         btn.disabled = false;
-        btn.textContent = '\x41\x64\x64\x20\x74\x6f\x20\x53\x68\x6f\x70\x20\x26\x20\x47\x6f\x6f\x67\x6c\x65\x20\x53\x68\x65\x65\x74';
+        btn.textContent = '\x41\x64\x64\x20\x74\x6f\x20\x53\x68\x6f\x70\x20\x26\x20\x44\x61\x74\x61\x62\x61\x73\x65';
       }
-      toast('\x50\x72\x6f\x64\x75\x63\x74\x20\x61\x64\x64\x65\x64\x20\x61\x6e\x64\x20\x73\x79\x6e\x63\x65\x64\x20\x74\x6f\x20\x47\x6f\x6f\x67\x6c\x65\x20\x53\x68\x65\x65\x74\x21', '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+      toast('\x50\x72\x6f\x64\x75\x63\x74\x20\x61\x64\x64\x65\x64\x20\x73\x75\x63\x63\x65\x73\x73\x66\x75\x6c\x6c\x79\x21', '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
       form.reset();
       resetDraft();
       paintPreview();
@@ -582,7 +582,7 @@ async function renderAdminProductsList() {
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <b style="font-size:.96rem">${esc(p.title)}</b>
             <code style="font-size:.74rem;color:var(--muted)">${esc(p.id)}</code>
-            <span class="badge-sheet-live">🟢 Sheet Cols I–Y</span>
+            <span class="badge-sheet-live">🟢 Active Item</span>
             ${isCustom ? '<span style="background:var(--brand-600);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:3px;font-weight:700">NEW</span>' : ''}
           </div>
           <div style="font-size:.82rem;color:var(--muted);margin-top:4px">
@@ -614,7 +614,7 @@ async function renderAdminProductsList() {
       const id = btn.dataset.delProduct;
       const prod = productById(id);
       const name = prod ? prod.title : id;
-      if (!confirm(`Are you sure you want to delete "${name}"? It will be removed from the store and marked Deleted in the Google Sheet.`)) return;
+      if (!confirm(`Are you sure you want to delete "${name}"? It will be removed from the store and database.`)) return;
       btn.disabled = true;
       btn.textContent = '\x44\x65\x6c\x65\x74\x69\x6e\x67\x2e\x2e\x2e';
       if (window.SheetEndpoint) {
@@ -622,7 +622,7 @@ async function renderAdminProductsList() {
       } else {
         deleteAnyProduct(id);
       }
-      toast(`Product "${name}" removed & synced to Sheet`, '\x74\x72\x61\x73\x68');
+      toast(`Product "${name}" removed successfully`, '\x74\x72\x61\x73\x68');
       renderAdminProductsList();
     });
   });
@@ -630,7 +630,7 @@ async function renderAdminProductsList() {
 async function renderAdminOrdersList() {
   const tbody = document.getElementById('\x6f\x72\x64\x65\x72\x73\x54\x61\x62\x6c\x65\x42\x6f\x64\x79');
   if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">Fetching orders from Google Sheet...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px">Loading orders...</td></tr>`;
   let orders = getOrders();
   if (window.SheetEndpoint) {
     try {
@@ -651,7 +651,7 @@ async function renderAdminOrdersList() {
     tbody.innerHTML = `
       <tr>
         <td colspan="10" style="text-align:center;color:var(--muted);padding:36px">
-          No orders placed yet. Place an order from the shop to see it here and in Google Sheets.
+          No orders placed yet. Place an order from the shop to see it here.
         </td>
       </tr>`;
     return;
@@ -674,7 +674,7 @@ async function renderAdminOrdersList() {
       <tr>
         <td>
           <b>${esc(o.ref)}</b>
-          <div style="margin-top:2px"><span class="badge-sheet-live" style="font-size:.65rem;padding:1px 6px">Cols AA–AM</span></div>
+          <div style="margin-top:2px"><span class="badge-sheet-live" style="font-size:.65rem;padding:1px 6px">Live Sync</span></div>
         </td>
         <td><small style="color:var(--muted);white-space:nowrap">${esc(orderDate(o.placedAt))}</small></td>
         <td>
@@ -730,7 +730,7 @@ async function renderAdminOrdersList() {
       if (window.SheetEndpoint) {
         await window.SheetEndpoint.updateOrderStatus(ref, '\x43\x6f\x6e\x66\x69\x72\x6d\x65\x64');
       }
-      toast(`Order ${ref} confirmed and synced to Google Sheet!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+      toast(`Order ${ref} confirmed successfully!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
       renderAdminOrdersList();
     });
   });
@@ -743,7 +743,7 @@ async function renderAdminOrdersList() {
       if (window.SheetEndpoint) {
         await window.SheetEndpoint.updateOrderStatus(ref, '\x43\x61\x6e\x63\x65\x6c\x6c\x65\x64');
       }
-      toast(`Order ${ref} cancelled and synced to Google Sheet!`, '\x63\x6c\x6f\x73\x65');
+      toast(`Order ${ref} cancelled successfully!`, '\x63\x6c\x6f\x73\x65');
       renderAdminOrdersList();
     });
   });
@@ -774,7 +774,7 @@ async function renderAdminOrdersList() {
 async function renderAdminUsersList() {
   const tbody = document.getElementById('\x75\x73\x65\x72\x73\x54\x61\x62\x6c\x65\x42\x6f\x64\x79');
   if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Fetching users from Google Sheet...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Loading users...</td></tr>`;
   let users = [];
   if (window.SheetEndpoint) {
     try {
@@ -801,7 +801,7 @@ async function renderAdminUsersList() {
     tbody.innerHTML = `
       <tr>
         <td colspan="7" style="text-align:center;color:var(--muted);padding:36px">
-          No registered customer accounts yet. When users register on the website, they will appear here and in Google Sheet Columns A–G.
+          No registered customer accounts yet. When users register on the website, they will appear here.
         </td>
       </tr>`;
     return;
@@ -814,7 +814,7 @@ async function renderAdminUsersList() {
       <tr>
         <td>
           <b>${esc(u.id || '—')}</b>
-          <div style="margin-top:2px"><span class="badge-sheet-live" style="font-size:.65rem;padding:1px 6px">Cols A–G</span></div>
+          <div style="margin-top:2px"><span class="badge-sheet-live" style="font-size:.65rem;padding:1px 6px">Registered</span></div>
         </td>
         <td><small style="color:var(--muted);white-space:nowrap">${esc(u.registeredAt || '—')}</small></td>
         <td><b>${esc(u.name || 'User')}</b></td>
@@ -844,7 +844,7 @@ async function renderAdminUsersList() {
       if (window.SheetEndpoint) {
         const res = await window.SheetEndpoint.updateUserStatus(email, newStatus, userId);
         if (res && res.ok) {
-          toast(`User ${email || userId} status updated to ${newStatus} in Google Sheet!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+          toast(`User ${email || userId} status updated to ${newStatus}!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
         } else {
           toast(res && res.error ? `Status: ${res.error}` : `User status changed to ${newStatus}`, '\x63\x68\x65\x63\x6b');
         }
@@ -872,29 +872,29 @@ function initSheetSettings() {
   if (refreshUsers) {
     refreshUsers.addEventListener('\x63\x6c\x69\x63\x6b', () => {
       renderAdminUsersList();
-      toast('\x52\x65\x66\x72\x65\x73\x68\x65\x64\x20\x72\x65\x67\x69\x73\x74\x65\x72\x65\x64\x20\x75\x73\x65\x72\x73\x20\x66\x72\x6f\x6d\x20\x73\x68\x65\x65\x74', '\x63\x68\x65\x63\x6b');
+      toast('\x52\x65\x66\x72\x65\x73\x68\x65\x64\x20\x72\x65\x67\x69\x73\x74\x65\x72\x65\x64\x20\x75\x73\x65\x72\x73', '\x63\x68\x65\x63\x6b');
     });
   }
   const seedProducts = document.getElementById('\x73\x65\x65\x64\x50\x72\x6f\x64\x75\x63\x74\x73\x42\x74\x6e');
   if (seedProducts) {
     seedProducts.addEventListener('\x63\x6c\x69\x63\x6b', async () => {
       const prods = allProducts();
-      if (!confirm(`Are you sure you want to upload all ${prods.length} products to Columns I–Y of your Google Sheet?`)) return;
+      if (!confirm(`Are you sure you want to upload all ${prods.length} products to the database?`)) return;
       seedProducts.disabled = true;
-      seedProducts.textContent = '\x55\x70\x6c\x6f\x61\x64\x69\x6e\x67\x20\x74\x6f\x20\x53\x68\x65\x65\x74\x2e\x2e\x2e';
+      seedProducts.textContent = '\x55\x70\x6c\x6f\x61\x64\x69\x6e\x67\x20\x74\x6f\x20\x44\x61\x74\x61\x62\x61\x73\x65\x2e\x2e\x2e';
       if (window.SheetEndpoint) {
         const res = await window.SheetEndpoint.seedProducts(prods);
         seedProducts.disabled = false;
-        seedProducts.textContent = '\ud83d\udce4\x20\x55\x70\x6c\x6f\x61\x64\x20\x41\x6c\x6c\x20\x74\x6f\x20\x53\x68\x65\x65\x74';
+        seedProducts.textContent = '\ud83d\udce4\x20\x55\x70\x6c\x6f\x61\x64\x20\x41\x6c\x6c\x20\x74\x6f\x20\x44\x61\x74\x61\x62\x61\x73\x65';
         if (res.ok) {
-          toast(`Uploaded ${prods.length} products to Google Sheet!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+          toast(`Uploaded ${prods.length} products to database!`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
         } else {
-          toast(res.error || '\x55\x70\x6c\x6f\x61\x64\x20\x66\x61\x69\x6c\x65\x64\x2c\x20\x76\x65\x72\x69\x66\x79\x20\x53\x68\x65\x65\x74\x20\x55\x52\x4c', '\x63\x6c\x6f\x73\x65');
+          toast(res.error || '\x55\x70\x6c\x6f\x61\x64\x20\x66\x61\x69\x6c\x65\x64\x2c\x20\x76\x65\x72\x69\x66\x79\x20\x64\x61\x74\x61\x62\x61\x73\x65\x20\x63\x6f\x6e\x6e\x65\x63\x74\x69\x6f\x6e', '\x63\x6c\x6f\x73\x65');
         }
       } else {
         seedProducts.disabled = false;
-        seedProducts.textContent = '\ud83d\udce4\x20\x55\x70\x6c\x6f\x61\x64\x20\x41\x6c\x6c\x20\x74\x6f\x20\x53\x68\x65\x65\x74';
-        toast('\x53\x68\x65\x65\x74\x20\x65\x6e\x64\x70\x6f\x69\x6e\x74\x20\x6e\x6f\x74\x20\x72\x65\x61\x64\x79', '\x63\x6c\x6f\x73\x65');
+        seedProducts.textContent = '\ud83d\udce4\x20\x55\x70\x6c\x6f\x61\x64\x20\x41\x6c\x6c\x20\x74\x6f\x20\x44\x61\x74\x61\x62\x61\x73\x65';
+        toast('\x44\x61\x74\x61\x62\x61\x73\x65\x20\x65\x6e\x64\x70\x6f\x69\x6e\x74\x20\x6e\x6f\x74\x20\x72\x65\x61\x64\x79', '\x63\x6c\x6f\x73\x65');
       }
     });
   }
@@ -916,7 +916,7 @@ async function updateConnectionPill() {
   if (window.SheetEndpoint && window.SheetEndpoint.isReady()) {
     if (pill) {
       pill.className = '\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x6f\x6e\x66\x69\x72\x6d\x65\x64';
-      pill.textContent = '\ud83d\udfe2\x20\x53\x68\x65\x65\x74\x20\x43\x6f\x6e\x6e\x65\x63\x74\x65\x64';
+      pill.textContent = '\ud83d\udfe2\x20\x44\x61\x74\x61\x62\x61\x73\x65\x20\x43\x6f\x6e\x6e\x65\x63\x74\x65\x64';
     }
     if (monitor) monitor.classList.remove('\x69\x73\x2d\x6f\x66\x66\x6c\x69\x6e\x65');
     if (monitorBadge) {
@@ -927,7 +927,7 @@ async function updateConnectionPill() {
       const pingRes = await window.SheetEndpoint.ping();
       if (pingRes && pingRes.ok) {
         if (latencyText) latencyText.textContent = `${pingRes.latency}ms (Fast)`;
-        if (pill) pill.textContent = `🟢 Sheet Connected (${pingRes.latency}ms)`;
+        if (pill) pill.textContent = `🟢 Database Connected (${pingRes.latency}ms)`;
       } else {
         if (latencyText) latencyText.textContent = '\x43\x6f\x6e\x66\x69\x67\x75\x72\x65\x64\x20\x28\x41\x63\x74\x69\x76\x65\x29';
       }
@@ -952,7 +952,7 @@ async function updateConnectionPill() {
     monitorSyncBtn.addEventListener('\x63\x6c\x69\x63\x6b', async () => {
       monitorSyncBtn.disabled = true;
       monitorSyncBtn.textContent = '\x53\x79\x6e\x63\x69\x6e\x67\x2e\x2e\x2e';
-      toast('\x54\x65\x73\x74\x69\x6e\x67\x20\x47\x6f\x6f\x67\x6c\x65\x20\x53\x68\x65\x65\x74\x20\x41\x50\x49\x20\x61\x6e\x64\x20\x66\x65\x74\x63\x68\x69\x6e\x67\x20\x6c\x61\x74\x65\x73\x74\x20\x64\x61\x74\x61\x2e\x2e\x2e', '\x63\x68\x65\x63\x6b');
+      toast('\x54\x65\x73\x74\x69\x6e\x67\x20\x64\x61\x74\x61\x62\x61\x73\x65\x20\x63\x6f\x6e\x6e\x65\x63\x74\x69\x6f\x6e\x20\x61\x6e\x64\x20\x66\x65\x74\x63\x68\x69\x6e\x67\x20\x6c\x61\x74\x65\x73\x74\x20\x64\x61\x74\x61\x2e\x2e\x2e', '\x63\x68\x65\x63\x6b');
       if (window.SheetEndpoint && window.SheetEndpoint.isReady()) {
         const pingRes = await window.SheetEndpoint.ping();
         await renderAdminProductsList();
@@ -967,9 +967,9 @@ async function updateConnectionPill() {
         monitorSyncBtn.disabled = false;
         monitorSyncBtn.textContent = '\ud83d\udd04\x20\x43\x68\x65\x63\x6b\x20\x26\x20\x53\x79\x6e\x63\x20\x4e\x6f\x77';
         if (pingRes && pingRes.ok) {
-          toast(`Sheet API Live (${pingRes.latency}ms)! Synced ${pCount} products, ${oCount} orders, ${uCount} users.`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
+          toast(`Database API Live (${pingRes.latency}ms)! Synced ${pCount} products, ${oCount} orders, ${uCount} users.`, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
         } else {
-          toast('\x53\x68\x65\x65\x74\x20\x65\x6e\x64\x70\x6f\x69\x6e\x74\x20\x73\x79\x6e\x63\x68\x72\x6f\x6e\x69\x7a\x65\x64\x20\x69\x6e\x20\x6c\x6f\x63\x61\x6c\x20\x63\x61\x63\x68\x65\x20\x6d\x6f\x64\x65\x2e', '\x63\x68\x65\x63\x6b');
+          toast('\x44\x61\x74\x61\x62\x61\x73\x65\x20\x73\x79\x6e\x63\x68\x72\x6f\x6e\x69\x7a\x65\x64\x20\x69\x6e\x20\x6c\x6f\x63\x61\x6c\x20\x63\x61\x63\x68\x65\x20\x6d\x6f\x64\x65\x2e', '\x63\x68\x65\x63\x6b');
         }
       } else {
         await renderAdminProductsList();
@@ -977,7 +977,7 @@ async function updateConnectionPill() {
         await renderAdminUsersList();
         monitorSyncBtn.disabled = false;
         monitorSyncBtn.textContent = '\ud83d\udd04\x20\x43\x68\x65\x63\x6b\x20\x26\x20\x53\x79\x6e\x63\x20\x4e\x6f\x77';
-        toast('\x4c\x6f\x63\x61\x6c\x20\x63\x61\x63\x68\x65\x20\x72\x65\x66\x72\x65\x73\x68\x65\x64\x2e\x20\x43\x6f\x6e\x66\x69\x67\x75\x72\x65\x20\x41\x70\x70\x73\x20\x53\x63\x72\x69\x70\x74\x20\x55\x52\x4c\x20\x74\x6f\x20\x63\x6f\x6e\x6e\x65\x63\x74\x20\x53\x68\x65\x65\x74\x2e', '\x63\x68\x65\x63\x6b');
+        toast('\x4c\x6f\x63\x61\x6c\x20\x63\x61\x63\x68\x65\x20\x72\x65\x66\x72\x65\x73\x68\x65\x64\x2e', '\x63\x68\x65\x63\x6b');
       }
     });
   }
