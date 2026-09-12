@@ -62,9 +62,7 @@ var COL_USER_LEN   = 7;
 var COL_SEP1       = 8;      // Col H
 
 var COL_PROD_START = 9;      // Col I
-var COL_PROD_LEN   = 17;
-
-var COL_SEP2       = 26;     // Col Z
+var COL_PROD_LEN   = 18;     // Cols I - Z (including Photos Link)
 
 var COL_ORDER_START= 27;     // Col AA
 var COL_ORDER_LEN  = 13;
@@ -78,7 +76,7 @@ var HEADERS_USERS = [
 
 var HEADERS_PRODUCTS = [
   'Product ID', 'Created At', 'Title', 'Brand', 'Category', 'Price (৳)', 'Old Price (৳)',
-  'Condition', 'Storage', 'RAM', 'Battery', 'Chip', 'Color', 'Warranty', 'Stock', 'Description', 'Product Status'
+  'Condition', 'Storage', 'RAM', 'Battery', 'Chip', 'Color', 'Warranty', 'Stock', 'Description', 'Product Status', 'Photos Link'
 ];
 
 var HEADERS_ORDERS = [
@@ -502,6 +500,8 @@ function addProduct_(sheet, data) {
     descWithImages = '<!-- IMAGES:' + JSON.stringify(processedImages) + ' -->\n' + descWithImages;
   }
 
+  var photosLink = processedImages.join(', ');
+
   var prodRow = [
     productId,
     dateStr,
@@ -519,7 +519,8 @@ function addProduct_(sheet, data) {
     data.warranty || '1 year official',
     stockVal,
     descWithImages,
-    statusVal
+    statusVal,
+    photosLink
   ];
 
   appendSectionRow_(sheet, COL_PROD_START, prodRow);
@@ -568,6 +569,8 @@ function updateProduct_(sheet, data) {
     descWithImages = '<!-- IMAGES:' + JSON.stringify(processedImages) + ' -->\n' + descWithImages;
   }
 
+  var photosLink = processedImages.join(', ');
+
   var updatedRow = [
     targetId || ('mg-a' + Date.now().toString(36)),
     Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Dhaka', 'yyyy-MM-dd HH:mm:ss'),
@@ -585,7 +588,8 @@ function updateProduct_(sheet, data) {
     data.warranty || '1 year official',
     stockVal,
     descWithImages,
-    statusVal
+    statusVal,
+    photosLink
   ];
 
   if (foundRow > -1) {
@@ -653,6 +657,8 @@ function seedProducts_(sheet, data) {
       pDescWithImages = '<!-- IMAGES:' + JSON.stringify(p.images) + ' -->\n' + pDescWithImages;
     }
 
+    var pPhotosLink = Array.isArray(p.images) ? p.images.join(', ') : '';
+
     var prodRow = [
       p.id,
       dateStr,
@@ -670,7 +676,8 @@ function seedProducts_(sheet, data) {
       p.warranty || '1 year official',
       pStock,
       pDescWithImages,
-      pStatus
+      pStatus,
+      pPhotosLink
     ];
     appendSectionRow_(sheet, COL_PROD_START, prodRow);
     existingIds.add(String(p.id).trim());
@@ -720,6 +727,12 @@ function getProductsList_(sheet) {
         images = JSON.parse(imgMatch[1]);
         cleanDesc = rawDesc.replace(/<!-- IMAGES:[\s\S]*?-->\n?/, '').trim();
       } catch (_) {}
+    }
+
+    // Also read from Photos Link column (Col 18 / Col Z)
+    var colPhotosLink = String(rows[i][17] || '').trim();
+    if (!images.length && colPhotosLink) {
+      images = colPhotosLink.split(/[\n,]+/).map(function(s) { return s.trim(); }).filter(Boolean);
     }
 
     products.push({
@@ -988,16 +1001,12 @@ function initSingleSheetLayout_(sheet) {
   sheet.getRange(1, COL_SEP1).setValue('── PRODUCTS ➔ ──');
   sheet.getRange(1, COL_SEP1).setFontWeight('bold').setBackground('#E2E8F0').setFontColor('#475569');
 
-  // 2. Products Headers (Cols I - Y) - Forest Green
+  // 2. Products Headers (Cols I - Z) - Forest Green (includes Col Z: Photos Link)
   sheet.getRange(1, COL_PROD_START, 1, HEADERS_PRODUCTS.length).setValues([HEADERS_PRODUCTS]);
   sheet.getRange(1, COL_PROD_START, 1, HEADERS_PRODUCTS.length)
     .setFontWeight('bold')
     .setBackground('#065F46')
     .setFontColor('#FFFFFF');
-
-  // Separator 2 (Col Z)
-  sheet.getRange(1, COL_SEP2).setValue('── ORDERS ➔ ──');
-  sheet.getRange(1, COL_SEP2).setFontWeight('bold').setBackground('#E2E8F0').setFontColor('#475569');
 
   // 3. Orders Headers (Cols AA - AM) - Royal Purple
   sheet.getRange(1, COL_ORDER_START, 1, HEADERS_ORDERS.length).setValues([HEADERS_ORDERS]);

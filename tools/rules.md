@@ -98,9 +98,7 @@
 - `Col W`: Stock (মজুদ সংখ্যা — অর্ডার হলে স্বয়ংক্রিয়ভাবে মাইনাস হয়)
 - `Col X`: Description (পণ্যের সংক্ষিপ্ত বিবরণ)
 - `Col Y`: Product Status (`In Stock`, `Low Stock`, `Out of Stock`, `Deleted`)
-
-### ঘ. সেপারেটর ২ (কলাম Z)
-- `Col Z`: `── ORDERS ➔ ──` (ভিজ্যুয়াল পার্টিশন)
+- `Col Z`: Photos Link (গুগল ড্রাইভে আপলোড হওয়া অপ্টিমাইজড ছবির সরাসরি পাবলিক লিংক)
 
 ### ঙ. সেকশন ৩: `Orders` (কলাম AA থেকে AM) — Royal Purple হেডার
 - `Col AA`: Order Ref (ইউনিক অর্ডার নম্বর, যেমন: `MG-9K2L`)
