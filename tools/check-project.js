@@ -14,21 +14,23 @@ for (const file of htmlFiles) {
   const scriptRegex = /<script[^>]+src=["']([^"']+)["']/gi;
   let match;
   while ((match = scriptRegex.exec(content)) !== null) {
-    const src = match[1];
+    const rawSrc = match[1];
+    const src = rawSrc.split('?')[0];
     if (src.startsWith('http') || src.startsWith('//')) continue;
     const resolved = path.resolve(rootDir, src);
     if (!fs.existsSync(resolved)) {
-      console.error(`  [FAIL script] ${file} -> ${src} NOT FOUND`);
+      console.error(`  [FAIL script] ${file} -> ${rawSrc} NOT FOUND`);
       errors++;
     } else {
-      console.log(`  [OK script] ${src}`);
+      console.log(`  [OK script] ${rawSrc}`);
     }
   }
 
   // Check stylesheet links
   const linkRegex = /<link[^>]+href=["']([^"']+)["'][^>]*>/gi;
   while ((match = linkRegex.exec(content)) !== null) {
-    const href = match[1];
+    const rawHref = match[1];
+    const href = rawHref.split('?')[0];
     if (href.startsWith('http') || href.startsWith('data:') || href.includes('fonts.googleapis') || href.startsWith('//')) continue;
     const resolved = path.resolve(rootDir, href);
     if (!fs.existsSync(resolved)) {

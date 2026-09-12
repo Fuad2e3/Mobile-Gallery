@@ -11,6 +11,68 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
+<script>
+  try {
+    if (sessionStorage.getItem('mg.admin.auth.v1') === 'true') {
+      document.write('<style id="adminAuthStyle">#adminLoginView{display:none!important}#adminDashboardView{display:block!important}</style>');
+    }
+  } catch (_) {}
+
+  function enterAdminDashboard() {
+    try {
+      sessionStorage.setItem('mg.admin.auth.v1', 'true');
+      var authStyle = document.getElementById('adminAuthStyle');
+      if (!authStyle) {
+        var s = document.createElement('style');
+        s.id = 'adminAuthStyle';
+        s.innerHTML = '#adminLoginView{display:none!important}#adminDashboardView{display:block!important}';
+        document.head.appendChild(s);
+      }
+      var lv = document.getElementById('adminLoginView');
+      var dv = document.getElementById('adminDashboardView');
+      if (lv) {
+        if (lv.style.setProperty) lv.style.setProperty('display', 'none', 'important');
+        lv.style.display = 'none';
+      }
+      if (dv) {
+        if (dv.style.setProperty) dv.style.setProperty('display', 'block', 'important');
+        dv.style.display = 'block';
+      }
+    } catch (_) {}
+    if (window.setAdminLoggedIn) {
+      try {
+        window.setAdminLoggedIn(true);
+      } catch (err) {
+        console.warn('setAdminLoggedIn error:', err);
+      }
+    }
+  }
+
+  function adminLogout() {
+    try {
+      sessionStorage.removeItem('mg.admin.auth.v1');
+      var authStyle = document.getElementById('adminAuthStyle');
+      if (authStyle) authStyle.remove();
+      var lv = document.getElementById('adminLoginView');
+      var dv = document.getElementById('adminDashboardView');
+      if (lv) {
+        if (lv.style.setProperty) lv.style.setProperty('display', 'flex', 'important');
+        lv.style.display = 'flex';
+      }
+      if (dv) {
+        if (dv.style.setProperty) dv.style.setProperty('display', 'none', 'important');
+        dv.style.display = 'none';
+      }
+    } catch (_) {}
+    if (window.setAdminLoggedIn) {
+      try {
+        window.setAdminLoggedIn(false);
+      } catch (err) {
+        console.warn('setAdminLoggedIn error:', err);
+      }
+    }
+  }
+</script>
 <noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
 </head>
 <body>
@@ -87,7 +149,7 @@
         No credentials required — simply click the button below to enter the Admin Panel.
       </div>
 
-      <button class="btn btn--primary btn--lg" id="adminLoginSubmitBtn" type="button" style="width:100%;font-size:1.05rem;padding:14px;display:flex;align-items:center;justify-content:center;gap:10px">
+      <button class="btn btn--primary btn--lg" id="adminLoginSubmitBtn" type="button" onclick="enterAdminDashboard()" style="width:100%;font-size:1.05rem;padding:14px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer">
         <span>Sign In to Admin Panel</span>
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -116,7 +178,7 @@
 
         <div style="display:flex;align-items:center;gap:10px">
           <a class="btn btn--ghost btn--sm" href="index.html#browse" target="_blank">View Shop ↗</a>
-          <button class="btn btn--soft btn--sm" id="adminLogoutBtn">Log Out</button>
+          <button class="btn btn--soft btn--sm" id="adminLogoutBtn" type="button" onclick="adminLogout()">Log Out</button>
         </div>
       </div>
 
@@ -532,11 +594,11 @@
   </div>
 </div>
 
-<script src="tools/sheet-endpoint.js"></script>
-<script src="assets/js/data.js"></script>
-<script src="assets/js/ui.js"></script>
-<script src="assets/js/cart.js"></script>
-<script src="assets/js/optimization.js"></script>
-<script src="assets/js/admin.js"></script>
+<script src="tools/sheet-endpoint.js?v=20260912_5"></script>
+<script src="assets/js/data.js?v=20260912_5"></script>
+<script src="assets/js/ui.js?v=20260912_5"></script>
+<script src="assets/js/cart.js?v=20260912_5"></script>
+<script src="assets/js/optimization.js?v=20260912_5"></script>
+<script src="assets/js/admin.js?v=20260912_5"></script>
 </body>
 </html>
