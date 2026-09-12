@@ -716,7 +716,7 @@ async function renderAdminOrdersList() {
             <select class="input" data-change-status="${esc(o.ref)}" style="display:inline-block;width:auto;padding:4px 8px;font-size:.76rem">
               <option value="Pending" ${isPending ? 'selected' : ''}>Pending</option>
               <option value="Confirmed" ${isConfirmed ? 'selected' : ''}>Confirmed</option>
-              <option value="Cancel" ${isCancel ? 'selected' : ''}>Cancel</option>
+              <option value="Cancelled" ${isCancel ? 'selected' : ''}>Cancelled</option>
               <option value="Delivered" ${isDelivered ? 'selected' : ''}>Delivered</option>
             </select>
           </div>
@@ -742,7 +742,7 @@ async function renderAdminOrdersList() {
       btn.disabled = true;
       btn.textContent = '\x43\x61\x6e\x63\x65\x6c\x6c\x69\x6e\x67\x2e\x2e\x2e';
       if (window.SheetEndpoint) {
-        await window.SheetEndpoint.updateOrderStatus(ref, '\x43\x61\x6e\x63\x65\x6c');
+        await window.SheetEndpoint.updateOrderStatus(ref, '\x43\x61\x6e\x63\x65\x6c\x6c\x65\x64');
       }
       toast(`Order ${ref} cancelled and synced to Google Sheet!`, '\x63\x6c\x6f\x73\x65');
       renderAdminOrdersList();
