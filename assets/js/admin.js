@@ -2,25 +2,6 @@
 const FIXED_ADMIN_EMAIL = '\x61\x64\x6d\x69\x6e\x40\x6d\x6f\x62\x69\x6c\x65\x67\x61\x6c\x6c\x65\x72\x79\x2e\x63\x6f\x6d';
 const FIXED_ADMIN_PASS  = '\x61\x64\x6d\x69\x6e\x31\x32\x33';
 const ADMIN_AUTH_KEY    = '\x6d\x67\x2e\x61\x64\x6d\x69\x6e\x2e\x61\x75\x74\x68\x2e\x76\x31';
-const PRICE_HINTS = {
-  Apple:   [35000, 175000],
-  Samsung: [12000, 160000],
-  Google:  [40000, 110000],
-  Xiaomi:  [9000, 115000],
-  OnePlus: [18000, 95000],
-  Realme:  [8000, 60000],
-  Vivo:    [9000, 70000],
-  Oppo:    [9000, 70000],
-  Sony:    [15000, 90000],
-  Asus:    [30000, 220000],
-  Other:   [3000, 120000]
-};
-const CONDITION_FACTOR = {
-  '\x42\x72\x61\x6e\x64\x20\x4e\x65\x77': 1.0,
-  '\x4c\x69\x6b\x65\x20\x4e\x65\x77': 0.86,
-  '\x47\x6f\x6f\x64': 0.72,
-  '\x46\x61\x69\x72': 0.55
-};
 const draft = {
   title: '', brand: '\x41\x70\x70\x6c\x65', category: '\x70\x68\x6f\x6e\x65', price: '', oldPrice: '',
   condition: '\x42\x72\x61\x6e\x64\x20\x4e\x65\x77', storage: '\x31\x32\x38\x47\x42', ram: '\x38\x47\x42', battery: '\x31\x30\x30\x25\x20\x68\x65\x61\x6c\x74\x68',
@@ -170,33 +151,6 @@ function paintPreview() {
         </div>
       </div>
     </article>`;
-  paintHint();
-}
-function paintHint() {
-  const box = document.getElementById('\x70\x72\x69\x63\x65\x48\x69\x6e\x74');
-  if (!box) return;
-  const [lo, hi] = PRICE_HINTS[draft.brand] || PRICE_HINTS.Other;
-  const factor = CONDITION_FACTOR[draft.condition] || 0.8;
-  const low = Math.round((lo * factor) / 500) * 500;
-  const high = Math.round((hi * factor) / 500) * 500;
-  const price = +draft.price;
-  let verdict = `<b>${esc(draft.brand)}</b> in <b>${esc(draft.condition)}</b> condition
-                 usually retails between <b>${money(low)}</b> and <b>${money(high)}</b>.`;
-  let tone = '\x76\x61\x72\x28\x2d\x2d\x6d\x75\x74\x65\x64\x29';
-  if (price > 0) {
-    if (price < low) {
-      verdict += ` This price is <b>below the usual range</b>.`;
-      tone = '\x76\x61\x72\x28\x2d\x2d\x61\x6d\x62\x65\x72\x29';
-    } else if (price > high) {
-      verdict += ` This price is <b>above the usual range</b>.`;
-      tone = '\x76\x61\x72\x28\x2d\x2d\x72\x6f\x73\x65\x29';
-    } else {
-      verdict += ` This price is <b>right in the sweet spot</b>.`;
-      tone = '\x76\x61\x72\x28\x2d\x2d\x6d\x69\x6e\x74\x29';
-    }
-  }
-  box.innerHTML = verdict;
-  box.style.borderColor = tone;
 }
 function compressImageFile(file, maxWidth = 800, maxHeight = 800, quality = 0.75) {
   return new Promise((resolve, reject) => {
