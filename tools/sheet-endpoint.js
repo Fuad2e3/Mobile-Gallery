@@ -125,7 +125,12 @@ class SheetEndpoint {
       const res = await this.request({ action: '\x6c\x6f\x67\x69\x6e\x5f\x75\x73\x65\x72', email, password });
       if (res.ok && res.user) {
         this.setCurrentUser(res.user);
-        users.push({ ...res.user, password });
+        const existingIdx = users.findIndex(u => u.email === res.user.email);
+        if (existingIdx > -1) {
+          users[existingIdx] = { ...users[existingIdx], ...res.user, password };
+        } else {
+          users.push({ ...res.user, password });
+        }
         this.setLocal(LOCAL_USERS_KEY, users);
         return { ok: true, user: res.user };
       }
@@ -146,10 +151,12 @@ class SheetEndpoint {
           if (!merged.find(m => m.email === u.email)) merged.push(u);
         });
         this.setLocal(LOCAL_USERS_KEY, merged);
-        return res.users;
+        try { localStorage.setItem('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', JSON.stringify(merged)); } catch (_) {}
+        return merged.length ? merged : res.users;
       }
     }
-    return this.getLocal(LOCAL_USERS_KEY, []);
+    const local = this.getLocal(LOCAL_USERS_KEY, []);
+    return local.length ? local : this.getLocal('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', []);
   }
   static async updateUserStatus(emailOrId, newStatus, optionalId) {
     const cleanStatus = String(newStatus || '\x41\x63\x74\x69\x76\x65').trim();
@@ -211,18 +218,6 @@ class SheetEndpoint {
   }
   static logoutUser() {
     this.setCurrentUser(null);
-  }
-  static async fetchUsers() {
-    if (this.isReady()) {
-      const res = await this.get('\x67\x65\x74\x5f\x75\x73\x65\x72\x73');
-      if (res.ok && Array.isArray(res.users) && res.users.length > 0) {
-        this.setLocal(LOCAL_USERS_KEY, res.users);
-        try { localStorage.setItem('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', JSON.stringify(res.users)); } catch (_) {}
-        return res.users;
-      }
-    }
-    const local = this.getLocal(LOCAL_USERS_KEY, []);
-    return local.length ? local : this.getLocal('\x6d\x67\x2e\x75\x73\x65\x72\x73\x2e\x63\x61\x63\x68\x65\x2e\x76\x31', []);
   }
   static async addProduct(product) {
     const payload = {

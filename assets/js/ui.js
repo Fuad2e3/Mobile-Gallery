@@ -51,6 +51,21 @@ function icon(name, size = 20, stroke = 1.8) {
     stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round"
     aria-hidden="true">${path}</svg>`;
 }
+function paintIcons() {
+  document.querySelectorAll('\x5b\x64\x61\x74\x61\x2d\x69\x63\x6f\x6e\x5d').forEach(el => {
+    const name = el.dataset.icon;
+    const size = parseInt(el.dataset.iconSize, 10) || 20;
+    const stroke = parseFloat(el.dataset.iconStroke) || 1.8;
+    const svg = icon(name, size, stroke);
+    if (!svg) return;
+    if (el.querySelector('\x73\x76\x67')) return;
+    if (el.dataset.iconPos === '\x65\x6e\x64' || name === '\x61\x72\x72\x6f\x77') {
+      el.insertAdjacentHTML('\x62\x65\x66\x6f\x72\x65\x65\x6e\x64', '\x20' + svg);
+    } else {
+      el.insertAdjacentHTML('\x61\x66\x74\x65\x72\x62\x65\x67\x69\x6e', svg + (el.textContent.trim() ? '\x20' : ''));
+    }
+  });
+}
 function starRow(rating) {
   const r = Math.round(rating * 2) / 2;
   return `<span class="stars">${Array.from({ length: 5 }, (_, i) =>

@@ -292,8 +292,11 @@ function daysAgo(d) {
 const FREE_DELIVERY_OVER = 30000;
 const DELIVERY_CHARGE = 120;
 function discount(item) {
-  if (!item.oldPrice || item.oldPrice <= item.price) return 0;
-  return Math.round(((item.oldPrice - item.price) / item.oldPrice) * 100);
+  if (!item) return 0;
+  const price = Number(item.price || 0);
+  const oldPrice = Number(item.oldPrice || 0);
+  if (!oldPrice || oldPrice <= price) return 0;
+  return Math.round(((oldPrice - price) / oldPrice) * 100);
 }
 function initials(name) {
   return name.split('\x20').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
@@ -466,19 +469,29 @@ function updateAnyProduct(product) {
 function decrementLocalStock(lines) {
   if (!Array.isArray(lines) || !lines.length) return;
   const edits = getEditedProducts();
+  const customProds = readStore(STORE_KEY, []);
+  let customChanged = false;
   lines.forEach(l => {
     const prod = productById(l.id);
     if (prod) {
-      const currentStock = Number(prod.stock || 0);
+      const currentStock = Number(prod.stock !== undefined ? prod.stock : 0);
       const qty = Math.max(1, Number(l.qty || 1));
       const newStock = Math.max(0, currentStock - qty);
       edits[prod.id] = { ...prod, stock: newStock };
+      const cIdx = customProds.findIndex(p => p.id === prod.id);
+      if (cIdx > -1) {
+        customProds[cIdx] = { ...customProds[cIdx], stock: newStock };
+        customChanged = true;
+      }
     }
   });
   writeStore(EDITED_PROD_KEY, edits);
+  if (customChanged) writeStore(STORE_KEY, customProds);
 }
 function productById(id) {
-  return allProducts().find(p => p.id === id) || null;
+  if (!id) return null;
+  const cleanId = String(id).trim();
+  return allProducts().find(p => p.id === id || String(p.id).trim() === cleanId) || null;
 }
 function getOrders() {
   const raw = readStore(ORDERS_KEY, []);

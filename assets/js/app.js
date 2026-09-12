@@ -542,7 +542,7 @@ function initHome() {
     window.SheetEndpoint.fetchProducts().then(prods => {
       if (prods && prods.length > 0) {
         paintResults();
-        paintBrands();
+        buildFilters();
       }
     }).catch(() => {});
   }
