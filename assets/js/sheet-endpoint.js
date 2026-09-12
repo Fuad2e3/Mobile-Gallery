@@ -234,6 +234,15 @@ class SheetEndpoint {
     this.setLocal(LOCAL_PRODUCTS_KEY, added);
     if (this.isReady()) {
       const res = await this.request(payload);
+      if (res && res.ok && Array.isArray(res.images) && res.images.length) {
+        product.images = res.images;
+        const currentAdded = this.getLocal(LOCAL_PRODUCTS_KEY, []);
+        const target = currentAdded.find(p => p.id === product.id);
+        if (target) {
+          target.images = res.images;
+          this.setLocal(LOCAL_PRODUCTS_KEY, currentAdded);
+        }
+      }
       return res.ok ? { ok: true, product } : { ok: true, localOnly: true, note: res.error };
     }
     return { ok: true, localOnly: true };
@@ -249,7 +258,18 @@ class SheetEndpoint {
     }
     if (this.isReady()) {
       const res = await this.request({ action: '\x75\x70\x64\x61\x74\x65\x5f\x70\x72\x6f\x64\x75\x63\x74', ...product });
-      return { ok: true, sheetSync: res.ok, note: res.error };
+      if (res && res.ok && Array.isArray(res.images) && res.images.length) {
+        product.images = res.images;
+        if (typeof updateAnyProduct === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') {
+          updateAnyProduct(product);
+        } else {
+          const added = this.getLocal(LOCAL_PRODUCTS_KEY, []);
+          const idx = added.findIndex(p => p.id === product.id);
+          if (idx > -1) added[idx].images = res.images;
+          this.setLocal(LOCAL_PRODUCTS_KEY, added);
+        }
+      }
+      return { ok: true, sheetSync: res.ok, note: res.error, images: res.images };
     }
     return { ok: true, localOnly: true };
   }

@@ -400,6 +400,88 @@ function getStockStatus_(stock) {
   return 'In Stock';
 }
 
+/**
+ * Processes an array of images:
+ * - If an image is an http/https URL, preserves it.
+ * - If an image is a base64 Data URL, uploads it to a 'Mobile Gallery Products' folder
+ *   in Google Drive and replaces it with a direct, publicly viewable image URL.
+ */
+function processImagesAndUploadToDrive_(images, productTitle) {
+  if (!Array.isArray(images) || images.length === 0) return [];
+
+  var processed = [];
+  var driveFolder = null;
+
+  for (var i = 0; i < images.length; i++) {
+    var img = String(images[i] || '').trim();
+    if (!img) continue;
+
+    // Keep regular web URLs
+    if (img.indexOf('http://') === 0 || img.indexOf('https://') === 0) {
+      processed.push(img);
+      continue;
+    }
+
+    // Process base64 data URLs
+    if (img.indexOf('data:image/') === 0) {
+      try {
+        if (!driveFolder) {
+          driveFolder = getOrCreateDriveFolder_('Mobile Gallery Products');
+        }
+
+        var semicolonIdx = img.indexOf(';');
+        var commaIdx = img.indexOf(',');
+        if (semicolonIdx > 5 && commaIdx > semicolonIdx) {
+          var mimeType = img.substring(5, semicolonIdx);
+          var ext = 'png';
+          if (mimeType.indexOf('jpeg') > -1 || mimeType.indexOf('jpg') > -1) ext = 'jpg';
+          else if (mimeType.indexOf('webp') > -1) ext = 'webp';
+
+          var base64Data = img.substring(commaIdx + 1);
+          var decodedBytes = Utilities.base64Decode(base64Data);
+          var safeTitle = String(productTitle || 'product').replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
+          var fileName = safeTitle + '_' + Date.now() + '_' + (i + 1) + '.' + ext;
+          var blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
+
+          var file = driveFolder.createFile(blob);
+          try {
+            file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          } catch (_) {}
+
+          var fileId = file.getId();
+          var publicUrl = 'https://drive.google.com/thumbnail?id=' + fileId + '&sz=w1200';
+          processed.push(publicUrl);
+          continue;
+        }
+      } catch (uploadErr) {
+        Logger.log('Drive upload failed for image #' + (i + 1) + ': ' + uploadErr);
+      }
+    }
+
+    // Fallback if not base64 or upload failed
+    if (img.length < 35000) {
+      processed.push(img);
+    }
+  }
+
+  return processed;
+}
+
+/**
+ * Get existing Google Drive folder or create it if not found
+ */
+function getOrCreateDriveFolder_(folderName) {
+  var folders = DriveApp.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    return folders.next();
+  }
+  var newFolder = DriveApp.createFolder(folderName);
+  try {
+    newFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (_) {}
+  return newFolder;
+}
+
 function addProduct_(sheet, data) {
   var title = String(data.title || '').trim();
   var price = Number(data.price || 0);
@@ -413,9 +495,11 @@ function addProduct_(sheet, data) {
   var stockVal = Number(data.stock !== undefined ? data.stock : 5);
   var statusVal = getStockStatus_(stockVal);
 
+  // Automatically upload any base64 images to Google Drive and convert to public URLs
+  var processedImages = processImagesAndUploadToDrive_(data.images, title);
   var descWithImages = String(data.desc || '');
-  if (Array.isArray(data.images) && data.images.length > 0) {
-    descWithImages = '<!-- IMAGES:' + JSON.stringify(data.images) + ' -->\n' + descWithImages;
+  if (processedImages.length > 0) {
+    descWithImages = '<!-- IMAGES:' + JSON.stringify(processedImages) + ' -->\n' + descWithImages;
   }
 
   var prodRow = [
@@ -443,7 +527,8 @@ function addProduct_(sheet, data) {
   return json_({
     ok: true,
     message: 'Product added in sheet successfully',
-    productId: productId
+    productId: productId,
+    images: processedImages
   });
 }
 
@@ -475,9 +560,12 @@ function updateProduct_(sheet, data) {
   var stockVal = Number(data.stock !== undefined ? data.stock : 5);
   var statusVal = (String(data.status || '').toLowerCase() === 'deleted') ? 'Deleted' : getStockStatus_(stockVal);
 
+  // Automatically upload any base64 images to Google Drive and convert to public URLs
+  var prodTitle = String(data.title || targetTitle || 'product').trim();
+  var processedImages = processImagesAndUploadToDrive_(data.images, prodTitle);
   var descWithImages = String(data.desc || '');
-  if (Array.isArray(data.images) && data.images.length > 0) {
-    descWithImages = '<!-- IMAGES:' + JSON.stringify(data.images) + ' -->\n' + descWithImages;
+  if (processedImages.length > 0) {
+    descWithImages = '<!-- IMAGES:' + JSON.stringify(processedImages) + ' -->\n' + descWithImages;
   }
 
   var updatedRow = [
@@ -502,11 +590,11 @@ function updateProduct_(sheet, data) {
 
   if (foundRow > -1) {
     sheet.getRange(foundRow, COL_PROD_START, 1, COL_PROD_LEN).setValues([updatedRow]);
-    return json_({ ok: true, message: 'Product updated in sheet successfully', id: targetId });
+    return json_({ ok: true, message: 'Product updated in sheet successfully', id: targetId, images: processedImages });
   } else {
     // If not found in sheet yet (e.g. old built-in product), append it
     appendSectionRow_(sheet, COL_PROD_START, updatedRow);
-    return json_({ ok: true, message: 'Product saved and updated in sheet', id: targetId });
+    return json_({ ok: true, message: 'Product saved and updated in sheet', id: targetId, images: processedImages });
   }
 }
 
