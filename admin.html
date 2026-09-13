@@ -170,7 +170,7 @@
             </svg>
             ADMIN LOGGED IN
           </span>
-          <span style="font-size:.88rem;color:var(--muted)">admin@mobilegallery.com</span>
+          <span style="font-size:.88rem;color:var(--muted)">Administrator</span>
           <span id="sheetStatusPill" class="status-badge status-badge--confirmed" title="Cloud Database Live Status">
             🟢 Database Connected
           </span>
@@ -259,7 +259,7 @@
               <div class="form-grid">
                 <div class="field field--full">
                   <label for="f-title">Product name <span>*</span></label>
-                  <input class="input" id="f-title" name="title" placeholder="e.g. iPhone 15 Pro 256GB — Blue Titanium" maxlength="80">
+                  <input class="input" id="f-title" name="title" placeholder="Product name" maxlength="80">
                   <small>Include model, storage and colour — this is what customers search for.</small>
                   <span class="err"></span>
                 </div>
@@ -322,12 +322,12 @@
 
                 <div class="field">
                   <label for="f-battery">Battery</label>
-                  <input class="input" id="f-battery" name="battery" value="100% health" placeholder="e.g. 100% health">
+                  <input class="input" id="f-battery" name="battery" value="" placeholder="Battery health / capacity">
                 </div>
 
                 <div class="field">
                   <label for="f-chip">Processor</label>
-                  <input class="input" id="f-chip" name="chip" placeholder="e.g. A17 Pro">
+                  <input class="input" id="f-chip" name="chip" placeholder="Processor / Chip">
                 </div>
 
                 <div class="field field--full">
@@ -344,18 +344,18 @@
               <div class="form-grid">
                 <div class="field">
                   <label for="f-price">Selling price (৳) <span>*</span></label>
-                  <input class="input" id="f-price" name="price" type="number" min="0" placeholder="145000" inputmode="numeric">
+                  <input class="input" id="f-price" name="price" type="number" min="0" placeholder="Price" inputmode="numeric">
                   <span class="err"></span>
                 </div>
 
                 <div class="field">
                   <label for="f-oldPrice">Was price (৳)</label>
-                  <input class="input" id="f-oldPrice" name="oldPrice" type="number" min="0" placeholder="Optional — shows a discount badge" inputmode="numeric">
+                  <input class="input" id="f-oldPrice" name="oldPrice" type="number" min="0" placeholder="Optional old price" inputmode="numeric">
                 </div>
 
                 <div class="field">
                   <label for="f-stock">Units in stock <span>*</span></label>
-                  <input class="input" id="f-stock" name="stock" type="number" min="0" max="9999" value="5" inputmode="numeric">
+                  <input class="input" id="f-stock" name="stock" type="number" min="0" max="9999" value="1" inputmode="numeric">
                   <small>Customers cannot order more than this.</small>
                   <span class="err"></span>
                 </div>
