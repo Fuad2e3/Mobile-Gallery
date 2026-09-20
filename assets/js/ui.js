@@ -295,7 +295,7 @@ function createAuthModal_() {
           </div>
           <div class="field" style="margin-bottom:14px">
             <label for="loginEmail">Email address <span>*</span></label>
-            <input class="input" type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
+            <input class="input" type="email" id="loginEmail" name="email" placeholder="you@example.com" required>
             <span class="err"></span>
           </div>
           <div class="field" style="margin-bottom:18px">
@@ -320,17 +320,17 @@ function createAuthModal_() {
           </div>
           <div class="field" style="margin-bottom:12px">
             <label for="regName">Full Name <span>*</span></label>
-            <input class="input" type="text" id="regName" name="name" placeholder="Enter full name" required>
+            <input class="input" type="text" id="regName" name="name" placeholder="e.g. Tanvir Ahmed" required>
             <span class="err"></span>
           </div>
           <div class="field" style="margin-bottom:12px">
             <label for="regEmail">Email address <span>*</span></label>
-            <input class="input" type="email" id="regEmail" name="email" placeholder="Enter your email" required>
+            <input class="input" type="email" id="regEmail" name="email" placeholder="you@example.com" required>
             <span class="err"></span>
           </div>
           <div class="field" style="margin-bottom:12px">
             <label for="regPhone">Mobile Number (Bangladesh) <span>*</span></label>
-            <input class="input" type="tel" id="regPhone" name="phone" placeholder="01XXXXXXXXX" required>
+            <input class="input" type="tel" id="regPhone" name="phone" placeholder="01712345678" required>
             <span class="err"></span>
           </div>
           <div class="field" style="margin-bottom:18px">
