@@ -54,19 +54,19 @@ graph TD
 1. **Initial Load**: Client requests `index.html`. Browser loads design system `style.css` and scripts from Cloudflare edge.
 2. **Cache Check**: `SheetEndpoint.fetchProducts()` retrieves local catalogue instantly from `localStorage` (`mg.products.v1`).
 3. **Edge Synchronization**: In parallel, client queries `GET /api/products` (or POST `{ action: 'get_products' }`).
-4. **D1 Query**: Worker executes `SELECT * FROM products ORDER BY rowid DESC`, parses JSON columns (`images`, `tags`), and returns product entities.
+4. **D1 Query**: Pages Function executes `SELECT * FROM products ORDER BY rowid DESC`, parses JSON columns (`images`, `tags`), and returns product entities.
 5. **UI Update**: Frontend merges remote data with local state and updates storefront DOM seamlessly.
 
 ### 3.2 Product Photo Upload & Optimization Flow (R2)
 1. **Admin Selection**: Admin selects or drag-and-drops raw product images (5–15 MB each) in `admin.html`.
 2. **In-Browser Compression**: `Optimization.batch()` compresses images using HTML5 Canvas to 720×720 WebP (<60 KB), saving 95%+ bandwidth.
 3. **R2 Upload**: Compressed WebP data is transmitted via `POST /api/upload`.
-4. **Bucket Storage**: Cloudflare Worker receives the binary buffer and writes to `env.PHOTOS_BUCKET.put('products/mg_...webp', buffer, { httpMetadata })`.
-5. **Edge URL Delivery**: Worker returns the persistent URL `/api/images/products/mg_...webp`, which is stored in the product record.
+4. **Bucket Storage**: Pages Function receives the binary buffer and writes to `env.PHOTOS_BUCKET.put('products/mg_...webp', buffer, { httpMetadata })`.
+5. **Edge URL Delivery**: Pages Function returns the persistent URL `/api/images/products/mg_...webp`, which is stored in the product record.
 
 ### 3.3 Checkout & Stock Decrement Transaction Flow
 1. **Order Submission**: Customer places an order on `checkout.html` via `SheetEndpoint.placeOrder()`.
-2. **Batch Transaction**: Worker invokes `env.DB.batch([...])`:
+2. **Batch Transaction**: Pages Function invokes `env.DB.batch([...])`:
    - Inserts order record into `orders` table.
    - For every item in the order, executes:
      ```sql

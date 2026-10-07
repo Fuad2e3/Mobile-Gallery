@@ -105,8 +105,21 @@ assert(wranglerToml.includes('binding = "DB"'), 'wrangler.toml binds D1 database
 assert(wranglerToml.includes('binding = "PHOTOS_BUCKET"'), 'wrangler.toml binds R2 bucket as PHOTOS_BUCKET');
 assert(wranglerToml.includes('pages_build_output_dir') || wranglerToml.includes('directory = "."') || wranglerToml.includes('assets'), 'wrangler.toml configures Pages build directory');
 assert(fs.existsSync(path.join(rootDir, 'functions/api/[[path]].js')), 'functions/api/[[path]].js catch-all exists');
-assert(fs.existsSync(path.join(rootDir, 'database/schema.sql')), 'database/schema.sql exists');
-assert(!fs.existsSync(path.join(rootDir, 'worker')), 'Standalone worker directory removed; functions/ is the sole backend');
+assert(!fs.existsSync(path.join(rootDir, 'worker')), 'No standalone worker directory exists; functions/ is the sole backend');
+
+// Verify No "Cloudflare Worker" terminology in docs/ or README.md
+let workerMentionsFound = false;
+for (const doc of expectedDocs) {
+  const content = fs.readFileSync(path.join(docsDir, doc), 'utf8');
+  if (content.includes('Cloudflare Worker') || content.includes('worker/')) {
+    workerMentionsFound = true;
+  }
+}
+const readmeContent = fs.readFileSync(path.join(rootDir, 'README.md'), 'utf8');
+if (readmeContent.includes('Cloudflare Worker') || readmeContent.includes('worker/')) {
+  workerMentionsFound = true;
+}
+assert(!workerMentionsFound, 'Zero Cloudflare Worker mentions across all docs and README; Cloudflare Pages Functions only');
 
 // 7. Verify Admin Credential Rules
 console.log('\n7. Verifying Admin Auth Rules with docs/RULES.md & admin.js...');

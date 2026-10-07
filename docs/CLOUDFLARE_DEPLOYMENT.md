@@ -1,6 +1,6 @@
 # 🚀 Cloudflare Deployment Guide — Mobile Gallery
 
-This manual provides the complete, authoritative operational instructions for deploying and running **Mobile Gallery** across **Cloudflare Pages**, **Cloudflare Workers**, **Cloudflare D1 (Database)**, and **Cloudflare R2 (Photo Storage)**.
+This manual provides the complete, authoritative operational instructions for deploying and running **Mobile Gallery** on **Cloudflare Pages (with Pages Functions)**, **Cloudflare D1 (Database)**, and **Cloudflare R2 (Photo Storage)**.
 
 ---
 
@@ -98,7 +98,7 @@ npx wrangler pages deploy . --project-name=mobile-gallery
 
 #### Option B: Git-Integrated Deployment via Cloudflare Dashboard
 1. Log in to [Cloudflare Dashboard](https://dash.cloudflare.com/).
-2. Navigate to **Workers & Pages** ➔ **Create** ➔ **Pages** ➔ **Connect to Git**.
+2. Navigate to **Pages** ➔ **Create a project** ➔ **Connect to Git**.
 3. Select your `Mobile-Gallery` GitHub repository.
 4. Set Build Settings:
    - **Framework preset**: None

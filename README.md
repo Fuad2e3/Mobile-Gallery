@@ -2,7 +2,7 @@
 
 A modern, high-performance, and responsive e-commerce platform for smartphones, tablets, and gadgets.
 
-Built for global edge speed with **Cloudflare Pages & Workers**, **Cloudflare D1 SQL Database**, and **Cloudflare R2 Object Storage**.
+Built for global edge speed with **Cloudflare Pages**, **Cloudflare Pages Functions**, **Cloudflare D1 SQL Database**, and **Cloudflare R2 Object Storage**.
 
 ---
 
@@ -19,7 +19,7 @@ Built for global edge speed with **Cloudflare Pages & Workers**, **Cloudflare D1
 ## 🛠️ Tech Stack
 
 - **Frontend**: HTML5, Modern CSS (Design Tokens, Responsive CSS Grid/Flexbox), Vanilla JavaScript (ES6+ Modules)
-- **Edge Backend**: Cloudflare Workers & Cloudflare Pages Functions
+- **Edge Backend**: Cloudflare Pages Functions (in `functions/api/`)
 - **Database**: Cloudflare D1 (Tables: `users`, `products`, `orders`)
 - **Media Storage**: Cloudflare R2 (`mobile-gallery-photos`) with immutable edge caching
 - **Fallback / Local Cache**: Browser `localStorage` for instant offline and slow-network resilience

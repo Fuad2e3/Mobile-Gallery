@@ -7,7 +7,7 @@ This document establishes the mandatory engineering standards, architectural inv
 ## 1. Architectural Invariants
 
 1. **Pure Vanilla Core**: No heavyweight client frameworks (React, Vue, Angular). All UI logic must be implemented using modern Vanilla ES6+ JavaScript, native DOM APIs, and CSS Design Tokens.
-2. **Edge-First Backend**: All server logic must be compatible with the Cloudflare Workers / Pages runtime (V8 isolates without Node.js native dependencies).
+2. **Edge-First Backend**: All server logic must be compatible with the Cloudflare Pages Functions edge runtime (V8 isolates without Node.js native dependencies).
 3. **Dual-Layer Cache Resilience**: Storefront operations must function smoothly even during network drops by utilizing optimistic browser `localStorage` fallbacks.
 
 ---

@@ -16,7 +16,7 @@ gantt
     section Phase 2: Cloudflare Edge
     D1 SQL Database & Schema      :done, m3, 2026-09-01, 2026-09-15
     R2 Photo Storage & Upload     :done, m4, 2026-09-16, 2026-09-30
-    Worker API & Pages Functions  :done, m5, 2026-10-01, 2026-10-07
+    Pages Functions API           :done, m5, 2026-10-01, 2026-10-07
     section Phase 3: Future Roadmap
     bKash/Nagad Merchant Gateway  :active, m6, 2026-10-15, 2026-11-01
     SMS Order Tracking Alerts     :m7, 2026-11-02, 2026-11-20
@@ -68,7 +68,7 @@ gantt
 ## 3. Upcoming Roadmap (Milestones 6 & Beyond)
 
 ### 📌 Milestone 6: Automated Digital Payment Gateway Integration
-- [ ] Implement bKash Checkout URL-based payment API in Cloudflare Worker.
+- [ ] Implement bKash Checkout URL-based payment API in Cloudflare Pages Functions.
 - [ ] Implement Nagad Merchant API callback verification.
 - [ ] Auto-mark orders as `Paid` upon successful webhook callback from payment provider.
 

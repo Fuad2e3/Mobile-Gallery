@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * Mobile Gallery — Cloudflare Worker & Pages API Router
+ * Mobile Gallery — Cloudflare Pages Functions API Router
  * ============================================================================
  * Fullstack API handler connecting:
  *   - Database: Cloudflare D1 (Tables: users, products, orders)

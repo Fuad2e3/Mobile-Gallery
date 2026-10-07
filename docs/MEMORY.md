@@ -57,7 +57,7 @@ This document serves as the persistent memory, architectural history, Architectu
 - `mg.users.v1`: Cached registered customer accounts.
 - `mg.auth.user.v1`: Logged-in customer session.
 - `mg.sheet.url`: Google Apps Script fallback URL.
-- `mg.cloudflare.url`: Configurable remote Cloudflare Worker URL override.
+- `mg.cloudflare.url`: Configurable remote Cloudflare Pages API URL override.
 
 ---
 
