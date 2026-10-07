@@ -27,7 +27,7 @@ This document establishes the mandatory engineering standards, architectural inv
   - `src/js/ui.js` — Modal management, toasts, theme toggler, and customer auth.
 
 ### 2.2 Production Compilation (`assets/js/`)
-- **NEVER** edit files in `assets/js/` or `tools/sheet-endpoint.js` directly.
+- **NEVER** edit files in `assets/js/` directly.
 - Whenever code in `src/js/` is changed, you **MUST** run:
   ```bash
   npm run build

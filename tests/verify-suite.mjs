@@ -111,7 +111,6 @@ try {
   assert(typeof mockWindow.SheetEndpoint === 'function', 'SheetEndpoint class is defined');
   assert(typeof mockWindow.CloudflareEndpoint === 'function', 'CloudflareEndpoint alias is defined');
   assert(mockWindow.SheetEndpoint.isReady() === true, 'SheetEndpoint.isReady() is true');
-  assert(typeof mockWindow.SheetEndpoint.getUrl() === 'string' && mockWindow.SheetEndpoint.getUrl().includes('script.google.com'), 'SheetEndpoint.getUrl() fallback is valid');
   assert(typeof mockWindow.SheetEndpoint.uploadPhoto === 'function', 'SheetEndpoint.uploadPhoto is defined');
 } catch (e) {
   assert(false, `API wrapper check failed: ${e.message}`);

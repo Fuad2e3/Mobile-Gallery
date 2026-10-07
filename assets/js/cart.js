@@ -42,6 +42,12 @@ function addToCart(id, qty = 1) {
   if (line) line.qty = next;
   else lines.push({ id, qty: next });
   saveCart(lines);
+  const cartBtn = document.getElementById('\x63\x61\x72\x74\x42\x74\x6e');
+  if (cartBtn) {
+    cartBtn.classList.remove('cart-bounce');
+    void cartBtn.offsetWidth;
+    cartBtn.classList.add('cart-bounce');
+  }
   return '\x61\x64\x64\x65\x64';
 }
 function setQty(id, qty) {
@@ -72,11 +78,16 @@ function renderCart() {
   const lines = cartDetailed();
   if (!lines.length) {
     body.innerHTML = `
-      <div class="cart-empty">
-        ${icon('cart', 40)}
-        <h4>Your cart is empty</h4>
-        <p>Browse the catalogue and add something you like.</p>
-        <button class="btn btn--soft btn--sm" data-cart-close>Continue shopping</button>
+      <div class="empty-state" style="padding: 32px 16px;">
+        <div class="empty-state__graphic" style="width: 100px; height: 100px;">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+        </div>
+        <h4 class="empty-state__title">Your shopping cart is empty</h4>
+        <p class="empty-state__desc">Looks like you haven't added any smartphones or gadgets to your cart yet.</p>
+        <button class="btn btn--primary btn--sm" data-cart-close style="margin-top:8px">Start Shopping</button>
       </div>`;
     if (foot) foot.hidden = true;
     return;

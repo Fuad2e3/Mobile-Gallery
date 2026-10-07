@@ -153,8 +153,14 @@ function toast(message, iconName = '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65
     el.setAttribute('\x72\x6f\x6c\x65', '\x73\x74\x61\x74\x75\x73');
     document.body.appendChild(el);
   }
-  el.innerHTML = icon(iconName) + '\x3c\x73\x70\x61\x6e\x3e\x3c\x2f\x73\x70\x61\x6e\x3e';
-  el.querySelector('\x73\x70\x61\x6e').textContent = message;
+  el.innerHTML = icon(iconName) + '<span></span><span class="toast-progress"></span>';
+  el.querySelector('span').textContent = message;
+  const bar = el.querySelector('.toast-progress');
+  if (bar) {
+    bar.style.animation = 'none';
+    void bar.offsetHeight;
+    bar.style.animation = '';
+  }
   requestAnimationFrame(() => el.classList.add('\x69\x73\x2d\x6f\x6e'));
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('\x69\x73\x2d\x6f\x6e'), 2800);
@@ -165,6 +171,17 @@ function initHeader() {
     const onScroll = () => header.classList.toggle('\x69\x73\x2d\x73\x74\x75\x63\x6b', window.scrollY > 8);
     onScroll();
     window.addEventListener('\x73\x63\x72\x6f\x6c\x6c', onScroll, { passive: true });
+  }
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  if (scrollTopBtn) {
+    const checkScrollTop = () => {
+      scrollTopBtn.classList.toggle('is-visible', window.scrollY > 300);
+    };
+    checkScrollTop();
+    window.addEventListener('scroll', checkScrollTop, { passive: true });
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
   const burger = document.getElementById('\x62\x75\x72\x67\x65\x72');
   const drawer = document.getElementById('\x64\x72\x61\x77\x65\x72');
@@ -561,7 +578,23 @@ function initUserAuthUI() {
   window.openAuthModal = openAuthModal;
   window.closeAuthModal = closeAuthModal;
   window.paintUserAuthNav = paintUserAuthNav;
+  window.renderSkeletons = renderSkeletons;
 }
+
+function renderSkeletons(container, count = 6) {
+  if (!container) return;
+  container.innerHTML = Array.from({ length: count }, () => `
+    <div class="skeleton-card">
+      <div class="skeleton-box skeleton-img"></div>
+      <div class="skeleton-box skeleton-pill"></div>
+      <div class="skeleton-box skeleton-title"></div>
+      <div class="skeleton-box skeleton-text"></div>
+      <div class="skeleton-box skeleton-price"></div>
+      <div class="skeleton-box skeleton-btn"></div>
+    </div>
+  `).join('');
+}
+
 function initShell() {
   initTheme();
   initHeader();

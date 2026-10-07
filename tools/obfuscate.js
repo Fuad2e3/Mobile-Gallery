@@ -101,9 +101,7 @@ function run() {
   let successCount = 0;
   for (const file of files) {
     const srcFile = path.join(SRC_DIR, file);
-    const targets = (file === 'sheet-endpoint.js')
-      ? [path.resolve(__dirname, '../tools/sheet-endpoint.js'), path.join(DIST_DIR, file)]
-      : [path.join(DIST_DIR, file)];
+    const targets = [path.join(DIST_DIR, file)];
 
     const sourceCode = fs.readFileSync(srcFile, 'utf8');
 

@@ -65,7 +65,7 @@ This document serves as the persistent memory, architectural history, Architectu
 
 1. **Source Code vs. Production Assets**:
    - Primary editable code lives in `src/js/`.
-   - Never manually modify files in `assets/js/` or `tools/sheet-endpoint.js`. Always run `npm run build` (`node tools/obfuscate.js`) to recompile.
+   - Never manually modify files in `assets/js/`. Always run `npm run build` (`node tools/obfuscate.js`) to recompile.
 2. **Local vs. Remote Cloudflare Execution**:
    - `npx wrangler d1 execute mobile-gallery-db --local --file=./database/schema.sql` interacts with SQLite in `.wrangler/state/v3/d1`.
    - `npx wrangler d1 execute mobile-gallery-db --remote --file=./database/schema.sql` interacts with the live production Cloudflare D1 database.
