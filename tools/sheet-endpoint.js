@@ -4,8 +4,24 @@ const LOCAL_PRODUCTS_KEY = '\x6d\x67\x2e\x70\x72\x6f\x64\x75\x63\x74\x73\x2e\x76
 const LOCAL_ORDERS_KEY   = '\x6d\x67\x2e\x6f\x72\x64\x65\x72\x73\x2e\x76\x31';
 const LOCAL_AUTH_KEY     = '\x6d\x67\x2e\x61\x75\x74\x68\x2e\x75\x73\x65\x72\x2e\x76\x31';
 class SheetEndpoint {
+  static cloudflareUrl = '\x2f\x61\x70\x69';
   static url = '\x68\x74\x74\x70\x73\x3a\x2f\x2f\x73\x63\x72\x69\x70\x74\x2e\x67\x6f\x6f\x67\x6c\x65\x2e\x63\x6f\x6d\x2f\x6d\x61\x63\x72\x6f\x73\x2f\x73\x2f\x41\x4b\x66\x79\x63\x62\x79\x71\x43\x47\x5f\x50\x6e\x6b\x6c\x46\x43\x38\x67\x55\x75\x44\x34\x30\x66\x6c\x46\x39\x50\x78\x57\x6d\x30\x77\x7a\x72\x4f\x56\x63\x62\x41\x71\x6a\x53\x67\x58\x76\x51\x75\x65\x78\x79\x31\x56\x34\x6d\x4e\x75\x30\x59\x67\x37\x67\x55\x58\x56\x64\x4f\x7a\x65\x70\x34\x2f\x65\x78\x65\x63';
+  static getCloudflareUrl() {
+    try {
+      if (typeof localStorage !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64') {
+        const saved = localStorage.getItem('\x6d\x67\x2e\x63\x6c\x6f\x75\x64\x66\x6c\x61\x72\x65\x2e\x75\x72\x6c');
+        if (saved && typeof saved === '\x73\x74\x72\x69\x6e\x67' && saved.trim()) {
+          return saved.trim().replace(/\/+$/, '');
+        }
+      }
+      if (typeof window !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64' && window.location && window.location.protocol && window.location.protocol.startsWith('\x68\x74\x74\x70')) {
+        return (this.cloudflareUrl || '\x2f\x61\x70\x69').trim().replace(/\/+$/, '');
+      }
+    } catch (_) {}
+    return null;
+  }
   static isReady() {
+    if (this.getCloudflareUrl()) return true;
     const u = this.getUrl();
     return typeof u === '\x73\x74\x72\x69\x6e\x67' && u.startsWith('\x68\x74\x74\x70\x73\x3a\x2f\x2f\x73\x63\x72\x69\x70\x74\x2e\x67\x6f\x6f\x67\x6c\x65\x2e\x63\x6f\x6d\x2f\x6d\x61\x63\x72\x6f\x73\x2f\x73\x2f');
   }
@@ -21,51 +37,102 @@ class SheetEndpoint {
     return (this.url || '').trim();
   }
   static async request(payload) {
-    const endpoint = this.getUrl();
-    if (!endpoint) {
-      return { ok: false, error: '\x53\x68\x65\x65\x74\x20\x65\x6e\x64\x70\x6f\x69\x6e\x74\x20\x55\x52\x4c\x20\x6e\x6f\x74\x20\x63\x6f\x6e\x66\x69\x67\x75\x72\x65\x64\x2e' };
-    }
-    try {
-      const res = await fetch(endpoint, {
-        method: '\x50\x4f\x53\x54',
-        headers: { '\x43\x6f\x6e\x74\x65\x6e\x74\x2d\x54\x79\x70\x65': '\x74\x65\x78\x74\x2f\x70\x6c\x61\x69\x6e\x3b\x63\x68\x61\x72\x73\x65\x74\x3d\x75\x74\x66\x2d\x38' },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        try {
+    const cfUrl = this.getCloudflareUrl();
+    if (cfUrl) {
+      try {
+        const res = await fetch(cfUrl, {
+          method: '\x50\x4f\x53\x54',
+          headers: { '\x43\x6f\x6e\x74\x65\x6e\x74\x2d\x54\x79\x70\x65': '\x61\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x2f\x6a\x73\x6f\x6e' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
           const json = await res.json();
           return json;
-        } catch (parseErr) {
-          return { ok: true, note: '\x52\x65\x73\x70\x6f\x6e\x73\x65\x20\x72\x65\x63\x65\x69\x76\x65\x64' };
         }
-      } else {
-        return { ok: false, status: res.status, error: res.statusText };
+      } catch (cfErr) {
       }
-    } catch (err) {
-      console.warn('\x53\x68\x65\x65\x74\x45\x6e\x64\x70\x6f\x69\x6e\x74\x3a\x20\x4e\x65\x74\x77\x6f\x72\x6b\x20\x72\x65\x71\x75\x65\x73\x74\x20\x66\x61\x69\x6c\x65\x64\x2c\x20\x75\x73\x69\x6e\x67\x20\x6c\x6f\x63\x61\x6c\x20\x66\x61\x6c\x6c\x62\x61\x63\x6b\x2e', err);
-      return { ok: false, error: err.message, networkError: true };
     }
+    const endpoint = this.getUrl();
+    if (endpoint) {
+      try {
+        const res = await fetch(endpoint, {
+          method: '\x50\x4f\x53\x54',
+          headers: { '\x43\x6f\x6e\x74\x65\x6e\x74\x2d\x54\x79\x70\x65': '\x74\x65\x78\x74\x2f\x70\x6c\x61\x69\x6e\x3b\x63\x68\x61\x72\x73\x65\x74\x3d\x75\x74\x66\x2d\x38' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          try {
+            return await res.json();
+          } catch (parseErr) {
+            return { ok: true, note: '\x52\x65\x73\x70\x6f\x6e\x73\x65\x20\x72\x65\x63\x65\x69\x76\x65\x64' };
+          }
+        } else {
+          return { ok: false, status: res.status, error: res.statusText };
+        }
+      } catch (err) {
+        console.warn('\x53\x68\x65\x65\x74\x45\x6e\x64\x70\x6f\x69\x6e\x74\x3a\x20\x4e\x65\x74\x77\x6f\x72\x6b\x20\x72\x65\x71\x75\x65\x73\x74\x20\x66\x61\x69\x6c\x65\x64\x2c\x20\x75\x73\x69\x6e\x67\x20\x6c\x6f\x63\x61\x6c\x20\x66\x61\x6c\x6c\x62\x61\x63\x6b\x2e', err);
+        return { ok: false, error: err.message, networkError: true };
+      }
+    }
+    return { ok: false, error: '\x45\x6e\x64\x70\x6f\x69\x6e\x74\x20\x55\x52\x4c\x20\x6e\x6f\x74\x20\x63\x6f\x6e\x66\x69\x67\x75\x72\x65\x64\x2e', networkError: true };
   }
   static async get(action) {
-    const endpoint = this.getUrl();
-    if (!endpoint) {
-      return { ok: false, error: '\x53\x68\x65\x65\x74\x20\x65\x6e\x64\x70\x6f\x69\x6e\x74\x20\x55\x52\x4c\x20\x6e\x6f\x74\x20\x63\x6f\x6e\x66\x69\x67\x75\x72\x65\x64\x2e' };
-    }
-    try {
-      const urlWithAction = endpoint + (endpoint.includes('\x3f') ? '\x26' : '\x3f') + '\x61\x63\x74\x69\x6f\x6e\x3d' + encodeURIComponent(action);
-      const res = await fetch(urlWithAction, { method: '\x47\x45\x54' });
-      if (res.ok) {
-        return await res.json();
+    const cfUrl = this.getCloudflareUrl();
+    if (cfUrl) {
+      try {
+        const urlWithAction = cfUrl + (cfUrl.includes('\x3f') ? '\x26' : '\x3f') + '\x61\x63\x74\x69\x6f\x6e\x3d' + encodeURIComponent(action);
+        const res = await fetch(urlWithAction, { method: '\x47\x45\x54' });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (cfErr) {
       }
-    } catch (err) {
-      console.warn(`SheetEndpoint: GET ${action} failed, attempting POST fallback:`, err);
+    }
+    const endpoint = this.getUrl();
+    if (endpoint) {
+      try {
+        const urlWithAction = endpoint + (endpoint.includes('\x3f') ? '\x26' : '\x3f') + '\x61\x63\x74\x69\x6f\x6e\x3d' + encodeURIComponent(action);
+        const res = await fetch(urlWithAction, { method: '\x47\x45\x54' });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (err) {
+        console.warn(`SheetEndpoint: GET ${action} failed, attempting POST fallback:`, err);
+      }
     }
     return await this.request({ action });
   }
-  static async ping() {
-    if (!this.isReady()) {
-      return { ok: false, error: '\x45\x6e\x64\x70\x6f\x69\x6e\x74\x20\x55\x52\x4c\x20\x6e\x6f\x74\x20\x63\x6f\x6e\x66\x69\x67\x75\x72\x65\x64\x2e' };
+  static async uploadPhoto(photo, filename = '\x70\x68\x6f\x74\x6f\x2e\x77\x65\x62\x70') {
+    const cfUrl = this.getCloudflareUrl() || '\x2f\x61\x70\x69';
+    const uploadUrl = (cfUrl.endsWith('\x2f\x61\x70\x69') ? cfUrl : cfUrl + '\x2f\x61\x70\x69') + '\x2f\x75\x70\x6c\x6f\x61\x64';
+    try {
+      let res;
+      if (typeof photo === '\x73\x74\x72\x69\x6e\x67') {
+        res = await fetch(uploadUrl, {
+          method: '\x50\x4f\x53\x54',
+          headers: { '\x43\x6f\x6e\x74\x65\x6e\x74\x2d\x54\x79\x70\x65': '\x61\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x2f\x6a\x73\x6f\x6e' },
+          body: JSON.stringify({ image: photo, filename })
+        });
+      } else {
+        const formData = new FormData();
+        formData.append('\x66\x69\x6c\x65', photo, filename);
+        res = await fetch(uploadUrl, {
+          method: '\x50\x4f\x53\x54',
+          body: formData
+        });
+      }
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.ok && data.url) {
+          return { ok: true, url: data.url, key: data.key, size: data.size };
+        }
+      }
+    } catch (err) {
+      console.warn('\x43\x6c\x6f\x75\x64\x66\x6c\x61\x72\x65\x20\x52\x32\x20\x70\x68\x6f\x74\x6f\x20\x75\x70\x6c\x6f\x61\x64\x20\x66\x61\x69\x6c\x65\x64\x2c\x20\x75\x73\x69\x6e\x67\x20\x6c\x6f\x63\x61\x6c\x20\x66\x61\x6c\x6c\x62\x61\x63\x6b\x3a', err);
     }
+    return { ok: false, url: typeof photo === '\x73\x74\x72\x69\x6e\x67' ? photo : '', fallback: true };
+  }
+  static async ping() {
     const start = Date.now();
     try {
       const res = await this.get('\x70\x69\x6e\x67');
@@ -409,6 +476,7 @@ class SheetEndpoint {
 }
 if (typeof window !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64') {
   window.SheetEndpoint = SheetEndpoint;
+  window.CloudflareEndpoint = SheetEndpoint;
 }
 if (typeof module !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64' && module.exports) {
   module.exports = SheetEndpoint;

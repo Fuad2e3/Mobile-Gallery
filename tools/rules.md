@@ -9,17 +9,19 @@
 - **প্রজেক্টের নাম**: Mobile Gallery (স্মার্টফোন ও গ্যাজেট অনলাইন স্টোর)
 - **প্রযুক্তি স্ট্যাক**: 
   - **Frontend**: Vanilla HTML5, Modern CSS (Design Tokens, Responsive CSS Grid/Flexbox, Dark/Light theme), Pure JavaScript (ES6+ Modules, Classes, Event Driven Architecture).
-  - **Database & Backend**: **Google Sheets** (Google Apps Script Web App API-এর মাধ্যমে পরিচালিত)।
-  - **Fallback / Local Cache**: Browser `localStorage` (অফলাইন বা স্লো নেটওয়ার্কেও যেন সাইট দ্রুত চলে এবং ইনস্ট্যান্ট ইউজার এক্সপেরিয়েন্স পাওয়া যায়)।
+  - **Cloud Hosting & Edge Backend**: **Cloudflare Pages Functions** (`functions/api/[[path]].js`, `functions/api/_api.js`)।
+  - **Database**: **Cloudflare D1 SQL Database** (`database/schema.sql`, `database/seed.sql`) — `users`, `products`, `orders` টেবিল ভিত্তিক পরিচালিত।
+  - **Photo Storage**: **Cloudflare R2 Bucket** (`mobile-gallery-photos`) — ক্লায়েন্ট-সাইডে স্বয়ংক্রিয়ভাবে কম্প্রেসড WebP (<60KB) ছবি সরাসরি R2-তে সংরক্ষিত হয় এবং এজ ক্যাশে পরিবেশিত হয়।
+  - **Fallback / Local Cache**: Browser `localStorage` (অফলাইন বা স্লো নেটওয়ার্কেও যেন সাইট দ্রুত চলে এবং ইনস্ট্যান্ট ইউজার এক্সপেরিয়েন্স পাওয়া যায়) এবং Google Sheets ফলব্যাক।
 - **ডিরেক্টরি ও ফাইল কাঠামো**:
+  - `functions/`: Cloudflare Pages Functions (`functions/api/[[path]].js`, `functions/api/_api.js`) — সম্পূর্ণ এজ ব্যাকএন্ড API রাউটার।
+  - `database/`: Cloudflare D1 ডাটাবেজ স্কিমা ও সিড ডেটা (`database/schema.sql`, `database/seed.sql`)।
+  - `wrangler.toml`: Cloudflare ডিপ্লয়মেন্ট কনফিগারেশন ও D1/R2 বাইন্ডিংস।
+  - `docs/`: সম্পূর্ণ প্রজেক্ট আর্কিটেকচার ও ডিপ্লয়মেন্ট গাইড (`ARCHITECTURE.md`, `CLOUDFLARE_DEPLOYMENT.md`, ইত্যাদি)।
   - `src/js/`: সমস্ত মূল রিডেবল ও আন-অবফাসকেটেড সোর্স কোড (`admin.js`, `app.js`, `cart.js`, `checkout.js`, `data.js`, `orders.js`, `ui.js`, `sheet-endpoint.js`)।
   - `assets/js/`: প্রোডাকশন গ্রেড অবফাসকেটেড ও সুরক্ষিত জাভাস্ক্রিপ্ট ফাইলসমূহ।
-  - `tools/`: গুগল শিট ব্যাকএন্ড ও অটোমেশন টুলস ডিরেক্টরি।
-    - `tools/sheet-endpoint.gs`: Google Apps Script সার্ভার কোড (একক শিট ব্যাকএন্ড)।
-    - `tools/sheet-endpoint.js`: ক্লায়েন্ট সাইড এপিআই র‍্যাপার ক্লাস (`SheetEndpoint`)।
-    - `tools/inject-endpoint.py`: ডিপ্লয়মেন্টে অটোমেটিক URL ইনজেকশন স্ক্রিপ্ট।
-    - `tools/obfuscate.js`: সোর্স কোড সুরক্ষা ও অবফাসকেশন কম্পাইলার।
-    - `tools/rules.md`: এই মাস্টার রুলস ও প্রজেক্ট ট্র্যাকিং লগ।
+  - `tests/`: স্বয়ংক্রিয় টেস্ট স্যুট (`check-project.mjs`, `verify-suite.mjs`, `test-cloudflare-api.mjs`, `test-docs-integrity.mjs`)।
+  - `tools/`: কোড অবফাসকেশন ও সিড জেনারেটর টুলস (`obfuscate.js`, `generate-seed.js`)।
 
 ---
 

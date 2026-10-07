@@ -348,20 +348,36 @@ function initAdminPhotos() {
       return toast('\x4d\x61\x78\x69\x6d\x75\x6d\x20\x35\x20\x70\x68\x6f\x74\x6f\x73\x20\x61\x6c\x6c\x6f\x77\x65\x64\x20\x70\x65\x72\x20\x70\x72\x6f\x64\x75\x63\x74', '\x63\x6c\x6f\x73\x65');
     }
     const filesToProcess = Array.from(files).slice(0, remainingSlots);
-    toast(`⚡ Optimizing ${filesToProcess.length} photo(s) for minimal cloud storage...`, '\x63\x68\x65\x63\x6b');
+    toast(`⚡ Optimizing ${filesToProcess.length} photo(s) & uploading to Cloudflare R2...`, '\x63\x68\x65\x63\x6b');
     try {
       const results = await Optimization.batch(filesToProcess);
       const totalOrig = results.reduce((sum, r) => sum + r.originalBytes, 0);
       const totalOpt = results.reduce((sum, r) => sum + r.optimizedBytes, 0);
       const avgSavings = totalOrig > 0 ? Math.round(((totalOrig - totalOpt) / totalOrig) * 100) : 0;
+      const finalImageUrls = [];
+      let r2Uploaded = 0;
+      for (const r of results) {
+        if (window.SheetEndpoint && typeof window.SheetEndpoint.uploadPhoto === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') {
+          try {
+            const up = await window.SheetEndpoint.uploadPhoto(r.dataUrl);
+            if (up && up.ok && up.url) {
+              finalImageUrls.push(up.url);
+              r2Uploaded++;
+              continue;
+            }
+          } catch (_) {}
+        }
+        finalImageUrls.push(r.dataUrl);
+      }
       draft.images = draft.images || [];
-      draft.images.push(...results.map(r => r.dataUrl));
+      draft.images.push(...finalImageUrls);
       renderAdminImagePreviews();
       paintPreview();
       const perPhotoKB = results.length ? Math.round((totalOpt / results.length) / 1024) : 0;
+      const r2Tag = r2Uploaded > 0 ? ` [${r2Uploaded} saved to R2]` : '';
       const savingsMsg = avgSavings > 0
-        ? `${results.length} photo(s) auto-optimized! Saved ${avgSavings}% space (~${perPhotoKB} KB/photo)`
-        : `${results.length} photo(s) added!`;
+        ? `${results.length} photo(s) optimized! Saved ${avgSavings}% space (~${perPhotoKB} KB/photo)${r2Tag}`
+        : `${results.length} photo(s) added!${r2Tag}`;
       toast(savingsMsg, '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65');
     } catch (err) {
       console.error('\x4f\x70\x74\x69\x6d\x69\x7a\x61\x74\x69\x6f\x6e\x20\x65\x72\x72\x6f\x72\x3a', err);

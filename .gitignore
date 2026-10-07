@@ -1,6 +1,6 @@
 node_modules/
 package-lock.json
-package.json
+.wrangler/
 .DS_Store
 *.log
 
@@ -11,4 +11,4 @@ package.json
 
 # Private source code (only obfuscated assets/ are published to GitHub)
 src/
-.idea/
+.idea/

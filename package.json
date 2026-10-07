@@ -1,0 +1,30 @@
+{
+  "name": "mobile-gallery",
+  "version": "2.0.0",
+  "description": "Mobile Gallery — Fullstack smartphone & gadget store on Cloudflare Pages, D1 and R2",
+  "scripts": {
+    "dev": "wrangler pages dev . --d1 DB=mobile-gallery-db --r2 PHOTOS_BUCKET=mobile-gallery-photos",
+    "build": "node tools/obfuscate.js",
+    "test": "node tests/check-project.mjs && node tests/verify-suite.mjs && node tests/test-cloudflare-api.mjs && node tests/test-docs-integrity.mjs",
+    "db:create": "wrangler d1 create mobile-gallery-db",
+    "db:init:local": "wrangler d1 execute mobile-gallery-db --local --file=./database/schema.sql",
+    "db:seed:local": "wrangler d1 execute mobile-gallery-db --local --file=./database/seed.sql",
+    "db:init": "wrangler d1 execute mobile-gallery-db --remote --file=./database/schema.sql",
+    "db:seed": "wrangler d1 execute mobile-gallery-db --remote --file=./database/seed.sql",
+    "r2:create": "wrangler r2 bucket create mobile-gallery-photos",
+    "deploy": "wrangler pages deploy . --project-name=mobile-gallery"
+  },
+  "devDependencies": {
+    "wrangler": "^3.111.0"
+  },
+  "keywords": [
+    "cloudflare",
+    "pages",
+    "functions",
+    "d1",
+    "r2",
+    "ecommerce"
+  ],
+  "author": "Mobile Gallery Team",
+  "license": "ISC"
+}

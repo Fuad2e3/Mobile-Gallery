@@ -1,0 +1,22 @@
+name = "mobile-gallery"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "."
+
+# ══════════════════════════════════════════════════════════════════
+# Cloudflare D1 Database Binding
+# Run: npx wrangler d1 create mobile-gallery-db
+# Paste your generated database_id below:
+# ══════════════════════════════════════════════════════════════════
+[[d1_databases]]
+binding = "DB"
+database_name = "mobile-gallery-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# ══════════════════════════════════════════════════════════════════
+# Cloudflare R2 Storage Bucket Binding (Optimized Photos)
+# Run: npx wrangler r2 bucket create mobile-gallery-photos
+# ══════════════════════════════════════════════════════════════════
+[[r2_buckets]]
+binding = "PHOTOS_BUCKET"
+bucket_name = "mobile-gallery-photos"
