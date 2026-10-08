@@ -979,6 +979,43 @@ p { margin: 0; }
 }
 .link-btn:hover { text-decoration: underline; transform: translate3d(0, -1px, 0); }
 
+/* ════════════════════════════════════════════ Sticky Horizontal Category Bar ══ */
+.sticky-cat-bar {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 90;
+  background: var(--bg-body);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line-soft);
+  padding: 12px 0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+.sticky-cat-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.sticky-cat-inner::-webkit-scrollbar {
+  display: none;
+}
+.seg--cat-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+.seg--cat-bar button {
+  white-space: nowrap;
+  padding: 8px 18px;
+  font-size: .88rem;
+  font-weight: 700;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+
 .fgroup { padding: 18px 0; border-bottom: 1px solid var(--line-soft); }
 .fgroup:last-child { border-bottom: 0; padding-bottom: 4px; }
 .fgroup > h4 {

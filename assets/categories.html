@@ -76,13 +76,29 @@
 
 <main>
 
+<!-- ════════════════════════════════ Sticky Horizontal Category Bar ══ -->
+<div class="sticky-cat-bar" id="stickyCatBar">
+  <div class="wrap">
+    <div class="sticky-cat-inner">
+      <div class="seg seg--cat-bar" id="catSeg">
+        <button class="is-on" data-cat="all">All Items</button>
+        <button data-cat="phone">📱 Phones</button>
+        <button data-cat="tablet">📱 Tablets</button>
+        <button data-cat="laptop">💻 Laptops</button>
+        <button data-cat="watch">⌚ Watches</button>
+        <button data-cat="audio">🎧 Audio</button>
+        <button data-cat="gaming">🎮 Gaming</button>
+        <button data-cat="accessory">🔋 Accessories</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ══════════════════════════════════════════════════════════ browse ══ -->
 <section class="section" id="browse" style="padding-top:20px">
   <div class="wrap">
-    <div class="section-head reveal" style="justify-content:flex-end">
-      <button class="btn btn--ghost filter-toggle" id="filterToggle" data-icon="filter">Filters</button>
-    </div>
+    <div class="section-head reveal" style="justify-content:flex-end;margin-bottom:12px">
+      <button class="btn btn--ghost filter-toggle" id="filterToggle" data-icon="filter">More Filters</button>
     </div>
 
     <div class="browse">
@@ -93,20 +109,6 @@
           <div style="display:flex;align-items:center;gap:10px">
             <button class="link-btn" id="resetFilters">Reset</button>
             <button class="icon-btn filters__mobile-close" id="filterClose" aria-label="Close filters" data-icon="close" style="width:34px;height:34px"></button>
-          </div>
-        </div>
-
-        <div class="fgroup">
-          <h4>Category</h4>
-          <div class="seg" id="catSeg">
-            <button class="is-on" data-cat="all">All</button>
-            <button data-cat="phone">Phones</button>
-            <button data-cat="tablet">Tablets</button>
-            <button data-cat="laptop">Laptops</button>
-            <button data-cat="watch">Watches</button>
-            <button data-cat="audio">Audio</button>
-            <button data-cat="gaming">Gaming</button>
-            <button data-cat="accessory">Accessories</button>
           </div>
         </div>
 
