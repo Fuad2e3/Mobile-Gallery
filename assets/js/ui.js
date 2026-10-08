@@ -604,6 +604,22 @@ function prefetchLink(url) {
   if (!url || url.startsWith('\x23') || url.startsWith('\x6a\x61\x76\x61\x73\x63\x72\x69\x70\x74\x3a') || url.startsWith('\x68\x74\x74\x70')) return;
   fetchPageHtml(url);
 }
+function prefetchMainPages() {
+  try {
+    const isAsset = window.location.pathname.includes('/assets/');
+    const prefix = isAsset ? '' : 'assets/';
+    const pages = [
+      isAsset ? '../index.html' : 'index.html',
+      `${prefix}categories.html`,
+      `${prefix}recent.html`,
+      `${prefix}orders.html`,
+      `${prefix}checkout.html`,
+      `${prefix}admin.html`
+    ];
+    pages.forEach(prefetchLink);
+  } catch (_) {}
+}
+
 async function navigateInstant(targetUrl) {
   const cleanUrl = targetUrl.split('\x23')[0];
   const hash = targetUrl.includes('\x23') ? targetUrl.split('\x23')[1] : '';
@@ -621,32 +637,60 @@ async function navigateInstant(targetUrl) {
     return;
   }
   document.title = doc.title || document.title;
-  currentMain.innerHTML = newMain.innerHTML;
-  const targetPath = new URL(targetUrl, window.location.href).pathname;
-  document.querySelectorAll('\x2e\x6e\x61\x76\x5f\x5f\x6c\x69\x6e\x6b\x73\x20\x61\x2c\x20\x2e\x64\x72\x61\x77\x65\x72\x20\x61').forEach(a => {
-    const aPath = new URL(a.getAttribute('\x68\x72\x65\x66'), window.location.href).pathname;
-    if (aPath === targetPath) {
-      a.classList.add('\x69\x73\x2d\x61\x63\x74\x69\x76\x65');
+  currentMain.style.transition = 'opacity .08s ease';
+  currentMain.style.opacity = '0.85';
+
+  setTimeout(() => {
+    currentMain.innerHTML = newMain.innerHTML;
+    currentMain.style.opacity = '1';
+
+    const targetPath = new URL(targetUrl, window.location.href).pathname;
+    document.querySelectorAll('\x2e\x6e\x61\x76\x5f\x5f\x6c\x69\x6e\x6b\x73\x20\x61\x2c\x20\x2e\x64\x72\x61\x77\x65\x72\x20\x61').forEach(a => {
+      const href = a.getAttribute('\x68\x72\x65\x66');
+      if (href) {
+        const aPath = new URL(href, window.location.href).pathname;
+        if (aPath === targetPath) {
+          a.classList.add('\x69\x73\x2d\x61\x63\x74\x69\x76\x65');
+        } else {
+          a.classList.remove('\x69\x73\x2d\x61\x63\x74\x69\x76\x65');
+        }
+      }
+    });
+
+    window.history.pushState(null, '', targetUrl);
+
+    if (hash) {
+      const targetEl = document.getElementById(hash);
+      if (targetEl) {
+        if (window.lenis) window.lenis.scrollTo(targetEl, { offset: -80 });
+        else targetEl.scrollIntoView({ behavior: 'smooth' });
+      }
     } else {
-      a.classList.remove('\x69\x73\x2d\x61\x63\x74\x69\x76\x65');
+      if (window.lenis) window.lenis.scrollTo(0, { immediate: true });
+      else window.scrollTo({ top: 0, behavior: 'instant' });
     }
-  });
-  window.history.pushState(null, '', targetUrl);
-  if (hash) {
-    const targetEl = document.getElementById(hash);
-    if (targetEl) targetEl.scrollIntoView({ behavior: '\x73\x6d\x6f\x6f\x74\x68' });
-  } else {
-    window.scrollTo({ top: 0, behavior: '\x69\x6e\x73\x74\x61\x6e\x74' });
-  }
-  const drawer = document.getElementById('\x64\x72\x61\x77\x65\x72');
-  if (drawer) drawer.classList.remove('\x69\x73\x2d\x6f\x70\x65\x6e');
-  if (typeof initHome === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initHome();
-  if (typeof initAdmin === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initAdmin();
-  if (typeof initCheckout === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initCheckout();
-  if (typeof initOrders === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initOrders();
-  if (typeof paintUserAuthNav === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') paintUserAuthNav();
+
+    const drawer = document.getElementById('\x64\x72\x61\x77\x65\x72');
+    if (drawer) drawer.classList.remove('\x69\x73\x2d\x6f\x70\x65\x6e');
+
+    if (typeof initHome === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initHome();
+    if (typeof initAdmin === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initAdmin();
+    if (typeof initCheckout === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initCheckout();
+    if (typeof initOrders === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initOrders();
+    if (typeof initRecentPage === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initRecentPage();
+    if (typeof paintUserAuthNav === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') paintUserAuthNav();
+    if (typeof paintIcons === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') paintIcons();
+    if (typeof initReveal === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initReveal();
+  }, 30);
 }
+
 function initInstantRouter() {
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(prefetchMainPages);
+  } else {
+    setTimeout(prefetchMainPages, 1000);
+  }
+
   document.body.addEventListener('\x6d\x6f\x75\x73\x65\x6f\x76\x65\x72', e => {
     const a = e.target.closest('\x61\x5b\x68\x72\x65\x66\x5d');
     if (a) prefetchLink(a.getAttribute('\x68\x72\x65\x66'));
@@ -659,7 +703,7 @@ function initInstantRouter() {
     const a = e.target.closest('\x61\x5b\x68\x72\x65\x66\x5d');
     if (!a) return;
     const href = a.getAttribute('\x68\x72\x65\x66');
-    if (!href || href.startsWith('\x68\x74\x74\x70') || href.startsWith('\x2f\x2f') || href.startsWith('\x6d\x61\x69\x6c\x74\x6f\x3a') || href.startsWith('\x74\x65\x6c\x3a') || a.hasAttribute('\x74\x61\x72\x67\x65\x74')) {
+    if (!href || href.startsWith('\x23') || href.startsWith('\x68\x74\x74\x70') || href.startsWith('\x2f\x2f') || href.startsWith('\x6d\x61\x69\x6c\x74\x6f\x3a') || href.startsWith('\x74\x65\x6c\x3a') || a.hasAttribute('\x74\x61\x72\x67\x65\x74')) {
       return;
     }
     e.preventDefault();
