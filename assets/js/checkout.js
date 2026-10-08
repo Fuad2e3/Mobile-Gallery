@@ -34,7 +34,7 @@ function paintSummary() {
         ${icon('cart', 34)}
         <h4>Your cart is empty</h4>
         <p>Add a product before checking out.</p>
-        <a class="btn btn--soft btn--sm" href="index.html#browse">Browse products</a>
+        <a class="btn btn--soft btn--sm" href="${window.location.pathname.includes('/assets/') ? '../index.html' : 'index.html'}#browse">Browse products</a>
       </div>`;
     if (place) place.disabled = true;
     return;
@@ -82,7 +82,7 @@ function showConfirmation(order) {
       </p>
       <p style="font-size:.9rem;margin-top:6px">Delivering to ${esc(order.area)}, ${esc(order.city)} in 2-4 working days.</p>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px">
-        <a class="btn btn--primary" href="index.html#browse">Continue shopping</a>
+        <a class="btn btn--primary" href="${window.location.pathname.includes('/assets/') ? '../index.html' : 'index.html'}#browse">Continue shopping</a>
         <button class="btn btn--ghost" onclick="window.print()">Print receipt</button>
       </div>
     </div>`;

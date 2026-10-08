@@ -403,7 +403,11 @@
     if (heroCat) {
       heroCat.addEventListener('change', () => {
         const target = document.querySelector(`#catSeg [data-cat="${heroCat.value}"]`);
-        if (target) target.click();
+        if (target) {
+          target.click();
+        } else {
+          window.location.href = `assets/categories.html?cat=${encodeURIComponent(heroCat.value)}`;
+        }
       });
     }
   });

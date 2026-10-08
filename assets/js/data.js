@@ -522,26 +522,24 @@ function orderStage(order) {
   return ORDER_STAGES[Math.min(Math.floor(days), ORDER_STAGES.length - 1)];
 }
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
-
 function pushRecent(id) {
   if (!id) return;
   const raw = readStore(RECENT_KEY, []);
   const now = Date.now();
   const list = raw
-    .map(item => (typeof item === 'string' ? { id: item, ts: now } : item))
+    .map(item => (typeof item === '\x73\x74\x72\x69\x6e\x67' ? { id: item, ts: now } : item))
     .filter(item => item && item.id && item.id !== id && (now - (item.ts || 0)) <= SEVEN_DAYS_MS);
   list.unshift({ id, ts: now });
   writeStore(RECENT_KEY, list.slice(0, 30));
 }
-
 function getRecentDetailed() {
   const now = Date.now();
   const raw = readStore(RECENT_KEY, []);
   const valid = [];
   const seen = new Set();
   for (const item of raw) {
-    const id = typeof item === 'string' ? item : (item && item.id);
-    const ts = typeof item === 'object' && item && item.ts ? item.ts : now;
+    const id = typeof item === '\x73\x74\x72\x69\x6e\x67' ? item : (item && item.id);
+    const ts = typeof item === '\x6f\x62\x6a\x65\x63\x74' && item && item.ts ? item.ts : now;
     if (id && !seen.has(id) && (now - ts) <= SEVEN_DAYS_MS) {
       seen.add(id);
       const product = productById(id);
@@ -552,11 +550,9 @@ function getRecentDetailed() {
   }
   return valid;
 }
-
 function getRecent() {
   return getRecentDetailed().map(x => x.product);
 }
-
 function clearRecentHistory() {
   writeStore(RECENT_KEY, []);
 }

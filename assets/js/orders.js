@@ -92,7 +92,7 @@ function paintOrders() {
       <div class="empty">
         <h3>No orders yet</h3>
         <p>${user ? 'You have not placed any orders yet. Once placed, your orders will appear here with live order tracking.' : 'When you place an order it will appear here, with its live delivery progress.'}</p>
-        <a class="btn btn--primary btn--sm" href="index.html#browse" style="margin-top:16px">Start shopping</a>
+        <a class="btn btn--primary btn--sm" href="${window.location.pathname.includes('/assets/') ? '../index.html' : 'index.html'}#browse" style="margin-top:16px">Start shopping</a>
       </div>`;
     return;
   }

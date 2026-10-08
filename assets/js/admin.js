@@ -196,11 +196,11 @@ function paintPreview() {
 if (typeof window !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64' && !window.Optimization) {
   window.Optimization = class Optimization {
     static DEFAULT_OPTIONS = {
-      maxWidth: 900,
-      maxHeight: 900,
-      initialQuality: 0.85,
-      minQuality: 0.65,
-      maxTargetKB: 85,
+      maxWidth: 720,
+      maxHeight: 720,
+      initialQuality: 0.72,
+      minQuality: 0.48,
+      maxTargetKB: 60,
       preferFormat: '\x69\x6d\x61\x67\x65\x2f\x77\x65\x62\x70',
       fallbackFormat: '\x69\x6d\x61\x67\x65\x2f\x6a\x70\x65\x67'
     };

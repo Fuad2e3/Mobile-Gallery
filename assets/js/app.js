@@ -103,20 +103,15 @@ function paintResults() {
   const grid = document.getElementById('\x67\x72\x69\x64');
   if (!grid) return;
   const results = filtered();
-
   const totalPages = Math.max(1, Math.ceil(results.length / state.perPage));
   if (state.page > totalPages) state.page = totalPages;
   if (state.page < 1) state.page = 1;
-
   const startIdx = (state.page - 1) * state.perPage;
   const endIdx = startIdx + state.perPage;
   const shown = results.slice(startIdx, endIdx);
-
   const countEl = document.getElementById('\x72\x65\x73\x75\x6c\x74\x43\x6f\x75\x6e\x74');
   if (countEl) countEl.textContent = results.length;
-
   grid.classList.toggle('\x69\x73\x2d\x6c\x69\x73\x74', state.view === '\x6c\x69\x73\x74');
-
   if (!results.length) {
     grid.innerHTML = `
       <div class="empty">
@@ -138,27 +133,22 @@ function paintResults() {
       setTimeout(() => el.classList.add('\x69\x73\x2d\x69\x6e'), Math.min(i, 8) * 45);
     }));
   }
-
   paintPagination(totalPages);
   paintActiveChips();
 }
-
 function paintPagination(totalPages) {
-  const paginationEl = document.getElementById('pagination');
+  const paginationEl = document.getElementById('\x70\x61\x67\x69\x6e\x61\x74\x69\x6f\x6e');
   if (!paginationEl) return;
-
   if (totalPages <= 1) {
     paginationEl.innerHTML = '';
     paginationEl.hidden = true;
     return;
   }
-
   paginationEl.hidden = false;
   let pageButtons = '';
   for (let i = 1; i <= totalPages; i++) {
     pageButtons += `<button class="pagination__num ${i === state.page ? 'is-active' : ''}" data-page="${i}">Page ${i}</button>`;
   }
-
   paginationEl.innerHTML = `
     <button class="pagination__btn" data-page="${state.page - 1}" ${state.page <= 1 ? 'disabled' : ''}>
       « Previous
@@ -406,8 +396,8 @@ function paintRecent() {
   const section = document.getElementById('\x72\x65\x63\x65\x6e\x74\x53\x65\x63\x74\x69\x6f\x6e');
   if (!section) return;
   const recent = getRecent().slice(0, 6);
-  section.hidden = recent.length < 1;
-  if (recent.length < 1) return;
+  section.hidden = recent.length < 2;
+  if (recent.length < 2) return;
   document.getElementById('\x72\x65\x63\x65\x6e\x74\x52\x6f\x77').innerHTML = recent.map(p => `
     <button class="related__item" data-open="${esc(p.id)}">
       <span class="related__art">${deviceArt(p, 74)}</span>
@@ -445,18 +435,14 @@ function initHome() {
     grid.innerHTML = skeletonMarkup(8);
     setTimeout(paintResults, 380);
   }
-  if (window._homeListenersBound) {
-    if (window.SheetEndpoint && window.SheetEndpoint.isReady()) {
-      window.SheetEndpoint.fetchProducts().then(prods => {
-        if (prods && prods.length > 0) {
-          paintResults();
-          buildFilters();
-        }
-      }).catch(() => {});
-    }
-    return;
-  }
-  window._homeListenersBound = true;
+  const getCategoriesUrl = param => {
+    const isAsset = window.location.pathname.includes('\x2f\x61\x73\x73\x65\x74\x73\x2f');
+    const page = isAsset ? '\x63\x61\x74\x65\x67\x6f\x72\x69\x65\x73\x2e\x68\x74\x6d\x6c' : '\x61\x73\x73\x65\x74\x73\x2f\x63\x61\x74\x65\x67\x6f\x72\x69\x65\x73\x2e\x68\x74\x6d\x6c';
+    return param ? `${page}?${param}` : page;
+  };
+  const getCheckoutUrl = () => {
+    return window.location.pathname.includes('\x2f\x61\x73\x73\x65\x74\x73\x2f') ? '\x63\x68\x65\x63\x6b\x6f\x75\x74\x2e\x68\x74\x6d\x6c' : '\x61\x73\x73\x65\x74\x73\x2f\x63\x68\x65\x63\x6b\x6f\x75\x74\x2e\x68\x74\x6d\x6c';
+  };
   const search = document.getElementById('\x73\x65\x61\x72\x63\x68\x49\x6e\x70\x75\x74');
   if (search) {
     if (state.q) search.value = state.q;
@@ -464,7 +450,7 @@ function initHome() {
       state.q = search.value.trim();
       state.page = 1;
       if (!document.getElementById('\x67\x72\x69\x64')) {
-        window.location.href = `categories.html?q=${encodeURIComponent(state.q)}`;
+        window.location.href = getCategoriesUrl(`q=${encodeURIComponent(state.q)}`);
         return;
       }
       paintResults();
@@ -482,7 +468,7 @@ function initHome() {
       const input = document.getElementById('\x73\x65\x61\x72\x63\x68\x49\x6e\x70\x75\x74');
       const val = input ? input.value.trim() : '';
       if (!document.getElementById('\x67\x72\x69\x64')) {
-        window.location.href = `categories.html?q=${encodeURIComponent(val)}`;
+        window.location.href = getCategoriesUrl(`q=${encodeURIComponent(val)}`);
         return;
       }
       state.q = val;
@@ -496,7 +482,7 @@ function initHome() {
     btn.addEventListener('\x63\x6c\x69\x63\x6b', () => {
       const q = btn.dataset.quick;
       if (!document.getElementById('\x67\x72\x69\x64')) {
-        window.location.href = `categories.html?q=${encodeURIComponent(q)}`;
+        window.location.href = getCategoriesUrl(`q=${encodeURIComponent(q)}`);
         return;
       }
       if (search) search.value = q;
@@ -512,7 +498,7 @@ function initHome() {
     if (!btn) return;
     const cat = btn.dataset.cat;
     if (!document.getElementById('\x67\x72\x69\x64')) {
-      window.location.href = `categories.html?cat=${encodeURIComponent(cat)}`;
+      window.location.href = getCategoriesUrl(`cat=${encodeURIComponent(cat)}`);
       return;
     }
     state.category = cat;
@@ -685,17 +671,17 @@ function initHome() {
     });
   }
   document.body.addEventListener('\x63\x6c\x69\x63\x6b', e => {
-    const pageBtn = e.target.closest('[data-page]');
-    if (pageBtn && !pageBtn.hasAttribute('disabled')) {
+    const pageBtn = e.target.closest('\x5b\x64\x61\x74\x61\x2d\x70\x61\x67\x65\x5d');
+    if (pageBtn && !pageBtn.hasAttribute('\x64\x69\x73\x61\x62\x6c\x65\x64')) {
       e.preventDefault();
       const targetPage = parseInt(pageBtn.dataset.page, 10);
       if (targetPage && targetPage !== state.page) {
         state.page = targetPage;
         paintResults();
-        const browse = document.getElementById('browse') || document.getElementById('grid');
+        const browse = document.getElementById('\x62\x72\x6f\x77\x73\x65') || document.getElementById('\x67\x72\x69\x64');
         if (browse) {
           if (window.lenis) window.lenis.scrollTo(browse, { offset: -80 });
-          else browse.scrollIntoView({ behavior: 'smooth' });
+          else browse.scrollIntoView({ behavior: '\x73\x6d\x6f\x6f\x74\x68' });
         }
       }
       return;
@@ -748,14 +734,14 @@ function initHome() {
           toast('\x50\x6c\x65\x61\x73\x65\x20\x63\x72\x65\x61\x74\x65\x20\x61\x6e\x20\x61\x63\x63\x6f\x75\x6e\x74\x20\x6f\x72\x20\x73\x69\x67\x6e\x20\x69\x6e\x20\x74\x6f\x20\x63\x6f\x6d\x70\x6c\x65\x74\x65\x20\x79\x6f\x75\x72\x20\x70\x75\x72\x63\x68\x61\x73\x65', '\x75\x73\x65\x72\x73');
           if (typeof openAuthModal === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') {
             openAuthModal('\x72\x65\x67\x69\x73\x74\x65\x72', '\x50\x6c\x65\x61\x73\x65\x20\x63\x72\x65\x61\x74\x65\x20\x61\x6e\x20\x61\x63\x63\x6f\x75\x6e\x74\x20\x6f\x72\x20\x73\x69\x67\x6e\x20\x69\x6e\x20\x74\x6f\x20\x63\x6f\x6d\x70\x6c\x65\x74\x65\x20\x79\x6f\x75\x72\x20\x70\x75\x72\x63\x68\x61\x73\x65\x2e', () => {
-              window.location.href = '\x63\x68\x65\x63\x6b\x6f\x75\x74\x2e\x68\x74\x6d\x6c';
+              window.location.href = getCheckoutUrl();
             });
           } else {
-            window.location.href = '\x63\x68\x65\x63\x6b\x6f\x75\x74\x2e\x68\x74\x6d\x6c';
+            window.location.href = getCheckoutUrl();
           }
           return;
         }
-        window.location.href = '\x63\x68\x65\x63\x6b\x6f\x75\x74\x2e\x68\x74\x6d\x6c';
+        window.location.href = getCheckoutUrl();
         return;
       }
       if (inModal) closeDetail();
