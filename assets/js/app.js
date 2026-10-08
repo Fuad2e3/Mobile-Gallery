@@ -427,10 +427,22 @@ function initHome() {
     paintResults();
   });
   document.getElementById('\x72\x65\x73\x65\x74\x46\x69\x6c\x74\x65\x72\x73').addEventListener('\x63\x6c\x69\x63\x6b', resetFilters);
-  document.getElementById('\x6c\x6f\x61\x64\x4d\x6f\x72\x65').addEventListener('\x63\x6c\x69\x63\x6b', () => {
-    state.page++;
-    paintResults();
-  });
+  const loadMoreBtn = document.getElementById('\x6c\x6f\x61\x64\x4d\x6f\x72\x65');
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('\x63\x6c\x69\x63\x6b', () => {
+      state.page++;
+      paintResults();
+    });
+    if ('\x49\x6e\x74\x65\x72\x73\x65\x63\x74\x69\x6f\x6e\x4f\x62\x73\x65\x72\x76\x65\x72' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !loadMoreBtn.hidden) {
+          state.page++;
+          paintResults();
+        }
+      }, { rootMargin: '\x32\x35\x30\x70\x78' });
+      observer.observe(loadMoreBtn);
+    }
+  }
   document.getElementById('\x61\x63\x74\x69\x76\x65\x43\x68\x69\x70\x73').addEventListener('\x63\x6c\x69\x63\x6b', e => {
     const btn = e.target.closest('\x5b\x64\x61\x74\x61\x2d\x63\x68\x69\x70\x5d');
     if (!btn) return;
