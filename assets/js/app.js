@@ -103,10 +103,20 @@ function paintResults() {
   const grid = document.getElementById('\x67\x72\x69\x64');
   if (!grid) return;
   const results = filtered();
-  const shown = results.slice(0, state.page * state.perPage);
+
+  const totalPages = Math.max(1, Math.ceil(results.length / state.perPage));
+  if (state.page > totalPages) state.page = totalPages;
+  if (state.page < 1) state.page = 1;
+
+  const startIdx = (state.page - 1) * state.perPage;
+  const endIdx = startIdx + state.perPage;
+  const shown = results.slice(startIdx, endIdx);
+
   const countEl = document.getElementById('\x72\x65\x73\x75\x6c\x74\x43\x6f\x75\x6e\x74');
   if (countEl) countEl.textContent = results.length;
+
   grid.classList.toggle('\x69\x73\x2d\x6c\x69\x73\x74', state.view === '\x6c\x69\x73\x74');
+
   if (!results.length) {
     grid.innerHTML = `
       <div class="empty">
@@ -116,7 +126,7 @@ function paintResults() {
           <line x1="11" y1="8" x2="11" y2="14"></line>
           <line x1="8" y1="11" x2="14" y2="11"></line>
         </svg>
-        <h3>No ads match those filters</h3>
+        <h3>No devices match those filters</h3>
         <p>Try widening the price range or clearing a brand or two.</p>
         <button class="btn btn--soft btn--sm" id="emptyReset" style="margin-top:16px">Reset all filters</button>
       </div>`;
@@ -128,13 +138,38 @@ function paintResults() {
       setTimeout(() => el.classList.add('\x69\x73\x2d\x69\x6e'), Math.min(i, 8) * 45);
     }));
   }
-  const more = document.getElementById('\x6c\x6f\x61\x64\x4d\x6f\x72\x65');
-  if (more) {
-    const remaining = results.length - shown.length;
-    more.hidden = remaining <= 0;
-    more.textContent = `Show ${Math.min(remaining, state.perPage)} more ads`;
-  }
+
+  paintPagination(totalPages);
   paintActiveChips();
+}
+
+function paintPagination(totalPages) {
+  const paginationEl = document.getElementById('pagination');
+  if (!paginationEl) return;
+
+  if (totalPages <= 1) {
+    paginationEl.innerHTML = '';
+    paginationEl.hidden = true;
+    return;
+  }
+
+  paginationEl.hidden = false;
+  let pageButtons = '';
+  for (let i = 1; i <= totalPages; i++) {
+    pageButtons += `<button class="pagination__num ${i === state.page ? 'is-active' : ''}" data-page="${i}">Page ${i}</button>`;
+  }
+
+  paginationEl.innerHTML = `
+    <button class="pagination__btn" data-page="${state.page - 1}" ${state.page <= 1 ? 'disabled' : ''}>
+      « Previous
+    </button>
+    <div class="pagination__pages">
+      ${pageButtons}
+    </div>
+    <button class="pagination__btn" data-page="${state.page + 1}" ${state.page >= totalPages ? 'disabled' : ''}>
+      Next »
+    </button>
+  `;
 }
 function paintActiveChips() {
   const box = document.getElementById('\x61\x63\x74\x69\x76\x65\x43\x68\x69\x70\x73');
@@ -650,6 +685,21 @@ function initHome() {
     });
   }
   document.body.addEventListener('\x63\x6c\x69\x63\x6b', e => {
+    const pageBtn = e.target.closest('[data-page]');
+    if (pageBtn && !pageBtn.hasAttribute('disabled')) {
+      e.preventDefault();
+      const targetPage = parseInt(pageBtn.dataset.page, 10);
+      if (targetPage && targetPage !== state.page) {
+        state.page = targetPage;
+        paintResults();
+        const browse = document.getElementById('browse') || document.getElementById('grid');
+        if (browse) {
+          if (window.lenis) window.lenis.scrollTo(browse, { offset: -80 });
+          else browse.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+      return;
+    }
     const favBtn = e.target.closest('\x5b\x64\x61\x74\x61\x2d\x66\x61\x76\x5d');
     if (favBtn) {
       e.preventDefault();
