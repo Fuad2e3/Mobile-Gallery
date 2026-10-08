@@ -76,57 +76,102 @@
 
 <main>
 
-<!-- ════════════════════ Top Horizontal Sticky Filter Bar ══ -->
+<!-- ════════════════════ Smart Glassmorphic Control Hub ══ -->
 <div class="sticky-cat-bar" id="stickyCatBar">
   <div class="wrap">
-    <!-- Row 1: Category Pills -->
+    <!-- Top Row: Category Tabs -->
     <div class="sticky-cat-inner">
-      <div class="seg seg--cat-bar" id="catSeg">
-        <button class="is-on" data-cat="all">All Items</button>
-        <button data-cat="phone">📱 Phones</button>
-        <button data-cat="tablet">📱 Tablets</button>
-        <button data-cat="laptop">💻 Laptops</button>
-        <button data-cat="watch">⌚ Watches</button>
-        <button data-cat="audio">🎧 Audio</button>
-        <button data-cat="gaming">🎮 Gaming</button>
-        <button data-cat="accessory">🔋 Accessories</button>
+      <div class="seg seg--smart-cat" id="catSeg">
+        <button class="is-on" data-cat="all">
+          <span>All Items</span>
+        </button>
+        <button data-cat="phone">
+          <span>📱 Phones</span>
+        </button>
+        <button data-cat="tablet">
+          <span>📱 Tablets</span>
+        </button>
+        <button data-cat="laptop">
+          <span>💻 Laptops</span>
+        </button>
+        <button data-cat="watch">
+          <span>⌚ Watches</span>
+        </button>
+        <button data-cat="audio">
+          <span>🎧 Audio</span>
+        </button>
+        <button data-cat="gaming">
+          <span>🎮 Gaming</span>
+        </button>
+        <button data-cat="accessory">
+          <span>🔋 Accessories</span>
+        </button>
       </div>
     </div>
 
-    <!-- Row 2: Horizontal Filter Controls -->
-    <div class="horizontal-filter-row">
-      <div class="hfilter-item">
-        <label for="priceRange">Max Budget: <b id="priceOut">৳2,00,000+</b></label>
-        <input type="range" id="priceRange" min="3000" max="200000" step="1000" value="200000" aria-label="Maximum price" style="width:130px">
+    <!-- Bottom Row: Smart Filter Pills & Controls Bar -->
+    <div class="smart-filter-toolbar">
+      <!-- Total Counter Badge -->
+      <div class="filter-stat-pill">
+        <b id="resultCount">0</b>
+        <span>items</span>
       </div>
 
-      <div class="hfilter-item">
-        <label for="brandSelect">Brand:</label>
-        <select class="select select--sm" id="brandSelect" aria-label="Filter by brand">
+      <!-- Price Budget Range -->
+      <div class="filter-chip-item">
+        <span class="filter-chip-label">Budget ≤ <b id="priceOut">৳2,00,000+</b></span>
+        <input type="range" id="priceRange" min="3000" max="200000" step="1000" value="200000" aria-label="Maximum price" style="width:110px">
+      </div>
+
+      <!-- Brand Select Dropdown -->
+      <div class="filter-chip-item">
+        <span class="filter-chip-label">Brand:</span>
+        <select class="select select--pill" id="brandSelect" aria-label="Filter by brand">
           <option value="">All Brands</option>
         </select>
       </div>
 
-      <div class="hfilter-item">
-        <label for="condSelect">Condition:</label>
-        <select class="select select--sm" id="condSelect" aria-label="Filter by condition">
+      <!-- Condition Select Dropdown -->
+      <div class="filter-chip-item">
+        <span class="filter-chip-label">Condition:</span>
+        <select class="select select--pill" id="condSelect" aria-label="Filter by condition">
           <option value="">All Conditions</option>
         </select>
       </div>
 
-      <div class="hfilter-item" style="gap:12px">
-        <label class="check" style="padding:0">
+      <!-- Toggle Chips -->
+      <div class="filter-chip-toggles">
+        <label class="chip-toggle">
           <input type="checkbox" id="inStockOnly">
-          <span>In Stock</span>
+          <span>📦 In Stock</span>
         </label>
-        <label class="check" style="padding:0">
+        <label class="chip-toggle">
           <input type="checkbox" id="onSaleOnly">
-          <span>On Sale</span>
+          <span>🔥 On Sale</span>
         </label>
       </div>
 
-      <button class="btn btn--ghost btn--sm" id="resetFilters" style="padding:4px 12px;margin-left:auto">Reset Filters</button>
+      <!-- Sort & View Controls -->
+      <div class="filter-right-group">
+        <select class="select select--pill" id="sortSelect" aria-label="Sort products">
+          <option value="relevant">⚡ Recommended</option>
+          <option value="newest">✨ New Arrivals</option>
+          <option value="price-a">💰 Low to High</option>
+          <option value="price-d">💎 High to Low</option>
+          <option value="discount">🏷️ Discount</option>
+          <option value="popular">🔥 Popular</option>
+        </select>
+
+        <div class="seg seg--view" role="group" aria-label="Layout">
+          <button class="is-on" data-view="grid" aria-label="Grid view" data-icon="grid" data-icon-size="15"></button>
+          <button data-view="list" aria-label="List view" data-icon="list" data-icon-size="15"></button>
+        </div>
+
+        <button class="btn btn--soft btn--xs" id="resetFilters" title="Reset all filters">Reset</button>
+      </div>
     </div>
+
+    <div class="active-chips" id="activeChips" hidden style="margin-top:8px"></div>
   </div>
 </div>
 
@@ -136,25 +181,6 @@
     <div class="browse">
       <!-- ─────────────────────────── results ─────────────────────────── -->
       <div>
-        <div class="results__bar">
-          <h3><span id="resultCount">0</span> <span class="muted">products</span></h3>
-          <span class="nav__spacer"></span>
-          <div class="seg" role="group" aria-label="Layout">
-            <button class="is-on" data-view="grid" aria-label="Grid view" data-icon="grid" data-icon-size="16"></button>
-            <button data-view="list" aria-label="List view" data-icon="list" data-icon-size="16"></button>
-          </div>
-          <select class="select" id="sortSelect" aria-label="Sort products">
-            <option value="relevant">Sort: Recommended</option>
-            <option value="newest">New arrivals</option>
-            <option value="price-a">Price: low to high</option>
-            <option value="price-d">Price: high to low</option>
-            <option value="discount">Biggest discount</option>
-            <option value="popular">Most popular</option>
-          </select>
-        </div>
-
-        <div class="active-chips" id="activeChips" hidden></div>
-
         <div class="grid-cards" id="grid"></div>
 
         <div style="text-align:center;margin-top:34px">

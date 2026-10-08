@@ -30,7 +30,7 @@ gantt
 - [x] Responsive layout with sticky topbar, category rail, and footer.
 - [x] Renamed primary storefront navigation link from "Shop" to "Home".
 - [x] Root directory organization with `index.html` as the primary entry point and secondary pages (`categories.html`, `admin.html`, `checkout.html`, `orders.html`, `404.html`) relocated into `assets/`.
-- [x] Sticky Horizontal Category Bar on `assets/categories.html` positioned at the top and frozen on scroll (`position: sticky; top: var(--header-h)`).
+- [x] Smart Glassmorphic Control Hub on `assets/categories.html` featuring horizontal categories, budget range pill, brand & condition select dropdowns, chip toggles (`In Stock`, `On Sale`), and sort/view controls.
 - [x] Dedicated Categories & Catalogue page (`assets/categories.html`) with auto infinite scroll.
 - [x] Clean Home page experience (`index.html`) featuring Hero search, Category Cards, and Featured Hot Deals grid.
 - [x] Streamlined navigation by removing "Why us" and "Help" buttons and their associated content sections.
