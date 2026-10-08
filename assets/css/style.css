@@ -947,10 +947,37 @@ p { margin: 0; }
 
 /* -------------------------------------------------------- browse grid --- */
 .browse {
-  display: grid;
-  grid-template-columns: 276px 1fr;
-  gap: 30px;
-  align-items: start;
+  display: block;
+}
+
+.horizontal-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  margin-top: 8px;
+  border-top: 1px solid var(--line-soft);
+  font-size: .88rem;
+}
+.hfilter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hfilter-item label {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.select--sm {
+  padding: 5px 12px;
+  font-size: .82rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
 }
 
 .filters {

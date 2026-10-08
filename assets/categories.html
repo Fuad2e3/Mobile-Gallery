@@ -76,9 +76,10 @@
 
 <main>
 
-<!-- ════════════════════════════════ Sticky Horizontal Category Bar ══ -->
+<!-- ════════════════════ Top Horizontal Sticky Filter Bar ══ -->
 <div class="sticky-cat-bar" id="stickyCatBar">
   <div class="wrap">
+    <!-- Row 1: Category Pills -->
     <div class="sticky-cat-inner">
       <div class="seg seg--cat-bar" id="catSeg">
         <button class="is-on" data-cat="all">All Items</button>
@@ -91,59 +92,48 @@
         <button data-cat="accessory">🔋 Accessories</button>
       </div>
     </div>
+
+    <!-- Row 2: Horizontal Filter Controls -->
+    <div class="horizontal-filter-row">
+      <div class="hfilter-item">
+        <label for="priceRange">Max Budget: <b id="priceOut">৳2,00,000+</b></label>
+        <input type="range" id="priceRange" min="3000" max="200000" step="1000" value="200000" aria-label="Maximum price" style="width:130px">
+      </div>
+
+      <div class="hfilter-item">
+        <label for="brandSelect">Brand:</label>
+        <select class="select select--sm" id="brandSelect" aria-label="Filter by brand">
+          <option value="">All Brands</option>
+        </select>
+      </div>
+
+      <div class="hfilter-item">
+        <label for="condSelect">Condition:</label>
+        <select class="select select--sm" id="condSelect" aria-label="Filter by condition">
+          <option value="">All Conditions</option>
+        </select>
+      </div>
+
+      <div class="hfilter-item" style="gap:12px">
+        <label class="check" style="padding:0">
+          <input type="checkbox" id="inStockOnly">
+          <span>In Stock</span>
+        </label>
+        <label class="check" style="padding:0">
+          <input type="checkbox" id="onSaleOnly">
+          <span>On Sale</span>
+        </label>
+      </div>
+
+      <button class="btn btn--ghost btn--sm" id="resetFilters" style="padding:4px 12px;margin-left:auto">Reset Filters</button>
+    </div>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════ browse ══ -->
-<section class="section" id="browse" style="padding-top:20px">
+<section class="section" id="browse" style="padding-top:16px">
   <div class="wrap">
-    <div class="section-head reveal" style="justify-content:flex-end;margin-bottom:12px">
-      <button class="btn btn--ghost filter-toggle" id="filterToggle" data-icon="filter">More Filters</button>
-    </div>
-
     <div class="browse">
-      <!-- ─────────────────────────── filters ─────────────────────────── -->
-      <aside class="filters" aria-label="Filter products">
-        <div class="filters__head">
-          <h3>Filters</h3>
-          <div style="display:flex;align-items:center;gap:10px">
-            <button class="link-btn" id="resetFilters">Reset</button>
-            <button class="icon-btn filters__mobile-close" id="filterClose" aria-label="Close filters" data-icon="close" style="width:34px;height:34px"></button>
-          </div>
-        </div>
-
-        <div class="fgroup">
-          <h4>Max budget</h4>
-          <div class="range-out">
-            <span>Up to</span>
-            <b id="priceOut">৳2,00,000+</b>
-          </div>
-          <input type="range" id="priceRange" min="3000" max="200000" step="1000" value="200000" aria-label="Maximum price">
-        </div>
-
-        <div class="fgroup">
-          <h4>Brand</h4>
-          <div id="brandFilters"></div>
-        </div>
-
-        <div class="fgroup">
-          <h4>Condition</h4>
-          <div id="condFilters"></div>
-        </div>
-
-        <div class="fgroup">
-          <h4>Availability</h4>
-          <label class="check">
-            <input type="checkbox" id="inStockOnly">
-            <span>In stock only</span>
-          </label>
-          <label class="check">
-            <input type="checkbox" id="onSaleOnly">
-            <span>On sale</span>
-          </label>
-        </div>
-      </aside>
-
       <!-- ─────────────────────────── results ─────────────────────────── -->
       <div>
         <div class="results__bar">

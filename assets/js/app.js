@@ -167,10 +167,15 @@ function resetFilters() {
   state.maxPrice = PRICE_CEIL;
   state.favOnly = false;
   state.page = 1;
-  document.querySelectorAll('\x2e\x66\x69\x6c\x74\x65\x72\x73\x20\x69\x6e\x70\x75\x74\x5b\x74\x79\x70\x65\x3d\x22\x63\x68\x65\x63\x6b\x62\x6f\x78\x22\x5d').forEach(el => { el.checked = false; });
+  document.querySelectorAll('\x69\x6e\x70\x75\x74\x5b\x74\x79\x70\x65\x3d\x22\x63\x68\x65\x63\x6b\x62\x6f\x78\x22\x5d').forEach(el => { el.checked = false; });
+  const brandSel = document.getElementById('\x62\x72\x61\x6e\x64\x53\x65\x6c\x65\x63\x74');
+  if (brandSel) brandSel.value = '';
+  const condSel = document.getElementById('\x63\x6f\x6e\x64\x53\x65\x6c\x65\x63\x74');
+  if (condSel) condSel.value = '';
   const range = document.getElementById('\x70\x72\x69\x63\x65\x52\x61\x6e\x67\x65');
-  range.value = PRICE_CEIL;
-  document.getElementById('\x70\x72\x69\x63\x65\x4f\x75\x74').textContent = money(PRICE_CEIL) + '\x2b';
+  if (range) range.value = PRICE_CEIL;
+  const priceOut = document.getElementById('\x70\x72\x69\x63\x65\x4f\x75\x74');
+  if (priceOut) priceOut.textContent = money(PRICE_CEIL) + '\x2b';
   const search = document.getElementById('\x73\x65\x61\x72\x63\x68\x49\x6e\x70\x75\x74');
   if (search) search.value = '';
   document.querySelectorAll('\x23\x63\x61\x74\x53\x65\x67\x20\x5b\x64\x61\x74\x61\x2d\x63\x61\x74\x5d').forEach(b => b.classList.toggle('\x69\x73\x2d\x6f\x6e', b.dataset.cat === '\x61\x6c\x6c'));
@@ -182,16 +187,41 @@ function buildFilters() {
     acc[it[key]] = (acc[it[key]] || 0) + 1;
     return acc;
   }, {});
-  const brands = Object.entries(tally('\x62\x72\x61\x6e\x64')).sort((a, b) => b[1] - a[1]);
-  const row = (kind, value, count) => `
-    <label class="check">
-      <input type="checkbox" data-kind="${kind}" value="${value}">
-      <span>${value}</span><span class="count">${count}</span>
-    </label>`;
-  document.getElementById('\x62\x72\x61\x6e\x64\x46\x69\x6c\x74\x65\x72\x73').innerHTML =
-    brands.map(([b, n]) => row('\x62\x72\x61\x6e\x64', b, n)).join('');
-  document.getElementById('\x63\x6f\x6e\x64\x46\x69\x6c\x74\x65\x72\x73').innerHTML =
-    CONDITIONS.map(c => row('\x63\x6f\x6e\x64\x69\x74\x69\x6f\x6e', c, items.filter(i => i.condition === c).length)).join('');
+  const brandSel = document.getElementById('\x62\x72\x61\x6e\x64\x53\x65\x6c\x65\x63\x74');
+  if (brandSel) {
+    const brands = Object.entries(tally('\x62\x72\x61\x6e\x64')).sort((a, b) => b[1] - a[1]);
+    const currentVal = brandSel.value;
+    brandSel.innerHTML = '\x3c\x6f\x70\x74\x69\x6f\x6e\x20\x76\x61\x6c\x75\x65\x3d\x22\x22\x3e\x41\x6c\x6c\x20\x42\x72\x61\x6e\x64\x73\x3c\x2f\x6f\x70\x74\x69\x6f\x6e\x3e' +
+      brands.map(([b, n]) => `<option value="${esc(b)}">${esc(b)} (${n})</option>`).join('');
+    if (currentVal) brandSel.value = currentVal;
+  }
+  const condSel = document.getElementById('\x63\x6f\x6e\x64\x53\x65\x6c\x65\x63\x74');
+  if (condSel) {
+    const conditions = CONDITIONS.map(c => [c, items.filter(i => i.condition === c).length]);
+    const currentVal = condSel.value;
+    condSel.innerHTML = '\x3c\x6f\x70\x74\x69\x6f\x6e\x20\x76\x61\x6c\x75\x65\x3d\x22\x22\x3e\x41\x6c\x6c\x20\x43\x6f\x6e\x64\x69\x74\x69\x6f\x6e\x73\x3c\x2f\x6f\x70\x74\x69\x6f\x6e\x3e' +
+      conditions.map(([c, n]) => `<option value="${esc(c)}">${esc(c)} (${n})</option>`).join('');
+    if (currentVal) condSel.value = currentVal;
+  }
+  const brandBox = document.getElementById('\x62\x72\x61\x6e\x64\x46\x69\x6c\x74\x65\x72\x73');
+  if (brandBox) {
+    const brands = Object.entries(tally('\x62\x72\x61\x6e\x64')).sort((a, b) => b[1] - a[1]);
+    const row = (kind, value, count) => `
+      <label class="check">
+        <input type="checkbox" data-kind="${kind}" value="${value}">
+        <span>${value}</span><span class="count">${count}</span>
+      </label>`;
+    brandBox.innerHTML = brands.map(([b, n]) => row('\x62\x72\x61\x6e\x64', b, n)).join('');
+  }
+  const condBox = document.getElementById('\x63\x6f\x6e\x64\x46\x69\x6c\x74\x65\x72\x73');
+  if (condBox) {
+    const row = (kind, value, count) => `
+      <label class="check">
+        <input type="checkbox" data-kind="${kind}" value="${value}">
+        <span>${value}</span><span class="count">${count}</span>
+      </label>`;
+    condBox.innerHTML = CONDITIONS.map(c => row('\x63\x6f\x6e\x64\x69\x74\x69\x6f\x6e', c, items.filter(i => i.condition === c).length)).join('');
+  }
 }
 function specRows(item) {
   return [
@@ -446,6 +476,40 @@ function initHome() {
     const browse = document.getElementById('\x62\x72\x6f\x77\x73\x65');
     if (browse) browse.scrollIntoView({ behavior: '\x73\x6d\x6f\x6f\x74\x68' });
   });
+  const brandSel = document.getElementById('\x62\x72\x61\x6e\x64\x53\x65\x6c\x65\x63\x74');
+  if (brandSel) {
+    brandSel.addEventListener('\x63\x68\x61\x6e\x67\x65', e => {
+      state.brands.clear();
+      if (e.target.value) state.brands.add(e.target.value);
+      state.page = 1;
+      paintResults();
+    });
+  }
+  const condSel = document.getElementById('\x63\x6f\x6e\x64\x53\x65\x6c\x65\x63\x74');
+  if (condSel) {
+    condSel.addEventListener('\x63\x68\x61\x6e\x67\x65', e => {
+      state.conditions.clear();
+      if (e.target.value) state.conditions.add(e.target.value);
+      state.page = 1;
+      paintResults();
+    });
+  }
+  const inStockInput = document.getElementById('\x69\x6e\x53\x74\x6f\x63\x6b\x4f\x6e\x6c\x79');
+  if (inStockInput) {
+    inStockInput.addEventListener('\x63\x68\x61\x6e\x67\x65', () => {
+      state.inStock = inStockInput.checked;
+      state.page = 1;
+      paintResults();
+    });
+  }
+  const onSaleInput = document.getElementById('\x6f\x6e\x53\x61\x6c\x65\x4f\x6e\x6c\x79');
+  if (onSaleInput) {
+    onSaleInput.addEventListener('\x63\x68\x61\x6e\x67\x65', () => {
+      state.onSale = onSaleInput.checked;
+      state.page = 1;
+      paintResults();
+    });
+  }
   const filtersEl = document.querySelector('\x2e\x66\x69\x6c\x74\x65\x72\x73');
   if (filtersEl) {
     filtersEl.addEventListener('\x63\x68\x61\x6e\x67\x65', e => {
