@@ -6,7 +6,7 @@ const draft = {
   title: '', brand: '\x41\x70\x70\x6c\x65', category: '\x70\x68\x6f\x6e\x65', price: '', oldPrice: '',
   condition: '\x42\x72\x61\x6e\x64\x20\x4e\x65\x77', storage: '\x31\x32\x38\x47\x42', ram: '\x38\x47\x42', battery: '\x31\x30\x30\x25\x20\x68\x65\x61\x6c\x74\x68',
   display: '', chip: '', camera: '', color: '\x6d\x69\x64\x6e\x69\x67\x68\x74', warranty: '\x31\x20\x79\x65\x61\x72\x20\x6f\x66\x66\x69\x63\x69\x61\x6c',
-  stock: '\x35', desc: '', images: []
+  stock: '\x35', status: '\x41\x63\x74\x69\x76\x65', desc: '', images: []
 };
 let editingProductId = null;
 function resetDraft() {
@@ -14,7 +14,7 @@ function resetDraft() {
     title: '', brand: '\x41\x70\x70\x6c\x65', category: '\x70\x68\x6f\x6e\x65', price: '', oldPrice: '',
     condition: '\x42\x72\x61\x6e\x64\x20\x4e\x65\x77', storage: '\x31\x32\x38\x47\x42', ram: '\x38\x47\x42', battery: '\x31\x30\x30\x25\x20\x68\x65\x61\x6c\x74\x68',
     display: '', chip: '', camera: '', color: '\x6d\x69\x64\x6e\x69\x67\x68\x74', warranty: '\x31\x20\x79\x65\x61\x72\x20\x6f\x66\x66\x69\x63\x69\x61\x6c',
-    stock: '\x35', desc: '', images: []
+    stock: '\x35', status: '\x41\x63\x74\x69\x76\x65', desc: '', images: []
   });
   renderAdminImagePreviews();
 }
@@ -149,6 +149,7 @@ function draftToProduct() {
     price: +draft.price || 0,
     oldPrice: +draft.oldPrice || 0,
     stock: Math.max(0, +draft.stock || 0),
+    status: draft.status || '\x41\x63\x74\x69\x76\x65',
     images: [...(draft.images || [])],
     added: 0,
     views: 0,
@@ -478,6 +479,7 @@ function startEditProduct(id) {
   draft.color = prod.color || '\x6d\x69\x64\x6e\x69\x67\x68\x74';
   draft.warranty = prod.warranty || '\x31\x20\x79\x65\x61\x72\x20\x6f\x66\x66\x69\x63\x69\x61\x6c';
   draft.stock = String(prod.stock !== undefined ? prod.stock : 5);
+  draft.status = prod.status || '\x41\x63\x74\x69\x76\x65';
   draft.desc = prod.desc || '';
   draft.images = Array.isArray(prod.images) ? [...prod.images] : [];
   const form = document.getElementById('\x61\x64\x6d\x69\x6e\x46\x6f\x72\x6d');
@@ -494,6 +496,7 @@ function startEditProduct(id) {
     if (form.elements['\x63\x68\x69\x70']) form.elements['\x63\x68\x69\x70'].value = draft.chip;
     if (form.elements['\x77\x61\x72\x72\x61\x6e\x74\x79']) form.elements['\x77\x61\x72\x72\x61\x6e\x74\x79'].value = draft.warranty;
     if (form.elements['\x73\x74\x6f\x63\x6b']) form.elements['\x73\x74\x6f\x63\x6b'].value = draft.stock;
+    if (form.elements['\x73\x74\x61\x74\x75\x73']) form.elements['\x73\x74\x61\x74\x75\x73'].value = draft.status;
     if (form.elements['\x64\x65\x73\x63']) form.elements['\x64\x65\x73\x63'].value = draft.desc;
   }
   const swatchBox = document.getElementById('\x73\x77\x61\x74\x63\x68\x65\x73');
@@ -635,6 +638,36 @@ function initProductForm() {
     }
   });
 }
+let adminProdFilter = '\x61\x6c\x6c';
+let adminProdSort = '\x6c\x6f\x77\x5f\x73\x74\x6f\x63\x6b';
+let adminProdSearch = '';
+function initProductToolbarControls() {
+  const filterBox = document.getElementById('\x61\x64\x6d\x69\x6e\x50\x72\x6f\x64\x46\x69\x6c\x74\x65\x72\x54\x61\x62\x73');
+  if (filterBox) {
+    filterBox.querySelectorAll('\x5b\x64\x61\x74\x61\x2d\x70\x72\x6f\x64\x2d\x66\x69\x6c\x74\x65\x72\x5d').forEach(btn => {
+      btn.addEventListener('\x63\x6c\x69\x63\x6b', () => {
+        filterBox.querySelectorAll('\x5b\x64\x61\x74\x61\x2d\x70\x72\x6f\x64\x2d\x66\x69\x6c\x74\x65\x72\x5d').forEach(b => b.classList.remove('\x69\x73\x2d\x61\x63\x74\x69\x76\x65'));
+        btn.classList.add('\x69\x73\x2d\x61\x63\x74\x69\x76\x65');
+        adminProdFilter = btn.dataset.prodFilter;
+        renderAdminProductsList();
+      });
+    });
+  }
+  const sortSelect = document.getElementById('\x61\x64\x6d\x69\x6e\x50\x72\x6f\x64\x53\x6f\x72\x74');
+  if (sortSelect) {
+    sortSelect.addEventListener('\x63\x68\x61\x6e\x67\x65', () => {
+      adminProdSort = sortSelect.value;
+      renderAdminProductsList();
+    });
+  }
+  const searchInput = document.getElementById('\x61\x64\x6d\x69\x6e\x50\x72\x6f\x64\x53\x65\x61\x72\x63\x68');
+  if (searchInput) {
+    searchInput.addEventListener('\x69\x6e\x70\x75\x74', () => {
+      adminProdSearch = searchInput.value;
+      renderAdminProductsList();
+    });
+  }
+}
 async function renderAdminProductsList() {
   const box = document.getElementById('\x61\x64\x6d\x69\x6e\x4c\x69\x73\x74');
   if (!box) return;
@@ -651,21 +684,70 @@ async function renderAdminProductsList() {
   const products = allProducts();
   const countBadge = document.getElementById('\x74\x61\x62\x50\x72\x6f\x64\x75\x63\x74\x43\x6f\x75\x6e\x74');
   if (countBadge) countBadge.textContent = products.length;
-  if (!products.length) {
+  const countAllEl = document.getElementById('\x63\x6f\x75\x6e\x74\x41\x6c\x6c\x50\x72\x6f\x64\x73');
+  const countLowEl = document.getElementById('\x63\x6f\x75\x6e\x74\x4c\x6f\x77\x53\x74\x6f\x63\x6b\x50\x72\x6f\x64\x73');
+  const countActiveEl = document.getElementById('\x63\x6f\x75\x6e\x74\x41\x63\x74\x69\x76\x65\x50\x72\x6f\x64\x73');
+  const countPausedEl = document.getElementById('\x63\x6f\x75\x6e\x74\x50\x61\x75\x73\x65\x64\x50\x72\x6f\x64\x73');
+  const lowStockCount = products.filter(p => Number(p.stock !== undefined ? p.stock : 0) <= 8).length;
+  const activeCount = products.filter(p => String(p.status || '\x41\x63\x74\x69\x76\x65').toLowerCase() === '\x61\x63\x74\x69\x76\x65').length;
+  const pausedCount = products.filter(p => {
+    const s = String(p.status || '\x41\x63\x74\x69\x76\x65').toLowerCase();
+    return s === '\x70\x61\x75\x73\x65\x64' || s === '\x69\x6e\x61\x63\x74\x69\x76\x65';
+  }).length;
+  if (countAllEl) countAllEl.textContent = products.length;
+  if (countLowEl) countLowEl.textContent = lowStockCount;
+  if (countActiveEl) countActiveEl.textContent = activeCount;
+  if (countPausedEl) countPausedEl.textContent = pausedCount;
+  let filteredList = products.filter(p => {
+    const st = String(p.status || '\x41\x63\x74\x69\x76\x65').toLowerCase();
+    const stockNum = Number(p.stock !== undefined ? p.stock : 0);
+    if (adminProdFilter === '\x6c\x6f\x77\x73\x74\x6f\x63\x6b' && stockNum > 8) return false;
+    if (adminProdFilter === '\x61\x63\x74\x69\x76\x65' && st !== '\x61\x63\x74\x69\x76\x65') return false;
+    if (adminProdFilter === '\x70\x61\x75\x73\x65\x64' && st !== '\x70\x61\x75\x73\x65\x64' && st !== '\x69\x6e\x61\x63\x74\x69\x76\x65') return false;
+    if (adminProdSearch) {
+      const q = adminProdSearch.toLowerCase().trim();
+      const hay = `${p.title} ${p.id} ${p.brand} ${p.category}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  if (adminProdSort === '\x6c\x6f\x77\x5f\x73\x74\x6f\x63\x6b') {
+    filteredList.sort((a, b) => {
+      const stockA = Number(a.stock !== undefined ? a.stock : 0);
+      const stockB = Number(b.stock !== undefined ? b.stock : 0);
+      if (stockA !== stockB) return stockA - stockB;
+      return String(a.title || '').localeCompare(String(b.title || ''));
+    });
+  } else if (adminProdSort === '\x68\x69\x67\x68\x5f\x73\x74\x6f\x63\x6b') {
+    filteredList.sort((a, b) => {
+      const stockA = Number(a.stock !== undefined ? a.stock : 0);
+      const stockB = Number(b.stock !== undefined ? b.stock : 0);
+      if (stockA !== stockB) return stockB - stockA;
+      return String(a.title || '').localeCompare(String(b.title || ''));
+    });
+  } else if (adminProdSort === '\x74\x69\x74\x6c\x65') {
+    filteredList.sort((a, b) => String(a.title || '').localeCompare(String(b.title || '')));
+  }
+  if (!filteredList.length) {
     box.innerHTML = `
       <div style="text-align:center;padding:36px 14px;color:var(--muted)">
-        <p>No products found in catalogue.</p>
+        <p>No products match the selected filter criteria.</p>
       </div>`;
     return;
   }
-  box.innerHTML = products.map(p => {
+  box.innerHTML = filteredList.map(p => {
     const isCustom = String(p.id).startsWith('\x6d\x67\x2d\x61');
     const stockNum = Number(p.stock !== undefined ? p.stock : 0);
     const stockBadge = stockNum === 0
-      ? '\x3c\x73\x70\x61\x6e\x20\x63\x6c\x61\x73\x73\x3d\x22\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x61\x6e\x63\x65\x6c\x6c\x65\x64\x22\x20\x73\x74\x79\x6c\x65\x3d\x22\x66\x6f\x6e\x74\x2d\x73\x69\x7a\x65\x3a\x2e\x37\x34\x72\x65\x6d\x3b\x70\x61\x64\x64\x69\x6e\x67\x3a\x32\x70\x78\x20\x38\x70\x78\x22\x3e\x4f\x75\x74\x20\x6f\x66\x20\x53\x74\x6f\x63\x6b\x20\x28\x43\x6f\x6c\x20\x59\x3a\x20\x30\x29\x3c\x2f\x73\x70\x61\x6e\x3e'
+      ? '\x3c\x73\x70\x61\x6e\x20\x63\x6c\x61\x73\x73\x3d\x22\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x61\x6e\x63\x65\x6c\x6c\x65\x64\x22\x20\x73\x74\x79\x6c\x65\x3d\x22\x66\x6f\x6e\x74\x2d\x73\x69\x7a\x65\x3a\x2e\x37\x34\x72\x65\x6d\x3b\x70\x61\x64\x64\x69\x6e\x67\x3a\x32\x70\x78\x20\x38\x70\x78\x3b\x66\x6f\x6e\x74\x2d\x77\x65\x69\x67\x68\x74\x3a\x37\x30\x30\x22\x3e\u274c\x20\x4f\x75\x74\x20\x6f\x66\x20\x53\x74\x6f\x63\x6b\x20\x28\x30\x29\x3c\x2f\x73\x70\x61\x6e\x3e'
       : stockNum <= 8
-        ? `<span class="status-badge status-badge--pending" style="font-size:.74rem;padding:2px 8px">Low Stock (${stockNum})</span>`
+        ? `<span class="status-badge status-badge--pending" style="font-size:.74rem;padding:2px 8px;font-weight:700">⚠️ Low Stock (${stockNum})</span>`
         : `<span class="status-badge status-badge--confirmed" style="font-size:.74rem;padding:2px 8px">In Stock (${stockNum})</span>`;
+    const statusStr = String(p.status || '\x41\x63\x74\x69\x76\x65').trim();
+    const isActive = statusStr.toLowerCase() === '\x61\x63\x74\x69\x76\x65';
+    const statusPill = isActive
+      ? '\x3c\x73\x70\x61\x6e\x20\x63\x6c\x61\x73\x73\x3d\x22\x62\x61\x64\x67\x65\x2d\x73\x68\x65\x65\x74\x2d\x6c\x69\x76\x65\x22\x3e\ud83d\udfe2\x20\x41\x63\x74\x69\x76\x65\x20\x49\x74\x65\x6d\x3c\x2f\x73\x70\x61\x6e\x3e'
+      : '\x3c\x73\x70\x61\x6e\x20\x63\x6c\x61\x73\x73\x3d\x22\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x20\x73\x74\x61\x74\x75\x73\x2d\x62\x61\x64\x67\x65\x2d\x2d\x63\x61\x6e\x63\x65\x6c\x6c\x65\x64\x22\x20\x73\x74\x79\x6c\x65\x3d\x22\x66\x6f\x6e\x74\x2d\x73\x69\x7a\x65\x3a\x2e\x37\x34\x72\x65\x6d\x3b\x70\x61\x64\x64\x69\x6e\x67\x3a\x32\x70\x78\x20\x38\x70\x78\x3b\x66\x6f\x6e\x74\x2d\x77\x65\x69\x67\x68\x74\x3a\x37\x30\x30\x22\x3e\u23f8\ufe0f\x20\x50\x61\x75\x73\x65\x64\x20\x49\x74\x65\x6d\x3c\x2f\x73\x70\x61\x6e\x3e';
     const specsInfo = [
       p.storage ? `Storage: <b>${esc(p.storage)}</b>` : '',
       p.ram ? `RAM: <b>${esc(p.ram)}</b>` : '',
@@ -677,11 +759,11 @@ async function renderAdminProductsList() {
     return `
       <div class="admin-row" style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap">
         <span class="admin-row__art" style="flex-shrink:0">${deviceArt(p, 48)}</span>
-        <span style="flex:1;min-width:260px">
+        <span style="flex:1;min-width:240px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
             <b style="font-size:.96rem">${esc(p.title)}</b>
             <code style="font-size:.74rem;color:var(--muted)">${esc(p.id)}</code>
-            <span class="badge-sheet-live">🟢 Active Item</span>
+            ${statusPill}
             ${isCustom ? '<span style="background:var(--brand-600);color:#fff;font-size:.65rem;padding:1px 6px;border-radius:3px;font-weight:700">NEW</span>' : ''}
           </div>
           <div style="font-size:.82rem;color:var(--muted);margin-top:4px">
@@ -690,18 +772,52 @@ async function renderAdminProductsList() {
           ${specsInfo ? `<div style="\x66\x6f\x6e\x74\x2d\x73\x69\x7a\x65\x3a\x2e\x37\x38\x72\x65\x6d\x3b\x63\x6f\x6c\x6f\x72\x3a\x76\x61\x72\x28\x2d\x2d\x6d\x75\x74\x65\x64\x29\x3b\x6d\x61\x72\x67\x69\x6e\x2d\x74\x6f\x70\x3a\x33\x70\x78">${specsInfo}</div>` : ''}
         </span>
         <b class="admin-row__price" style="font-size:1.05rem;white-space:nowrap">${money(p.price)}</b>
-        <div style="display:flex;gap:6px;align-items:center">
+        <!-- Action Buttons: Separate Active and Pause buttons + Edit + Delete -->
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn--sm ${isActive ? 'btn--primary' : 'btn--soft'}" data-status-product="${esc(p.id)}" data-set-status="Active"
+            style="${isActive ? 'background:#10b981;color:#fff;font-weight:700;border-color:#10b981' : 'color:#059669'};padding:6px 10px;gap:4px"
+            title="Mark product as Active">
+            🟢 Active
+          </button>
+          <button class="btn btn--sm ${!isActive ? 'btn--primary' : 'btn--soft'}" data-status-product="${esc(p.id)}" data-set-status="Paused"
+            style="${!isActive ? 'background:#f59e0b;color:#fff;font-weight:700;border-color:#f59e0b' : 'color:#b45309'};padding:6px 10px;gap:4px"
+            title="Pause product (hide from store)">
+            ⏸️ Pause
+          </button>
           <button class="btn btn--soft btn--sm" data-edit-product="${esc(p.id)}"
-            style="color:var(--brand-600);padding:6px 12px;gap:4px">
+            style="color:var(--brand-600);padding:6px 10px;gap:4px">
             ✏️ Edit
           </button>
           <button class="btn btn--soft btn--sm" data-del-product="${esc(p.id)}"
-            style="color:var(--rose);padding:6px 12px;gap:4px">
+            style="color:var(--rose);padding:6px 10px;gap:4px">
             ${icon('trash', 15)} Delete
           </button>
         </div>
       </div>`;
   }).join('');
+  box.querySelectorAll('\x5b\x64\x61\x74\x61\x2d\x73\x74\x61\x74\x75\x73\x2d\x70\x72\x6f\x64\x75\x63\x74\x5d').forEach(btn => {
+    btn.addEventListener('\x63\x6c\x69\x63\x6b', async () => {
+      const id = btn.dataset.statusProduct;
+      const newStatus = btn.dataset.setStatus;
+      const prod = productById(id);
+      if (!prod) return;
+      const currentStatus = String(prod.status || '\x41\x63\x74\x69\x76\x65');
+      if (currentStatus.toLowerCase() === newStatus.toLowerCase()) {
+        toast(`Product "${prod.title}" is already ${newStatus}`, '\x63\x68\x65\x63\x6b');
+        return;
+      }
+      btn.disabled = true;
+      prod.status = newStatus;
+      if (window.SheetEndpoint) {
+        await window.SheetEndpoint.updateProduct(prod);
+      } else {
+        updateAnyProduct(prod);
+      }
+      const iconType = newStatus === '\x41\x63\x74\x69\x76\x65' ? '\x63\x68\x65\x63\x6b\x43\x69\x72\x63\x6c\x65' : '\x70\x61\x75\x73\x65';
+      toast(`Product "${prod.title}" status changed to ${newStatus}!`, iconType);
+      renderAdminProductsList();
+    });
+  });
   box.querySelectorAll('\x5b\x64\x61\x74\x61\x2d\x65\x64\x69\x74\x2d\x70\x72\x6f\x64\x75\x63\x74\x5d').forEach(btn => {
     btn.addEventListener('\x63\x6c\x69\x63\x6b', () => {
       const id = btn.dataset.editProduct;
@@ -1086,6 +1202,7 @@ function initAdmin() {
   initAdminTabs();
   initProductForm();
   initAdminPhotos();
+  initProductToolbarControls();
   initSheetSettings();
   try {
     const savedUrl = localStorage.getItem('\x6d\x67\x2e\x73\x68\x65\x65\x74\x2e\x75\x72\x6c');

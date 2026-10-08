@@ -42,6 +42,28 @@ This document serves as the persistent memory, architectural history, Architectu
   - Zero breaking changes to existing storefront or admin UI code.
   - Zero downtime transition between backend platforms.
 
+### ADR-004: Low Stock Priority Sorting & Active/Pause Product Inventory Controls
+- **Status**: Implemented & Verified.
+- **Context**: Store administrators need clear visibility of low stock items (quantities 1, 2, 3...) to reorder quickly, and explicit separate controls to pause items from customer view without deleting them.
+- **Decision**: 
+  1. Default Manage Products sorting to stock quantity ascending (`stockNumA - stockNumB`), placing low stock items (1, 2, 3...) at the top.
+  2. Provide separate, distinct action buttons for `🟢 Active` and `⏸️ Pause` on each product row in `renderAdminProductsList()`.
+  3. Filter out items with `status === 'Paused'` or `'Inactive'` in `app.js`'s `matches(item)` so paused items automatically disappear from customer search and shop browsing.
+- **Consequences**:
+  - Immediate visual clarity for low stock inventory management.
+  - Instant visibility toggling with cloud & local state sync.
+
+### ADR-005: Streamlined Storefront Navigation & Section Cleanup
+- **Status**: Implemented & Verified.
+- **Context**: The navbar contained extra links ("Shop", "Why us", "Help") that congested the navigation bar on desktop and mobile screens.
+- **Decision**: 
+  1. Renamed primary navigation link "Shop" to "Home".
+  2. Removed "Why us" and "Help" buttons from the header navigation bar and mobile drawer across all pages.
+  3. Removed the corresponding `#why` ("Why Mobile Gallery") and `#faq` ("Help & delivery") HTML content sections from `index.html`.
+- **Consequences**:
+  - Cleaner, focused navigation header (`Home`, `Categories`, `Orders`, `Admin`).
+  - Reduced page scrolling depth and lighter DOM tree for improved FCP/TTI performance.
+
 ---
 
 ## 3. Persistent Constants & Keys

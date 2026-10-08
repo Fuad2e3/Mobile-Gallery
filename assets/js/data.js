@@ -455,6 +455,7 @@ function deleteAnyProduct(id) {
   return true;
 }
 function updateAnyProduct(product) {
+  if (!product || !product.id) return false;
   const edits = getEditedProducts();
   edits[product.id] = product;
   writeStore(EDITED_PROD_KEY, edits);
@@ -462,6 +463,9 @@ function updateAnyProduct(product) {
   const idx = added.findIndex(p => p.id === product.id);
   if (idx > -1) {
     added[idx] = product;
+    writeStore(STORE_KEY, added);
+  } else if (!LISTINGS.some(p => p.id === product.id)) {
+    added.unshift(product);
     writeStore(STORE_KEY, added);
   }
   return true;

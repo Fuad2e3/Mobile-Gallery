@@ -28,6 +28,8 @@ gantt
 
 ### ✅ Milestone 1: Core Storefront & 3D Design System
 - [x] Responsive layout with sticky topbar, category rail, and footer.
+- [x] Renamed primary storefront navigation link from "Shop" to "Home".
+- [x] Streamlined navigation by removing "Why us" and "Help" buttons and their associated content sections.
 - [x] 3D perspective physics, spring easing, and dynamic device color palettes (`PALETTES`).
 - [x] Real-time multi-attribute live search (filtering titles, brands, processors).
 - [x] Product quick-view modal with detailed technical specifications and battery health.
@@ -44,7 +46,11 @@ gantt
 ### ✅ Milestone 3: Admin Management Portal
 - [x] Fixed credential security layer (`admin@mobilegallery.com` / `admin123`).
 - [x] Cloud database telemetry monitor displaying live product, order, and user counts with latency gauge.
-- [x] Product creator & inline editor with swatch picker and warranty management.
+- [x] Product creator & inline editor with swatch picker, warranty, and status management (`Active` / `Paused`).
+- [x] Low stock priority sorting (`1, 2, 3...` stock items shown first by default) with prominent badges (`⚠️ Low Stock`).
+- [x] Separate, distinct action buttons for `🟢 Active` and `⏸️ Pause` on each product card in Manage Products.
+- [x] Automatic storefront hiding of `Paused` items from customer browsing and search results.
+- [x] Manage Products filter toolbar with live counter chips (`All`, `⚡ Low Stock`, `🟢 Active`, `⏸️ Paused`), search bar, and sort dropdown.
 - [x] Order fulfillment pipeline with status filters (`Pending`, `Confirmed`, `Delivered`, `Cancelled`).
 - [x] Customer access control allowing one-click account suspension (`Active`, `Inactive`, `Suspended`).
 

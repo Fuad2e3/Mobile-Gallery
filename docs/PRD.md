@@ -44,7 +44,11 @@ This document specifies the product requirements, user personas, functional feat
 - **Secure Authentication**: Protected view requiring `admin@mobilegallery.com` / `admin123`.
 - **Cloud Database Telemetry**: Live metric chips showing total active products, orders, users, and API latency.
 - **Product Management**:
-  - Add new products or edit existing catalogue items in-place.
+  - Add new products or edit existing catalogue items in-place with `Product Status` (`🟢 Active` / `⏸️ Paused`).
+  - Low stock priority sorting (`1, 2, 3...` stock items shown first by default) with `⚠️ Low Stock` badges.
+  - Separate, distinct action buttons for `🟢 Active` and `⏸️ Pause` on each product card for quick visibility control.
+  - Automatic hiding of `Paused` items from customer storefront catalog browsing and search.
+  - Manage Products filter toolbar with live counter chips (`All`, `⚡ Low Stock`, `🟢 Active`, `⏸️ Paused`), search bar, and sort dropdown.
   - Multi-photo drag & drop (up to 5 photos per listing).
   - Client-side WebP compression (<60 KB) and automatic Cloudflare R2 upload.
   - Delete product with instant cascade.

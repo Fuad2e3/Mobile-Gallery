@@ -23,11 +23,6 @@ function badgeMarkup(item) {
   if (off >= 12 && !item.tags.includes('\x6e\x65\x77')) out.push(`<span class="badge badge--deal">-${off}% off</span>`);
   return out.length ? `<div class="badges">${out.slice(0, 2).join('')}</div>` : '';
 }
-function swatchesMarkup(item) {
-  if (!item.color || !PALETTES[item.color]) return '';
-  const [c1, c2] = PALETTES[item.color];
-  return `<div class="color-swatches" title="Color: ${esc(item.color)}"><span class="color-swatch is-active" style="background: linear-gradient(135deg, ${c1}, ${c2})"></span></div>`;
-}
 function cardMarkup(item) {
   const off = discount(item);
   return `
@@ -41,10 +36,7 @@ function cardMarkup(item) {
       ${deviceArt(item, 168)}
     </div>
     <div class="card__body">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <span class="card__brand">${esc(item.brand)} · ${esc(item.condition)}</span>
-        ${swatchesMarkup(item)}
-      </div>
+      <span class="card__brand">${esc(item.brand)} · ${esc(item.condition)}</span>
       <h3 class="card__title"><a href="#" data-open="${esc(item.id)}">${esc(item.title)}</a></h3>
       <div class="card__meta">
         ${item.storage !== 'N/A' ? `<span>${esc(item.storage)}</span>` : ''}
@@ -71,16 +63,18 @@ function cardMarkup(item) {
 }
 function skeletonMarkup(n = 8) {
   return Array.from({ length: n }, () => `
-    <div class="skeleton-card">
-      <div class="skeleton-box skeleton-img"></div>
-      <div class="skeleton-box skeleton-pill"></div>
-      <div class="skeleton-box skeleton-title"></div>
-      <div class="skeleton-box skeleton-text"></div>
-      <div class="skeleton-box skeleton-price"></div>
-      <div class="skeleton-box skeleton-btn"></div>
-    </div>`).join('');
+    <article class="card card--skeleton">
+      <div class="card__media"><div class="sk" style="width:100%;height:100%"></div></div>
+      <div class="card__body">
+        <div class="sk" style="width:38%;height:10px"></div>
+        <div class="sk" style="width:88%;height:16px"></div>
+        <div class="sk" style="width:60%;height:12px"></div>
+        <div class="sk" style="width:44%;height:22px;margin-top:8px"></div>
+      </div>
+    </article>`).join('');
 }
 function matches(item) {
+  if (item.status && (String(item.status).toLowerCase() === '\x70\x61\x75\x73\x65\x64' || String(item.status).toLowerCase() === '\x69\x6e\x61\x63\x74\x69\x76\x65')) return false;
   if (state.favOnly && !isFav(item.id)) return false;
   if (state.category !== '\x61\x6c\x6c' && item.category !== state.category) return false;
   if (state.brands.size && !state.brands.has(item.brand)) return false;
@@ -115,15 +109,16 @@ function paintResults() {
   grid.classList.toggle('\x69\x73\x2d\x6c\x69\x73\x74', state.view === '\x6c\x69\x73\x74');
   if (!results.length) {
     grid.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state__graphic">
-          <svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/>
-          </svg>
-        </div>
-        <h3 class="empty-state__title">No products match your search</h3>
-        <p class="empty-state__desc">Try adjusting your filters, widening the price range, or searching for another device name.</p>
-        <button class="btn btn--soft btn--sm" id="emptyReset" style="margin-top:8px">Reset all filters</button>
+      <div class="empty">
+        <svg class="empty-illu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          <line x1="11" y1="8" x2="11" y2="14"></line>
+          <line x1="8" y1="11" x2="14" y2="11"></line>
+        </svg>
+        <h3>No ads match those filters</h3>
+        <p>Try widening the price range or clearing a brand or two.</p>
+        <button class="btn btn--soft btn--sm" id="emptyReset" style="margin-top:16px">Reset all filters</button>
       </div>`;
     const emptyReset = document.getElementById('\x65\x6d\x70\x74\x79\x52\x65\x73\x65\x74');
     if (emptyReset) emptyReset.addEventListener('\x63\x6c\x69\x63\x6b', resetFilters);
@@ -223,30 +218,11 @@ function openDetail(id) {
   const hasPhotos = item.images && item.images.length > 0;
   const mediaMarkup = hasPhotos ? `
     <div class="detail__gallery">
-      <div class="detail__carousel">
-        <div class="detail__carousel-stage" id="carouselStage" style="transform: translateX(0%)">
-          ${item.images.map((imgUrl, i) => `
-            <div class="detail__carousel-slide">
-              <img id="detailMainImg_${i}" src="${esc(imgUrl)}" alt="${esc(item.title)} photo ${i + 1}">
-            </div>
-          `).join('')}
-        </div>
-        ${item.images.length > 1 ? `
-          <button class="detail__nav-arrow detail__nav-arrow--prev" id="carouselPrev" aria-label="Previous photo">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <button class="detail__nav-arrow detail__nav-arrow--next" id="carouselNext" aria-label="Next photo">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
-        ` : ''}
+      <div class="detail__main-img-wrap">
+        <img id="detailMainImg" src="${esc(item.images[0])}" alt="${esc(item.title)}">
       </div>
       ${item.images.length > 1 ? `
-      <div class="detail__carousel-dots" id="carouselDots">
-        ${item.images.map((_, i) => `
-          <span class="detail__dot ${i === 0 ? 'is-active' : ''}" data-dot-idx="${i}"></span>
-        `).join('')}
-      </div>
-      <div class="detail__thumbs" role="tablist" aria-label="Product photos" style="margin-top:12px">
+      <div class="\x64\x65\x74\x61\x69\x6c\x5f\x5f\x74\x68\x75\x6d\x62\x73" role="\x74\x61\x62\x6c\x69\x73\x74" aria-label="\x50\x72\x6f\x64\x75\x63\x74\x20\x70\x68\x6f\x74\x6f\x73">
         ${item.images.map((imgUrl, i) => `
           <button type="button" class="detail__thumb-btn ${i === 0 ? 'is-active' : ''}" data-thumb-idx="${i}" aria-label="Photo ${i + 1}">
             <img src="${esc(imgUrl)}" alt="Thumbnail ${i + 1}">
@@ -314,27 +290,16 @@ function openDetail(id) {
     </div>
     ${relatedMarkup(item)}`;
   if (hasPhotos && item.images.length > 1) {
-    let currentSlide = 0;
-    const stage = modal.querySelector('#carouselStage');
-    const dots = modal.querySelectorAll('.detail__dot');
-    const thumbBtns = modal.querySelectorAll('.detail__thumb-btn');
-    const prevBtn = modal.querySelector('#carouselPrev');
-    const nextBtn = modal.querySelector('#carouselNext');
-
-    const goToSlide = (idx) => {
-      currentSlide = (idx + item.images.length) % item.images.length;
-      if (stage) stage.style.transform = `translateX(-${currentSlide * 100}%)`;
-      dots.forEach((d, i) => d.classList.toggle('is-active', i === currentSlide));
-      thumbBtns.forEach((b, i) => b.classList.toggle('is-active', i === currentSlide));
-    };
-
-    if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
-    dots.forEach(d => d.addEventListener('click', () => goToSlide(parseInt(d.dataset.dotIdx, 10))));
+    const mainImg = modal.querySelector('\x23\x64\x65\x74\x61\x69\x6c\x4d\x61\x69\x6e\x49\x6d\x67');
+    const thumbBtns = modal.querySelectorAll('\x2e\x64\x65\x74\x61\x69\x6c\x5f\x5f\x74\x68\x75\x6d\x62\x2d\x62\x74\x6e');
     thumbBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('\x63\x6c\x69\x63\x6b', () => {
         const idx = parseInt(btn.dataset.thumbIdx, 10);
-        goToSlide(idx);
+        if (mainImg && item.images[idx]) {
+          mainImg.src = item.images[idx];
+          thumbBtns.forEach(b => b.classList.remove('\x69\x73\x2d\x61\x63\x74\x69\x76\x65'));
+          btn.classList.add('\x69\x73\x2d\x61\x63\x74\x69\x76\x65');
+        }
       });
     });
   }

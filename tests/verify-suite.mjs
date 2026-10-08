@@ -160,6 +160,80 @@ try {
   assert(false, `Production code test failed: ${e.message}`);
 }
 
+// Test 7: Verify Admin Operations (Add, Edit, Pause/Activate, Low Stock Sort, Delete)
+console.log('\n7. Checking Admin Operations (Add, Edit, Pause/Activate, Low Stock Sort, Delete)...');
+try {
+  const adminContext = vm.createContext({ ...mockWindow });
+  const dataJs = fs.readFileSync(path.join(rootDir, 'src/js/data.js'), 'utf8');
+  const sheetJs = fs.readFileSync(path.join(rootDir, 'src/js/sheet-endpoint.js'), 'utf8');
+  const appJs = fs.readFileSync(path.join(rootDir, 'src/js/app.js'), 'utf8');
+
+  vm.runInContext(dataJs, adminContext);
+  vm.runInContext(sheetJs, adminContext);
+  vm.runInContext(appJs, adminContext);
+
+  const initialProds = vm.runInContext('allProducts()', adminContext);
+  assert(initialProds.length === 24, `Initial product count is 24`);
+
+  // 1. ADD ITEM
+  const newProd = {
+    id: 'mg-a_test1',
+    title: 'Test Pixel Phone 256GB',
+    brand: 'Google',
+    category: 'phone',
+    price: 75000,
+    oldPrice: 85000,
+    stock: 2, // Low stock (2)
+    status: 'Active',
+    condition: 'Brand New',
+    storage: '256GB',
+    ram: '12GB',
+    battery: '100%',
+    color: 'ocean',
+    desc: 'Test phone for admin operations verification.'
+  };
+
+  vm.runInContext(`updateAnyProduct(${JSON.stringify(newProd)})`, adminContext);
+  const afterAdd = vm.runInContext('allProducts()', adminContext);
+  assert(afterAdd.length === 25, `After add product, catalogue count is 25`);
+  const addedItem = vm.runInContext(`productById('mg-a_test1')`, adminContext);
+  assert(addedItem && addedItem.title === 'Test Pixel Phone 256GB', 'Added product retrieved successfully by ID');
+
+  // 2. EDIT ITEM
+  addedItem.price = 72000;
+  addedItem.stock = 1; // Stock 1
+  vm.runInContext(`updateAnyProduct(${JSON.stringify(addedItem)})`, adminContext);
+  const updatedItem = vm.runInContext(`productById('mg-a_test1')`, adminContext);
+  assert(updatedItem && updatedItem.price === 72000 && updatedItem.stock === 1, 'Product price and stock updated successfully');
+
+  // 3. PAUSE ITEM & CHECK SHOP MATCHES
+  updatedItem.status = 'Paused';
+  vm.runInContext(`updateAnyProduct(${JSON.stringify(updatedItem)})`, adminContext);
+  const isMatchPaused = vm.runInContext(`matches(${JSON.stringify(updatedItem)})`, adminContext);
+  assert(isMatchPaused === false, 'Paused product is excluded from customer shop matching');
+
+  // 4. ACTIVATE ITEM & CHECK SHOP MATCHES
+  updatedItem.status = 'Active';
+  vm.runInContext(`updateAnyProduct(${JSON.stringify(updatedItem)})`, adminContext);
+  const isMatchActive = vm.runInContext(`matches(${JSON.stringify(updatedItem)})`, adminContext);
+  assert(isMatchActive === true, 'Active product is included in customer shop matching');
+
+  // 5. LOW STOCK SORTING (1, 2, 3...)
+  const allProdsSorted = vm.runInContext('allProducts()', adminContext);
+  allProdsSorted.sort((a, b) => (Number(a.stock ?? 0) - Number(b.stock ?? 0)));
+  assert(Number(allProdsSorted[0].stock ?? 0) <= Number(allProdsSorted[1].stock ?? 0), 'Low stock sorting puts stock 1, 2, 3 items first');
+
+  // 6. DELETE ITEM
+  vm.runInContext(`deleteAnyProduct('mg-a_test1')`, adminContext);
+  const afterDel = vm.runInContext('allProducts()', adminContext);
+  assert(afterDel.length === 24, 'After delete product, catalogue count returns to 24');
+  const deletedItem = vm.runInContext(`productById('mg-a_test1')`, adminContext);
+  assert(deletedItem === null, 'Deleted product is no longer found in catalogue');
+
+} catch (e) {
+  assert(false, `Admin operations check failed: ${e.message}`);
+}
+
 console.log('\n======================================================');
 console.log(`Suite Complete: ${passCount} Passed, ${failCount} Failed`);
 console.log('======================================================\n');

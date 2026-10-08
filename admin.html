@@ -88,10 +88,8 @@
     </a>
 
     <nav class="nav__links" aria-label="Main">
-      <a href="index.html#browse">Shop</a>
+      <a href="index.html#browse">Home</a>
       <a href="index.html#categories">Categories</a>
-      <a href="index.html#why">Why us</a>
-      <a href="index.html#faq">Help</a>
       <a href="orders.html">Orders</a>
       <a href="admin.html" class="is-active">Admin</a>
     </nav>
@@ -121,10 +119,8 @@
       <b>Menu</b>
       <button class="icon-btn" data-close aria-label="Close menu" data-icon="close"></button>
     </div>
-    <a href="index.html#browse">Shop all products</a>
+    <a href="index.html#browse">Home</a>
     <a href="index.html#categories">Categories</a>
-    <a href="index.html#why">Why us</a>
-    <a href="index.html#faq">Help &amp; delivery</a>
     <a href="orders.html">My orders</a>
     <a href="admin.html">Admin panel</a>
   </div>
@@ -360,6 +356,15 @@
                   <span class="err"></span>
                 </div>
 
+                <div class="field">
+                  <label for="f-status">Product Status <span>*</span></label>
+                  <select class="input" id="f-status" name="status">
+                    <option value="Active" selected>🟢 Active</option>
+                    <option value="Paused">⏸️ Paused</option>
+                  </select>
+                  <small>Paused products are hidden from customers in the store.</small>
+                </div>
+
               </div>
             </div>
 
@@ -438,10 +443,10 @@
         </div>
 
         <div class="panel" style="margin-bottom:20px">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px">
             <div>
               <h3>Products in Catalogue</h3>
-              <p class="hint" style="margin:0">All products currently active. Edit (✏️) or delete (🗑️) any product with instant cloud sync.</p>
+              <p class="hint" style="margin:0">Manage inventory, low stock items, and toggle active/paused visibility with instant cloud sync.</p>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap">
               <button class="btn btn--soft btn--sm" id="seedProductsBtn" title="Upload all built-in catalogue items to database">
@@ -450,6 +455,24 @@
               <button class="btn btn--soft btn--sm" id="refreshProductsBtn">
                 🔄 Sync Products
               </button>
+            </div>
+          </div>
+
+          <!-- Product Filter & Sort Toolbar -->
+          <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--line-soft)">
+            <div style="display:flex;gap:6px;flex-wrap:wrap" id="adminProdFilterTabs">
+              <button type="button" class="btn btn--soft btn--sm is-active" data-prod-filter="all">All (<span id="countAllProds">0</span>)</button>
+              <button type="button" class="btn btn--soft btn--sm" data-prod-filter="lowstock" style="color:var(--amber)">⚡ Low Stock (<span id="countLowStockProds">0</span>)</button>
+              <button type="button" class="btn btn--soft btn--sm" data-prod-filter="active" style="color:var(--mint)">🟢 Active (<span id="countActiveProds">0</span>)</button>
+              <button type="button" class="btn btn--soft btn--sm" data-prod-filter="paused" style="color:var(--rose)">⏸️ Paused (<span id="countPausedProds">0</span>)</button>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <input type="text" id="adminProdSearch" class="input" placeholder="🔍 Search title or ID..." aria-label="Search title or ID" style="width:200px;padding:6px 12px;font-size:.85rem">
+              <select id="adminProdSort" class="input" aria-label="Sort products" style="width:auto;padding:6px 12px;font-size:.85rem">
+                <option value="low_stock" selected>⚡ Low Stock First (1,2,3...)</option>
+                <option value="high_stock">📦 High Stock First</option>
+                <option value="title">🔤 Title A-Z</option>
+              </select>
             </div>
           </div>
         </div>
