@@ -1,6 +1,7 @@
 {
   "name": "mobile-gallery",
   "version": "2.0.0",
+  "type": "module",
   "description": "Mobile Gallery — Fullstack smartphone & gadget store on Edge Pages, D1 and R2",
   "scripts": {
     "dev": "wrangler pages dev . --d1 DB=mobile-gallery-db --r2 PHOTOS_BUCKET=mobile-gallery-photos",
