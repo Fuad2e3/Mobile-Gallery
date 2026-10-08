@@ -59,11 +59,16 @@ Built for global edge speed with **Pages**, **Pages Functions**, **D1 SQL Databa
 │   └── generate-seed.js     # D1 seed generator
 ├── wrangler.toml            # Edge deployment & bindings configuration
 ├── package.json             # Project scripts & dev dependencies
-├── index.html               # Main Storefront
-├── admin.html               # Admin Portal
-├── checkout.html            # Checkout Flow
-├── orders.html              # Customer Order Tracking
-└── 404.html                 # 404 Error Page
+├── index.html               # Main Storefront Landing Page
+└── assets/                  # Production-compiled assets & secondary HTML pages
+    ├── 404.html             # 404 Not Found Page
+    ├── admin.html           # Admin Portal & Inventory Dashboard
+    ├── categories.html      # Categories & Full Catalogue Page
+    ├── checkout.html        # Checkout & Payment Pipeline
+    ├── orders.html          # Order Tracking & Status Page
+    ├── recent.html          # Dedicated Recently Viewed Devices Page (7-day window)
+    ├── css/style.css        # Core stylesheet & design tokens
+    └── js/                  # Obfuscated production scripts
 ```
 
 ---

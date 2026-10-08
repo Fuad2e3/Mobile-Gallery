@@ -69,11 +69,56 @@ This document serves as the persistent memory, architectural history, Architectu
 - **Context**: Keeping all HTML pages in the root folder creates clutter and obscures `index.html` as the primary web application entry point.
 - **Decision**: 
   1. Retain ONLY `index.html` in the root directory.
-  2. Relocate secondary HTML pages (`categories.html`, `admin.html`, `checkout.html`, `orders.html`, `404.html`) into the `assets/` directory.
-  3. Update all relative paths across HTML headers, footers, drawers, and JavaScript modules (`app.js`, `cart.js`, `ui.js`).
+  2. Relocate secondary HTML pages (`categories.html`, `admin.html`, `checkout.html`, `orders.html`, `recent.html`, `404.html`) into the `assets/` directory.
+  3. Update all relative paths across HTML headers, footers, drawers, and JavaScript modules (`app.js`, `cart.js`, `ui.js`, `recent.js`).
 - **Consequences**:
   - Extremely clean root directory layout.
   - Seamless navigation between root `index.html` and secondary pages in `assets/`.
+
+### ADR-007: Exact Header Center Alignment & Glassmorphic Navigation Pill
+- **Status**: Implemented & Verified.
+- **Context**: Header navigation links (`Home`, `Categories`, `Orders`, `Admin`) were huddled on the left side near the logo, creating an unbalanced layout.
+- **Decision**: Positioned `.nav__links` at exact horizontal center (`position: absolute; left: 50%; transform: translateX(-50%)`) inside `.nav` container, with a floating glassmorphic pill background, backdrop blur, and custom light/dark active states.
+- **Consequences**:
+  - Perfectly balanced header layout across desktop & laptop screens.
+  - Responsive collapse to mobile drawer menu on screens $\le$ 880px.
+
+### ADR-008: Event Listener Guarding & Duplicate Execution Prevention
+- **Status**: Implemented & Verified.
+- **Context**: Re-executing `initHome()` or `initCart()` on page re-renders attached duplicate event listeners to `document.body`, causing multiple items to be added on a single "Add to Cart" click.
+- **Decision**: Added global execution guards (`window._homeListenersBound`, `window._cartListenersBound`) to ensure click handlers and form listeners are bound EXACTLY ONCE on initial load.
+- **Consequences**:
+  - Fixed duplicate "Add to Cart" bug permanently (adds exactly 1 item per click).
+  - Cleaner memory footprint and zero handler leakage.
+
+### ADR-009: Lenis Smooth Scrolling Engine Integration
+- **Status**: Implemented & Verified.
+- **Context**: Native browser scrolling can feel abrupt and lacks fluid momentum.
+- **Decision**: Integrated Lenis v1.1.18 smooth scroll library across all HTML pages with a global `requestAnimationFrame` loop, smooth anchor scrolling, and `MutationObserver` on `document.body.no-scroll` for auto-pausing when drawers/modals/cart open.
+- **Consequences**:
+  - Ultra-smooth, high-end scrolling performance across desktop and mobile browsers.
+  - Zero conflict with popup overlays, drawers, and modals.
+
+### ADR-010: Dedicated Recently Viewed Page (`recent.html`) & 7-Day Time Window
+- **Status**: Implemented & Verified.
+- **Context**: Customers requested a dedicated page for recently viewed devices, showing only items viewed within the last 7 days.
+- **Decision**:
+  1. Created `assets/recent.html` and `assets/js/recent.js` displaying full product grid cards with relative time-ago badges (e.g. `Just now`, `2 hours ago`, `Yesterday`, `3 days ago`).
+  2. Updated `pushRecent()` & `getRecentDetailed()` in `data.js` to store timestamps and auto-purge items older than 7 days (`7 * 24 * 60 * 60 * 1000` ms).
+  3. Added header clock icon button `#recentNavBtn` and Profile Dropdown menu item linking directly to `recent.html`.
+- **Consequences**:
+  - Dedicated full page experience for product viewing history.
+  - Automatic 7-day data retention cleanup.
+
+### ADR-011: Global Floating Scroll-To-Top Button & Ultra-Compact Breakpoint (360px)
+- **Status**: Implemented & Verified.
+- **Context**: Long product pages require an effortless way to return to top, and tiny mobile devices (cover screens) need 1-column responsiveness.
+- **Decision**:
+  1. Added `#scrollTopBtn` across all HTML pages, integrated with Lenis smooth scroll (`window.lenis.scrollTo(0)`).
+  2. Introduced `@media (max-width: 360px)` breakpoint in `style.css` for 100% fluid responsiveness on ultra-compact mobile devices.
+- **Consequences**:
+  - Smooth 1-tap return to top across all storefront pages.
+  - 100% device compatibility from 320px foldables to 4K ultra-wide monitors.
 
 ---
 

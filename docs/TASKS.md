@@ -34,6 +34,13 @@ gantt
 - [x] Root directory organization with `index.html` as the primary entry point and secondary pages (`categories.html`, `admin.html`, `checkout.html`, `orders.html`, `404.html`) relocated into `assets/`.
 - [x] Smart Glassmorphic Control Hub on `assets/categories.html` featuring horizontal categories, budget range pill, brand & condition select dropdowns, chip toggles (`In Stock`, `On Sale`), and sort/view controls.
 - [x] Dedicated Categories & Catalogue page (`assets/categories.html`) with auto infinite scroll.
+- [x] Dedicated Recently Viewed full page (`assets/recent.html`, `assets/js/recent.js`) with 7-day timestamp filtering, relative time-ago badges (`Just now`, `2 hours ago`, `Yesterday`, `3 days ago`), and clear history option.
+- [x] Centered header navigation layout (`Home`, `Categories`, `Orders`, `Admin`) with floating glassmorphic pill container.
+- [x] Added header clock icon button `#recentNavBtn` and Profile Dropdown "Recently Viewed" menu option.
+- [x] Integrated Lenis v1.1.18 smooth scroll engine globally (`initLenis()`) with RAF loop, smooth anchor navigation, and `MutationObserver` body overlay auto-pausing.
+- [x] Added floating scroll-to-top button `#scrollTopBtn` across all HTML pages, integrated with Lenis smooth scroll.
+- [x] Introduced `@media (max-width: 360px)` breakpoint for 100% responsiveness on ultra-compact mobile devices.
+- [x] Fixed duplicate event listener bug in `initHome()` and `initCart()` to guarantee single-item cart additions per click.
 - [x] Clean Home page experience (`index.html`) featuring Hero search, Category Cards, and Featured Hot Deals grid.
 - [x] Streamlined navigation by removing "Why us" and "Help" buttons and their associated content sections.
 - [x] 3D perspective physics, spring easing, and dynamic device color palettes (`PALETTES`).

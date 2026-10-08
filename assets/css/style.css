@@ -2161,6 +2161,15 @@ input[type="range"]::-moz-range-thumb {
   .nav__actions #favToggle { display: none; }
 }
 
+@media (max-width: 360px) {
+  .wrap { width: min(100% - 16px, var(--wrap)); }
+  .grid-cards { grid-template-columns: 1fr; }
+  .nav { gap: 6px; }
+  .nav__actions { gap: 4px; }
+  .icon-btn { width: 34px; height: 34px; }
+  .logo__text { font-size: .92rem; }
+}
+
 .filters__mobile-close { display: none; }
 .filter-toggle { display: none; }
 

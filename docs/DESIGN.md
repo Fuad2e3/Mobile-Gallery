@@ -121,13 +121,29 @@ The typography uses **Plus Jakarta Sans** with clean proportional scaling:
 - Close buttons (`✕`) allowing individual photo removal from the upload draft.
 - Real-time compression telemetry showing percentage savings and resulting WebP byte size.
 
+### 4.4 Centered Navigation Pill & Glassmorphism
+- Absolute centered header navigation container (`.nav__links`) with floating pill border, backdrop blur (`12px`), and dynamic light/dark active states.
+- Clock icon button (`#recentNavBtn`) in header actions and Profile Dropdown option linking directly to Recently Viewed page (`assets/recent.html`).
+
+### 4.5 Lenis Smooth Scroll Engine & Scroll-To-Top
+- Lenis v1.1.18 integrated globally across all pages via `initLenis()` with a `requestAnimationFrame` loop.
+- `MutationObserver` on `document.body` detects `no-scroll` and automatically pauses Lenis during modal/drawer overlays.
+- Floating Scroll-to-Top button (`#scrollTopBtn`) popping in after 280px vertical scroll, gliding smoothly back to top using `window.lenis.scrollTo(0)`.
+
+### 4.6 Dedicated Recently Viewed Page (`recent.html`)
+- Full page product grid displaying devices viewed within the last 7 days (`SEVEN_DAYS_MS`).
+- Relative time-ago badges on every card (`Just now`, `2 hours ago`, `Yesterday`, `3 days ago`).
+- 1-tap "Clear History" button and empty state graphics.
+
 ---
 
 ## 5. Responsive Breakpoint Matrix
 
 | Viewport | Range | Layout Strategy |
 | :--- | :--- | :--- |
-| **Mobile** | `< 640px` | 1-column product stack, sticky bottom cart bar, drawer navigation. |
-| **Tablet** | `640px – 1024px` | 2-column product grid, topbar filter segmentation. |
-| **Desktop** | `1024px – 1440px` | 3 to 4-column product grid, full side-by-side admin panels. |
-| **Wide** | `> 1440px` | Max container wrap at `1280px` with centered alignment. |
+| **Ultra-Compact Mobile** | `< 360px` | 1-column single product card grid, compact header icons (`34px`), full fluid wrapper. |
+| **Mobile Portrait** | `360px – 620px` | 2-column product grid (`minmax(160px, 1fr)`), searchbar stacking, hidden tagline. |
+| **Tablet Portrait / Small Laptop** | `621px – 880px` | 2–3 column grid, nav links collapse into mobile drawer menu (`#drawer`), slide-over filters. |
+| **Tablet Landscape / Desktop** | `881px – 1080px` | Centered navigation pill, 3-column product grid, sticky preview containers. |
+| **Standard Desktop** | `1081px – 1440px` | 4-column product grid, full side-by-side admin panels. |
+| **Ultra-Wide Desktop** | `> 1440px` | Max container wrap at `1240px` with centered alignment. |

@@ -21,12 +21,20 @@ This document specifies the product requirements, user personas, functional feat
 
 ## 3. Functional Requirements
 
-### 3.1 Storefront (`index.html`)
+### 3.1 Storefront (`index.html`, `categories.html`)
 - **Category Navigation**: Segmented browsing for `Smartphones`, `Tablets`, `Laptops`, `Smartwatches`, `Audio`, `Gaming`, and `Accessories`.
+- **Centered Navigation Pill Layout**: Centered navigation header (`Home`, `Categories`, `Orders`, `Admin`) with floating glassmorphic pill background.
+- **Lenis Smooth Scroll & Floating Scroll-To-Top**: Fluid momentum smooth scroll globally, with auto-pausing on open drawers/modals and 1-tap floating scroll-to-top button (`#scrollTopBtn`).
 - **Live Search & Filter**: Real-time multi-attribute query engine filtering title, brand, chip, and condition without page reload.
 - **Product Details Modal**: Displays detailed device specs (Display, Chipset, Camera, Battery Health, Warranty, Official Box contents).
 - **Wishlist Engine**: Persistent client-side favorites toggle with topbar badge counter.
 - **Theme Switcher**: Instant light/dark mode switching with persistent user preference.
+
+### 3.2 Recently Viewed Page (`recent.html`)
+- **Dedicated Full Page View**: Accessible from header clock icon button (`#recentNavBtn`) and Profile Dropdown menu.
+- **7-Day Rolling Window**: Filters and stores viewed products with timestamps, automatically purging items older than 7 days (`SEVEN_DAYS_MS`).
+- **Relative Time-Ago Badges**: Displays `Just now`, `2 hours ago`, `Yesterday`, or `3 days ago` badges on device cards.
+- **Clear History Option**: 1-tap option to clear recently viewed history.
 
 ### 3.2 Shopping Cart & Checkout (`cart.js`, `checkout.html`)
 - **Cart Drawer**: Slide-out panel supporting quantity stepping (`+` / `-`) and item removal.
