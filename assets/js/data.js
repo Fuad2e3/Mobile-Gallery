@@ -521,13 +521,42 @@ function orderStage(order) {
   if (isNaN(days)) return ORDER_STAGES[0];
   return ORDER_STAGES[Math.min(Math.floor(days), ORDER_STAGES.length - 1)];
 }
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
 function pushRecent(id) {
-  const list = readStore(RECENT_KEY, []).filter(x => x !== id);
-  list.unshift(id);
-  writeStore(RECENT_KEY, list.slice(0, 8));
+  if (!id) return;
+  const raw = readStore(RECENT_KEY, []);
+  const now = Date.now();
+  const list = raw
+    .map(item => (typeof item === 'string' ? { id: item, ts: now } : item))
+    .filter(item => item && item.id && item.id !== id && (now - (item.ts || 0)) <= SEVEN_DAYS_MS);
+  list.unshift({ id, ts: now });
+  writeStore(RECENT_KEY, list.slice(0, 30));
 }
+
+function getRecentDetailed() {
+  const now = Date.now();
+  const raw = readStore(RECENT_KEY, []);
+  const valid = [];
+  const seen = new Set();
+  for (const item of raw) {
+    const id = typeof item === 'string' ? item : (item && item.id);
+    const ts = typeof item === 'object' && item && item.ts ? item.ts : now;
+    if (id && !seen.has(id) && (now - ts) <= SEVEN_DAYS_MS) {
+      seen.add(id);
+      const product = productById(id);
+      if (product) {
+        valid.push({ id, ts, product });
+      }
+    }
+  }
+  return valid;
+}
+
 function getRecent() {
-  return readStore(RECENT_KEY, [])
-    .map(productById)
-    .filter(Boolean);
+  return getRecentDetailed().map(x => x.product);
+}
+
+function clearRecentHistory() {
+  writeStore(RECENT_KEY, []);
 }

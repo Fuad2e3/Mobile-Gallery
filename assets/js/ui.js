@@ -436,25 +436,9 @@ function createAuthModal_() {
 }
 function handleRecentViewClick(e) {
   if (e) e.preventDefault();
-  const recentSec = document.getElementById('recentSection');
-  if (recentSec) {
-    if (typeof paintRecent === 'function') paintRecent();
-    const recentItems = typeof getRecent === 'function' ? getRecent() : [];
-    if (!recentItems || recentItems.length === 0) {
-      toast('No recently viewed devices yet. Explore our products!', 'eye');
-      return;
-    }
-    recentSec.hidden = false;
-    if (window.lenis) {
-      window.lenis.scrollTo(recentSec, { offset: -80 });
-    } else {
-      recentSec.scrollIntoView({ behavior: 'smooth' });
-    }
-  } else {
-    const isAssetDir = window.location.pathname.includes('/assets/');
-    const targetUrl = (isAssetDir ? 'categories.html' : 'assets/categories.html') + '#recentSection';
-    window.location.href = targetUrl;
-  }
+  const isAssetDir = window.location.pathname.includes('/assets/');
+  const targetUrl = isAssetDir ? 'recent.html' : 'assets/recent.html';
+  window.location.href = targetUrl;
 }
 
 function paintUserAuthNav() {
