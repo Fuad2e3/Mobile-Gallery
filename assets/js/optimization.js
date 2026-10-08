@@ -1,11 +1,11 @@
 /* Mobile Gallery v1.0.0 - Production Protected Build. (c) 2026 Mobile Gallery Inc. All Rights Reserved. Reverse-engineering, redistribution or copying is prohibited. */
 class Optimization {
   static DEFAULT_CONFIG = {
-    maxWidth: 720,
-    maxHeight: 720,
-    initialQuality: 0.72,
-    minQuality: 0.48,
-    targetMaxKB: 60,
+    maxWidth: 900,
+    maxHeight: 900,
+    initialQuality: 0.85,
+    minQuality: 0.65,
+    targetMaxKB: 85,
     preferredFormat: '\x69\x6d\x61\x67\x65\x2f\x77\x65\x62\x70',
     fallbackFormat: '\x69\x6d\x61\x67\x65\x2f\x6a\x70\x65\x67'
   };
