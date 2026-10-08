@@ -59,11 +59,14 @@ function clearCart() {
   saveCart([]);
 }
 function paintCartCount() {
-  const el = document.getElementById('\x63\x61\x72\x74\x43\x6f\x75\x6e\x74');
-  if (!el) return;
   const n = cartCount();
-  el.textContent = n > 99 ? '\x39\x39\x2b' : n;
-  el.classList.toggle('\x69\x73\x2d\x6f\x6e', n > 0);
+  const text = n > 99 ? '\x39\x39\x2b' : n;
+  ['\x63\x61\x72\x74\x43\x6f\x75\x6e\x74', '\x62\x6f\x74\x74\x6f\x6d\x43\x61\x72\x74\x43\x6f\x75\x6e\x74'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.classList.toggle('\x69\x73\x2d\x6f\x6e', n > 0);
+  });
 }
 function renderCart() {
   const body = document.getElementById('\x63\x61\x72\x74\x42\x6f\x64\x79');
@@ -138,6 +141,8 @@ function initCart() {
   window._cartListenersBound = true;
   const openBtn = document.getElementById('\x63\x61\x72\x74\x42\x74\x6e');
   if (openBtn) openBtn.addEventListener('\x63\x6c\x69\x63\x6b', openCart);
+  const bottomOpenBtn = document.getElementById('\x62\x6f\x74\x74\x6f\x6d\x43\x61\x72\x74\x42\x74\x6e');
+  if (bottomOpenBtn) bottomOpenBtn.addEventListener('\x63\x6c\x69\x63\x6b', openCart);
   const panel = document.getElementById('\x63\x61\x72\x74\x50\x61\x6e\x65\x6c');
   if (!panel) return;
   panel.addEventListener('\x63\x6c\x69\x63\x6b', e => {

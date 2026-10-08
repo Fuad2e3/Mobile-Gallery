@@ -410,8 +410,14 @@ function parseUrlParams() {
     const params = new URLSearchParams(window.location.search);
     const cat = params.get('\x63\x61\x74');
     const q = params.get('\x71');
+    const fav = params.get('\x66\x61\x76');
     if (cat) state.category = cat;
     if (q) state.q = q;
+    if (fav === '\x31' || fav === '\x74\x72\x75\x65') {
+      state.favOnly = true;
+      const favT = document.getElementById('\x66\x61\x76\x54\x6f\x67\x67\x6c\x65');
+      if (favT) favT.classList.add('\x69\x73\x2d\x6f\x6e');
+    }
   } catch (_) {}
 }
 function paintHomeFeatured() {
