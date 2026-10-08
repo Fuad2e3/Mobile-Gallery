@@ -644,6 +644,66 @@ function initInstantRouter() {
     navigateInstant(window.location.href);
   });
 }
+function initLenis() {
+  if (window._lenisInstance) return;
+
+  function createInstance() {
+    if (typeof Lenis === 'undefined') return false;
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      smoothTouch: false,
+      touchMultiplier: 1.5,
+      wheelMultiplier: 1.0
+    });
+
+    window.lenis = lenis;
+    window._lenisInstance = lenis;
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    const observer = new MutationObserver(() => {
+      if (document.body.classList.contains('no-scroll')) {
+        lenis.stop();
+      } else {
+        lenis.start();
+      }
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    document.body.addEventListener('click', e => {
+      const anchor = e.target.closest('a[href^="#"]');
+      if (anchor) {
+        const targetId = anchor.getAttribute('href');
+        if (targetId && targetId !== '#') {
+          const target = document.querySelector(targetId);
+          if (target) {
+            e.preventDefault();
+            lenis.scrollTo(target, { offset: -80 });
+          }
+        }
+      }
+    });
+
+    return true;
+  }
+
+  if (!createInstance()) {
+    let retries = 0;
+    const interval = setInterval(() => {
+      retries++;
+      if (createInstance() || retries > 30) {
+        clearInterval(interval);
+      }
+    }, 100);
+  }
+}
+
 function initShell() {
   initTheme();
   initHeader();
@@ -653,6 +713,7 @@ function initShell() {
   initCounters();
   initUserAuthUI();
   initInstantRouter();
+  initLenis();
   const y = document.getElementById('\x79\x65\x61\x72');
   if (y) y.textContent = new Date().getFullYear();
 }

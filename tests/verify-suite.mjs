@@ -63,7 +63,7 @@ const context = vm.createContext(mockWindow);
 // Test 1: Load Data
 console.log('1. Checking Data Catalogue...');
 try {
-  const dataCode = fs.readFileSync(path.join(rootDir, 'src/js/data.js'), 'utf8');
+  const dataCode = fs.readFileSync(path.join(rootDir, 'assets/js/data.js'), 'utf8');
   vm.runInContext(dataCode, context);
   const listings = vm.runInContext('LISTINGS', context);
   const categories = vm.runInContext('CATEGORIES', context);
@@ -84,7 +84,7 @@ try {
 // Test 2: Load Cart & Shopping Logic
 console.log('\n2. Checking Cart Logic...');
 try {
-  const cartCode = fs.readFileSync(path.join(rootDir, 'src/js/cart.js'), 'utf8');
+  const cartCode = fs.readFileSync(path.join(rootDir, 'assets/js/cart.js'), 'utf8');
   vm.runInContext(cartCode, context);
 
   // Test addToCart
@@ -102,14 +102,14 @@ try {
   assert(false, `Cart logic failed: ${e.message}`);
 }
 
-// Test 3: Load SheetEndpoint & Cloudflare API Wrapper
-console.log('\n3. Checking SheetEndpoint & Cloudflare API Wrapper...');
+// Test 3: Load SheetEndpoint & Edge API Wrapper
+console.log('\n3. Checking SheetEndpoint & Edge API Wrapper...');
 try {
-  const sheetCode = fs.readFileSync(path.join(rootDir, 'src/js/sheet-endpoint.js'), 'utf8');
+  const sheetCode = fs.readFileSync(path.join(rootDir, 'assets/js/sheet-endpoint.js'), 'utf8');
   vm.runInContext(sheetCode, context);
 
   assert(typeof mockWindow.SheetEndpoint === 'function', 'SheetEndpoint class is defined');
-  assert(typeof mockWindow.CloudflareEndpoint === 'function', 'CloudflareEndpoint alias is defined');
+  assert(typeof mockWindow.EdgeEndpoint === 'function', 'EdgeEndpoint alias is defined');
   assert(mockWindow.SheetEndpoint.isReady() === true, 'SheetEndpoint.isReady() is true');
   assert(typeof mockWindow.SheetEndpoint.uploadPhoto === 'function', 'SheetEndpoint.uploadPhoto is defined');
 } catch (e) {
@@ -164,9 +164,9 @@ try {
 console.log('\n7. Checking Admin Operations (Add, Edit, Pause/Activate, Low Stock Sort, Delete)...');
 try {
   const adminContext = vm.createContext({ ...mockWindow });
-  const dataJs = fs.readFileSync(path.join(rootDir, 'src/js/data.js'), 'utf8');
-  const sheetJs = fs.readFileSync(path.join(rootDir, 'src/js/sheet-endpoint.js'), 'utf8');
-  const appJs = fs.readFileSync(path.join(rootDir, 'src/js/app.js'), 'utf8');
+  const dataJs = fs.readFileSync(path.join(rootDir, 'assets/js/data.js'), 'utf8');
+  const sheetJs = fs.readFileSync(path.join(rootDir, 'assets/js/sheet-endpoint.js'), 'utf8');
+  const appJs = fs.readFileSync(path.join(rootDir, 'assets/js/app.js'), 'utf8');
 
   vm.runInContext(dataJs, adminContext);
   vm.runInContext(sheetJs, adminContext);

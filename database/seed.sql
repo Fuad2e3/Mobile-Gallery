@@ -1,5 +1,5 @@
 -- ============================================================================
--- Mobile Gallery — Cloudflare D1 Seed Data (Initial Catalogue & Admin)
+-- Mobile Gallery — Edge D1 Seed Data (Initial Catalogue & Admin)
 -- ============================================================================
 
 -- 1. Admin User

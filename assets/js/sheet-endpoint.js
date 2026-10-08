@@ -4,26 +4,26 @@ const LOCAL_PRODUCTS_KEY = '\x6d\x67\x2e\x70\x72\x6f\x64\x75\x63\x74\x73\x2e\x76
 const LOCAL_ORDERS_KEY   = '\x6d\x67\x2e\x6f\x72\x64\x65\x72\x73\x2e\x76\x31';
 const LOCAL_AUTH_KEY     = '\x6d\x67\x2e\x61\x75\x74\x68\x2e\x75\x73\x65\x72\x2e\x76\x31';
 class SheetEndpoint {
-  static cloudflareUrl = '\x2f\x61\x70\x69';
-  static getCloudflareUrl() {
+  static edgeUrl = '\x2f\x61\x70\x69';
+  static getEdgeUrl() {
     try {
       if (typeof localStorage !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64') {
-        const saved = localStorage.getItem('\x6d\x67\x2e\x63\x6c\x6f\x75\x64\x66\x6c\x61\x72\x65\x2e\x75\x72\x6c');
+        const saved = localStorage.getItem('\x6d\x67\x2e\x65\x64\x67\x65\x2e\x75\x72\x6c');
         if (saved && typeof saved === '\x73\x74\x72\x69\x6e\x67' && saved.trim()) {
           return saved.trim().replace(/\/+$/, '');
         }
       }
       if (typeof window !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64' && window.location && window.location.protocol && window.location.protocol.startsWith('\x68\x74\x74\x70')) {
-        return (this.cloudflareUrl || '\x2f\x61\x70\x69').trim().replace(/\/+$/, '');
+        return (this.edgeUrl || '\x2f\x61\x70\x69').trim().replace(/\/+$/, '');
       }
     } catch (_) {}
     return null;
   }
   static isReady() {
-    return !!this.getCloudflareUrl();
+    return !!this.getEdgeUrl();
   }
   static async request(payload) {
-    const cfUrl = this.getCloudflareUrl();
+    const cfUrl = this.getEdgeUrl();
     if (cfUrl) {
       try {
         const res = await fetch(cfUrl, {
@@ -45,7 +45,7 @@ class SheetEndpoint {
     return { ok: false, error: '\x45\x6e\x64\x70\x6f\x69\x6e\x74\x20\x55\x52\x4c\x20\x6e\x6f\x74\x20\x63\x6f\x6e\x66\x69\x67\x75\x72\x65\x64\x2e', networkError: true };
   }
   static async get(action) {
-    const cfUrl = this.getCloudflareUrl();
+    const cfUrl = this.getEdgeUrl();
     if (cfUrl) {
       try {
         const urlWithAction = cfUrl + (cfUrl.includes('\x3f') ? '\x26' : '\x3f') + '\x61\x63\x74\x69\x6f\x6e\x3d' + encodeURIComponent(action);
@@ -60,7 +60,7 @@ class SheetEndpoint {
     return await this.request({ action });
   }
   static async uploadPhoto(photo, filename = '\x70\x68\x6f\x74\x6f\x2e\x77\x65\x62\x70') {
-    const cfUrl = this.getCloudflareUrl() || '\x2f\x61\x70\x69';
+    const cfUrl = this.getEdgeUrl() || '\x2f\x61\x70\x69';
     const uploadUrl = (cfUrl.endsWith('\x2f\x61\x70\x69') ? cfUrl : cfUrl + '\x2f\x61\x70\x69') + '\x2f\x75\x70\x6c\x6f\x61\x64';
     try {
       let res;
@@ -433,7 +433,7 @@ class SheetEndpoint {
 }
 if (typeof window !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64') {
   window.SheetEndpoint = SheetEndpoint;
-  window.CloudflareEndpoint = SheetEndpoint;
+  window.EdgeEndpoint = SheetEndpoint;
 }
 if (typeof module !== '\x75\x6e\x64\x65\x66\x69\x6e\x65\x64' && module.exports) {
   module.exports = SheetEndpoint;

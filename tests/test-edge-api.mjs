@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * Cloudflare Pages Functions API & D1/R2 Verification Test
+ * Edge Pages Functions API & D1/R2 Verification Test
  * ============================================================================
  * Tests functions/api/_api.js handlers with simulated D1 database and R2 bucket.
  * ============================================================================
@@ -182,7 +182,7 @@ const mockR2 = new MockR2();
 const env = { DB: db, PHOTOS_BUCKET: mockR2 };
 
 async function runTests() {
-  console.log('--- TESTING CLOUDFLARE PAGES FUNCTIONS (D1 & R2) API ---');
+  console.log('--- TESTING EDGE PAGES FUNCTIONS (D1 & R2) API ---');
   let pass = 0, fail = 0;
 
   function assert(cond, msg) {
@@ -224,16 +224,16 @@ async function runTests() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       id: 'prod-test-1',
-      title: 'Cloudflare Phone 1',
+      title: 'Edge Phone 1',
       price: 50000,
       stock: 10,
       category: 'phone',
-      brand: 'Cloudflare',
+      brand: 'Edge',
       images: ['/api/images/products/sample.webp']
     })
   }), env);
   const addProdData = await addProdRes.json();
-  assert(addProdData.ok === true && addProdData.product.title === 'Cloudflare Phone 1', 'POST /api/products inserts product into D1');
+  assert(addProdData.ok === true && addProdData.product.title === 'Edge Phone 1', 'POST /api/products inserts product into D1');
 
   const getProdsRes = await handleApiRequest(new Request('http://localhost/api/products', { method: 'GET' }), env);
   const getProdsData = await getProdsRes.json();

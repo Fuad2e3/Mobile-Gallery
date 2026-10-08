@@ -349,7 +349,7 @@ function initAdminPhotos() {
       return toast('\x4d\x61\x78\x69\x6d\x75\x6d\x20\x35\x20\x70\x68\x6f\x74\x6f\x73\x20\x61\x6c\x6c\x6f\x77\x65\x64\x20\x70\x65\x72\x20\x70\x72\x6f\x64\x75\x63\x74', '\x63\x6c\x6f\x73\x65');
     }
     const filesToProcess = Array.from(files).slice(0, remainingSlots);
-    toast(`⚡ Optimizing ${filesToProcess.length} photo(s) & uploading to Cloudflare R2...`, '\x63\x68\x65\x63\x6b');
+    toast(`⚡ Optimizing ${filesToProcess.length} photo(s) & uploading to photo storage...`, '\x63\x68\x65\x63\x6b');
     try {
       const results = await Optimization.batch(filesToProcess);
       const totalOrig = results.reduce((sum, r) => sum + r.originalBytes, 0);

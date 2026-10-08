@@ -33,10 +33,10 @@ This document specifies the product requirements, user personas, functional feat
 - **Free Shipping Incentive**: Real-time progress bar towards free nationwide delivery on orders over **৳30,000** (standard delivery ৳120).
 - **Checkout Form**: Address collection with automated City/Division dropdowns and Bangladeshi phone number validation (`+8801...` or `01...`).
 - **Payment Methods**: Cash on Delivery (COD), bKash, and Nagad payment options.
-- **Order Generation**: Unique order reference generation (`MG-XXXXX`) and immediate dispatch to Cloudflare D1.
+- **Order Generation**: Unique order reference generation (`MG-XXXXX`) and immediate dispatch to D1 database.
 
 ### 3.3 Customer Accounts & Order Tracking (`orders.html`)
-- **Registration**: Form collecting Name, Email, Phone, and Password. Creates record in Cloudflare D1 `users` table.
+- **Registration**: Form collecting Name, Email, Phone, and Password. Creates record in D1 `users` table.
 - **Login & Access Control**: Validates credentials. Rejects authentication for accounts marked `Inactive` or `Suspended`.
 - **Order Lookup**: Search by phone number or Order Reference showing live timeline status (`Pending` ➔ `Confirmed` ➔ `Delivered`).
 
@@ -50,13 +50,13 @@ This document specifies the product requirements, user personas, functional feat
   - Automatic hiding of `Paused` items from customer storefront catalog browsing and search.
   - Manage Products filter toolbar with live counter chips (`All`, `⚡ Low Stock`, `🟢 Active`, `⏸️ Paused`), search bar, and sort dropdown.
   - Multi-photo drag & drop (up to 5 photos per listing).
-  - Client-side WebP compression (<60 KB) and automatic Cloudflare R2 upload.
+  - Client-side WebP compression (<60 KB) and automatic R2 upload.
   - Delete product with instant cascade.
 - **Order Fulfillment Pipeline**:
   - Live order queue displaying customer delivery address, contact phone, and line items.
   - One-click order confirmation (`Confirmed`), cancellation (`Cancelled`), or delivery (`Delivered`).
 - **User Access Management**:
-  - Real-time customer list from Cloudflare D1.
+  - Real-time customer list from D1 database.
   - Instant status toggle (`Active`, `Inactive`, `Suspended`).
 
 ---
@@ -81,7 +81,7 @@ This document specifies the product requirements, user personas, functional feat
 
 ## 5. Non-Functional Requirements (NFR)
 
-1. **Performance**: First Contentful Paint (FCP) `< 0.8s`, Time to Interactive (TTI) `< 1.2s` globally on Cloudflare Edge.
+1. **Performance**: First Contentful Paint (FCP) `< 0.8s`, Time to Interactive (TTI) `< 1.2s` globally on global Edge CDN.
 2. **Bandwidth Efficiency**: Product images compressed to `< 60 KB` WebP format before network transmission.
-3. **Availability**: 99.99% uptime utilizing Cloudflare Pages and D1 serverless architecture.
+3. **Availability**: 99.99% uptime utilizing Pages and D1 serverless architecture.
 4. **Security**: OWASP compliance, SQL injection elimination via D1 prepared statements, and honeypot spam protection.

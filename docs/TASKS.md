@@ -13,7 +13,7 @@ gantt
     section Phase 1: Frontend
     Storefront UI & Cart          :done, m1, 2026-08-01, 2026-08-15
     Admin Portal & Dashboard      :done, m2, 2026-08-16, 2026-08-30
-    section Phase 2: Cloudflare Edge
+    section Phase 2: Serverless Edge Infrastructure
     D1 SQL Database & Schema      :done, m3, 2026-09-01, 2026-09-15
     R2 Photo Storage & Upload     :done, m4, 2026-09-16, 2026-09-30
     Pages Functions API           :done, m5, 2026-10-01, 2026-10-07
@@ -60,27 +60,27 @@ gantt
 - [x] Order fulfillment pipeline with status filters (`Pending`, `Confirmed`, `Delivered`, `Cancelled`).
 - [x] Customer access control allowing one-click account suspension (`Active`, `Inactive`, `Suspended`).
 
-### ✅ Milestone 4: Cloudflare Pages Functions, D1 & R2 Migration
+### ✅ Milestone 4: Pages Functions, D1 & R2 Migration
 - [x] Created `database/schema.sql` provisioning D1 tables (`users`, `products`, `orders`) with indexes.
 - [x] Generated `database/seed.sql` populating all 24 built-in smartphone listings and admin profile.
 - [x] Implemented in-browser HTML5 canvas image optimizer (`Optimization.batch()`) compressing photos to `<60 KB` WebP.
-- [x] Built Cloudflare R2 upload endpoint (`POST /api/upload`) and streaming edge server (`GET /api/images/*`).
+- [x] Built R2 photo upload endpoint (`POST /api/upload`) and streaming edge server (`GET /api/images/*`).
 - [x] Architected modular Edge API router in `functions/api/_api.js` supporting REST and legacy RPC actions.
-- [x] Built Cloudflare Pages Functions catch-all in `functions/api/[[path]].js`.
-- [x] Authored comprehensive deployment manual in `docs/CLOUDFLARE_DEPLOYMENT.md`.
+- [x] Built Pages Functions catch-all in `functions/api/[[path]].js`.
+- [x] Authored comprehensive deployment manual in `docs/EDGE_DEPLOYMENT.md`.
 
 ### ✅ Milestone 5: Verification Suite & Documentation
 - [x] Automated project integrity check (`tests/check-project.mjs`).
 - [x] Core test suite for catalogue, cart, and asset links (`tests/verify-suite.mjs`).
-- [x] Cloudflare Pages Functions, D1 database, and R2 photo storage integration tests (`tests/test-cloudflare-api.mjs`).
-- [x] Authored all 7 documentation files in `docs/` (`ARCHITECTURE.md`, `CLOUDFLARE_DEPLOYMENT.md`, `DESIGN.md`, `MEMORY.md`, `PRD.md`, `RULES.md`, `TASKS.md`).
+- [x] Pages Functions, D1 database, and R2 photo storage integration tests (`tests/test-edge-api.mjs`).
+- [x] Authored all 7 documentation files in `docs/` (`ARCHITECTURE.md`, `EDGE_DEPLOYMENT.md`, `DESIGN.md`, `MEMORY.md`, `PRD.md`, `RULES.md`, `TASKS.md`).
 
 ---
 
 ## 3. Upcoming Roadmap (Milestones 6 & Beyond)
 
 ### 📌 Milestone 6: Automated Digital Payment Gateway Integration
-- [ ] Implement bKash Checkout URL-based payment API in Cloudflare Pages Functions.
+- [ ] Implement bKash Checkout URL-based payment API in Pages Functions.
 - [ ] Implement Nagad Merchant API callback verification.
 - [ ] Auto-mark orders as `Paid` upon successful webhook callback from payment provider.
 
@@ -90,7 +90,7 @@ gantt
 - [ ] Send dispatch SMS alert with courier tracking code when order is marked `Delivered`.
 
 ### 📌 Milestone 8: Telemetry & Edge Analytics
-- [ ] Integrate Cloudflare Web Analytics for zero-cookie traffic monitoring.
+- [ ] Integrate Privacy-First Web Analytics for zero-cookie traffic monitoring.
 - [ ] Core Web Vitals (LCP, FID, CLS) performance dashboard.
 
 ---

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Mobile Gallery — Cloudflare D1 Database Schema
+-- Mobile Gallery — Edge D1 Database Schema
 -- ============================================================================
 
 -- 1. Users Table (Customer Accounts & Admin)
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS products (
   stock INTEGER DEFAULT 0,
   description TEXT,
   status TEXT DEFAULT 'Active',
-  images TEXT DEFAULT '[]',   -- JSON array of Cloudflare R2 / public photo URLs
+  images TEXT DEFAULT '[]',   -- JSON array of Edge R2 / public photo URLs
   rating REAL DEFAULT 5.0,
   reviews INTEGER DEFAULT 0,
   views INTEGER DEFAULT 0,

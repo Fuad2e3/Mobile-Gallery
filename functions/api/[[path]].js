@@ -1,8 +1,8 @@
 /**
  * ============================================================================
- * Mobile Gallery — Cloudflare Pages Functions API Catch-all
+ * Mobile Gallery — Edge Pages Functions API Catch-all
  * ============================================================================
- * Handles all /api/* requests on Cloudflare Pages with D1 and R2 bindings.
+ * Handles all /api/* requests on Edge Pages with D1 and R2 bindings.
  * ============================================================================
  */
 

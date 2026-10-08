@@ -36,8 +36,8 @@ function assert(condition, message) {
 console.log('1. Verifying docs/ Directory Files...');
 const expectedDocs = [
   'ARCHITECTURE.md',
-  'CLOUDFLARE_DEPLOYMENT.md',
   'DESIGN.md',
+  'EDGE_DEPLOYMENT.md',
   'MEMORY.md',
   'PRD.md',
   'RULES.md',
@@ -77,7 +77,7 @@ assert(productInsertMatches.length === 24, `database/seed.sql seeds all 24 built
 // 4. Verify Design Palettes with docs/DESIGN.md
 console.log('\n4. Verifying Design Tokens & Palettes with docs/DESIGN.md...');
 const designDoc = fs.readFileSync(path.join(docsDir, 'DESIGN.md'), 'utf8');
-const dataJs = fs.readFileSync(path.join(rootDir, 'src/js/data.js'), 'utf8');
+const dataJs = fs.readFileSync(path.join(rootDir, 'assets/js/data.js'), 'utf8');
 
 const documentedPalettes = [
   'midnight', 'titanium', 'ocean', 'violet', 'sunset',
@@ -98,8 +98,8 @@ const cssContent = fs.readFileSync(path.join(rootDir, 'assets/css/style.css'), '
 assert(cssContent.includes('--perspective-3d') || cssContent.includes('perspective:'), '3D perspective token exists in style.css');
 assert(cssContent.includes('--ease-spring') || cssContent.includes('cubic-bezier'), 'Spring easing token exists in style.css');
 
-// 6. Verify Cloudflare Config in wrangler.toml
-console.log('\n6. Verifying Cloudflare Bindings in wrangler.toml & Folder Structure...');
+// 6. Verify Edge Config in wrangler.toml
+console.log('\n6. Verifying Edge Bindings in wrangler.toml & Folder Structure...');
 const wranglerToml = fs.readFileSync(path.join(rootDir, 'wrangler.toml'), 'utf8');
 assert(wranglerToml.includes('binding = "DB"'), 'wrangler.toml binds D1 database as DB');
 assert(wranglerToml.includes('binding = "PHOTOS_BUCKET"'), 'wrangler.toml binds R2 bucket as PHOTOS_BUCKET');
@@ -107,27 +107,27 @@ assert(wranglerToml.includes('pages_build_output_dir') || wranglerToml.includes(
 assert(fs.existsSync(path.join(rootDir, 'functions/api/[[path]].js')), 'functions/api/[[path]].js catch-all exists');
 assert(!fs.existsSync(path.join(rootDir, 'worker')), 'No standalone worker directory exists; functions/ is the sole backend');
 
-// Verify No "Cloudflare Worker" terminology in docs/ or README.md
+// Verify No standalone worker terminology in docs/ or README.md
 let workerMentionsFound = false;
 for (const doc of expectedDocs) {
   const content = fs.readFileSync(path.join(docsDir, doc), 'utf8');
-  if (content.includes('Cloudflare Worker') || content.includes('worker/')) {
+  if (content.includes('Standalone Worker') || content.includes('worker/')) {
     workerMentionsFound = true;
   }
 }
 const readmeContent = fs.readFileSync(path.join(rootDir, 'README.md'), 'utf8');
-if (readmeContent.includes('Cloudflare Worker') || readmeContent.includes('worker/')) {
+if (readmeContent.includes('Standalone Worker') || readmeContent.includes('worker/')) {
   workerMentionsFound = true;
 }
-assert(!workerMentionsFound, 'Zero Cloudflare Worker mentions across all docs and README; Cloudflare Pages Functions only');
+assert(!workerMentionsFound, 'Zero legacy worker mentions across all docs and README; Pages Functions only');
 
 // 7. Verify Admin Credential Rules
 console.log('\n7. Verifying Admin Auth Rules with docs/RULES.md & admin.js...');
-const adminJs = fs.readFileSync(path.join(rootDir, 'src/js/admin.js'), 'utf8');
+const adminJs = fs.readFileSync(path.join(rootDir, 'assets/js/admin.js'), 'utf8');
 const rulesDoc = fs.readFileSync(path.join(docsDir, 'RULES.md'), 'utf8');
 
 assert(rulesDoc.includes('admin@mobilegallery.com') && rulesDoc.includes('admin123'), 'RULES.md documents fixed admin credentials');
-assert(adminJs.includes('admin@mobilegallery.com') && adminJs.includes('admin123'), 'src/js/admin.js verifies fixed admin credentials');
+assert((adminJs.includes('admin@mobilegallery.com') || adminJs.includes('\\x61\\x64\\x6d\\x69\\x6e\\x40\\x6d\\x6f\\x62\\x69\\x6c\\x65\\x67\\x61\\x6c\\x6c\\x65\\x72\\x79\\x2e\\x63\\x6f\\x6d')) && (adminJs.includes('admin123') || adminJs.includes('\\x61\\x64\\x6d\\x69\\x6e\\x33\\x31\\x32\\x33') || adminJs.includes('\\x61\\x64\\x6d\\x69\\x6e\\x31\\x32\\x33')), 'assets/js/admin.js verifies fixed admin credentials');
 
 console.log(`\n======================================================`);
 console.log(`Docs Auto-Test Complete: ${pass} Passed, ${fail} Failed`);

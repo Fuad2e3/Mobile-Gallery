@@ -410,6 +410,18 @@ function initHome() {
     grid.innerHTML = skeletonMarkup(8);
     setTimeout(paintResults, 380);
   }
+  if (window._homeListenersBound) {
+    if (window.SheetEndpoint && window.SheetEndpoint.isReady()) {
+      window.SheetEndpoint.fetchProducts().then(prods => {
+        if (prods && prods.length > 0) {
+          paintResults();
+          buildFilters();
+        }
+      }).catch(() => {});
+    }
+    return;
+  }
+  window._homeListenersBound = true;
   const search = document.getElementById('\x73\x65\x61\x72\x63\x68\x49\x6e\x70\x75\x74');
   if (search) {
     if (state.q) search.value = state.q;

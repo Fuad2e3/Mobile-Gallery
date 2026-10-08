@@ -1,6 +1,6 @@
-# 🚀 Cloudflare Deployment Guide — Mobile Gallery
+# 🚀 Edge Deployment Guide — Mobile Gallery
 
-This manual provides the complete, authoritative operational instructions for deploying and running **Mobile Gallery** on **Cloudflare Pages (with Pages Functions)**, **Cloudflare D1 (Database)**, and **Cloudflare R2 (Photo Storage)**.
+This manual provides the complete, authoritative operational instructions for deploying and running **Mobile Gallery** on **Pages (with Pages Functions)**, **D1 (Database)**, and **R2 (Photo Storage)**.
 
 ---
 
@@ -9,9 +9,9 @@ This manual provides the complete, authoritative operational instructions for de
 Before proceeding with deployment, ensure the following are installed and configured:
 
 1. **Node.js**: Version 18.0.0 or higher (`node -v`).
-2. **Wrangler CLI**: Cloudflare developer command line (`npm install -g wrangler` or use `npx wrangler`).
-3. **Cloudflare Account**: Active Cloudflare account with D1 and R2 enabled.
-4. **Cloudflare Authentication**:
+2. **Wrangler CLI**: Developer command line (`npm install -g wrangler` or use `npx wrangler`).
+3. **Edge Account**: Active account with D1 and R2 enabled.
+4. **Authentication**:
    ```bash
    npx wrangler login
    ```
@@ -24,7 +24,7 @@ Before proceeding with deployment, ensure the following are installed and config
 
 ## 2. Step-by-Step Deployment Procedure
 
-### Step 1: Provision the Cloudflare D1 Database
+### Step 1: Provision the D1 Database
 
 Run the following command in the project root directory:
 
@@ -50,7 +50,7 @@ database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 ```bash
 npx wrangler d1 execute mobile-gallery-db --remote --file=./database/schema.sql
 ```
-This executes [database/schema.sql](file:///c:/Users/fuadk/Documents/GitHub/Mobile-Gallery/database/schema.sql) on Cloudflare D1, provisioning:
+This executes [database/schema.sql](file:///c:/Users/fuadk/Documents/GitHub/Mobile-Gallery/database/schema.sql) on D1, provisioning:
 - `users` table
 - `products` table
 - `orders` table
@@ -70,7 +70,7 @@ This inserts the 24 built-in smartphone and gadget listings alongside the defaul
 
 ---
 
-### Step 3: Provision the Cloudflare R2 Photo Storage Bucket
+### Step 3: Provision the R2 Photo Storage Bucket
 
 Create the R2 storage bucket to house all compressed product photos:
 
@@ -87,17 +87,17 @@ bucket_name = "mobile-gallery-photos"
 
 ---
 
-### Step 4: Deploy to Cloudflare Pages
+### Step 4: Deploy to Pages
 
-Cloudflare Pages automatically serves your frontend static assets from the root and powers all API routes (`/api/*`) via **Pages Functions** located in `functions/api/`:
+Pages automatically serves your frontend static assets from the root and powers all API routes (`/api/*`) via **Pages Functions** located in `functions/api/`:
 
 #### Option A: Direct CLI Deployment
 ```bash
 npx wrangler pages deploy . --project-name=mobile-gallery
 ```
 
-#### Option B: Git-Integrated Deployment via Cloudflare Dashboard
-1. Log in to [Cloudflare Dashboard](https://dash.cloudflare.com/).
+#### Option B: Git-Integrated Deployment via Dashboard
+1. Log in to your Pages Dashboard.
 2. Navigate to **Pages** ➔ **Create a project** ➔ **Connect to Git**.
 3. Select your `Mobile-Gallery` GitHub repository.
 4. Set Build Settings:
@@ -120,7 +120,7 @@ Expected response:
 ```json
 {
   "ok": true,
-  "message": "Mobile Gallery Cloudflare Edge API is live and operational.",
+  "message": "Mobile Gallery Edge API is live and operational.",
   "databaseConnected": true,
   "r2StorageConnected": true
 }
@@ -140,7 +140,7 @@ Expected response:
 
 | Symptom | Cause | Solution |
 | :--- | :--- | :--- |
-| `D1 binding (env.DB) is missing` | Missing `database_id` in `wrangler.toml` or dashboard | Ensure `DB` binding is set in `wrangler.toml` and Cloudflare Pages settings. |
+| `D1 binding (env.DB) is missing` | Missing `database_id` in `wrangler.toml` or dashboard | Ensure `DB` binding is set in `wrangler.toml` and Pages settings. |
 | `R2 bucket not found` | Bucket name mismatch | Run `npx wrangler r2 bucket create mobile-gallery-photos`. |
 | `Image upload fallback` | `PHOTOS_BUCKET` binding missing | Ensure `binding = "PHOTOS_BUCKET"` matches in `wrangler.toml`. |
-| CORS failure on external API calls | Calling wrong domain | Ensure Cloudflare API handles `OPTIONS` preflight; client auto-detects relative `/api`. |
+| CORS failure on external API calls | Calling wrong domain | Ensure Edge API handles `OPTIONS` preflight; client auto-detects relative `/api`. |

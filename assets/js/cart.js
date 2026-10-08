@@ -134,6 +134,8 @@ function closeCart() {
 }
 function initCart() {
   paintCartCount();
+  if (window._cartListenersBound) return;
+  window._cartListenersBound = true;
   const openBtn = document.getElementById('\x63\x61\x72\x74\x42\x74\x6e');
   if (openBtn) openBtn.addEventListener('\x63\x6c\x69\x63\x6b', openCart);
   const panel = document.getElementById('\x63\x61\x72\x74\x50\x61\x6e\x65\x6c');

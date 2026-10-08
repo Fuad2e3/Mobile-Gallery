@@ -1,10 +1,10 @@
 /**
  * ============================================================================
- * Mobile Gallery — Cloudflare Pages Functions API Router
+ * Mobile Gallery — Edge Pages Functions API Router
  * ============================================================================
  * Fullstack API handler connecting:
- *   - Database: Cloudflare D1 (Tables: users, products, orders)
- *   - Optimized Photo Storage: Cloudflare R2 (Bucket: PHOTOS_BUCKET)
+ *   - Database: Edge D1 (Tables: users, products, orders)
+ *   - Optimized Photo Storage: Edge R2 (Bucket: PHOTOS_BUCKET)
  *   - Edge REST & Action-compatible Dispatcher
  * ============================================================================
  */
@@ -39,7 +39,7 @@ export function handleOptions() {
 /**
  * Main API request dispatcher
  * @param {Request} request
- * @param {Object} env - Cloudflare bindings: env.DB (D1) and env.PHOTOS_BUCKET (R2)
+ * @param {Object} env - Edge bindings: env.DB (D1) and env.PHOTOS_BUCKET (R2)
  * @param {Object} [ctx]
  * @returns {Promise<Response>}
  */
@@ -57,7 +57,7 @@ export async function handleApiRequest(request, env, ctx) {
     if (method === 'GET') {
       return jsonResponse({
         ok: true,
-        message: 'Mobile Gallery Cloudflare Edge API is live and operational.',
+        message: 'Mobile Gallery Edge API is live and operational.',
         databaseConnected: !!env.DB,
         r2StorageConnected: !!env.PHOTOS_BUCKET,
         timestamp: new Date().toISOString()
@@ -166,7 +166,7 @@ async function dispatchAction(action, data, env, url) {
     case 'ping':
       return jsonResponse({
         ok: true,
-        message: 'Mobile Gallery Cloudflare D1 & R2 API is active and ready.',
+        message: 'Mobile Gallery Edge D1 & R2 API is active and ready.',
         databaseConnected: !!env.DB,
         r2Connected: !!env.PHOTOS_BUCKET
       });
@@ -216,15 +216,15 @@ async function dispatchAction(action, data, env, url) {
 }
 
 /* ============================================================================
-   1. Cloudflare R2 Photo Storage Handlers (Optimized WebP / Images)
+   1. Edge R2 Photo Storage Handlers (Optimized WebP / Images)
    ============================================================================ */
 
 /**
- * Handle serving an image from Cloudflare R2
+ * Handle serving an image from Edge R2
  */
 async function handleServePhoto(key, env) {
   if (!env.PHOTOS_BUCKET) {
-    return new Response('Cloudflare R2 Bucket (PHOTOS_BUCKET) not configured.', { status: 500 });
+    return new Response('Edge R2 Bucket (PHOTOS_BUCKET) not configured.', { status: 500 });
   }
 
   try {
@@ -246,7 +246,7 @@ async function handleServePhoto(key, env) {
 }
 
 /**
- * Handle uploading an optimized photo to Cloudflare R2
+ * Handle uploading an optimized photo to Edge R2
  */
 async function handleUploadPhoto(request, env) {
   const contentType = request.headers.get('content-type') || '';
@@ -313,7 +313,7 @@ async function handleUploadPhotoDirect(data, env) {
 }
 
 /**
- * Put raw image buffer into Cloudflare R2
+ * Put raw image buffer into Edge R2
  */
 async function saveBufferToR2(arrayBuffer, mimeType, originalName, env) {
   if (!env.PHOTOS_BUCKET) {
@@ -353,7 +353,7 @@ async function saveBufferToR2(arrayBuffer, mimeType, originalName, env) {
 }
 
 /* ============================================================================
-   2. Cloudflare D1 Products Handlers
+   2. Edge D1 Products Handlers
    ============================================================================ */
 
 /**
@@ -361,7 +361,7 @@ async function saveBufferToR2(arrayBuffer, mimeType, originalName, env) {
  */
 function assertDb(env) {
   if (!env.DB) {
-    throw new Error('Cloudflare D1 binding (env.DB) is missing. Please configure [[d1_databases]] in wrangler.toml.');
+    throw new Error('Edge D1 binding (env.DB) is missing. Please configure [[d1_databases]] in wrangler.toml.');
   }
 }
 
@@ -576,7 +576,7 @@ async function seedProducts(productsList, env) {
 }
 
 /* ============================================================================
-   3. Cloudflare D1 Orders Handlers
+   3. Edge D1 Orders Handlers
    ============================================================================ */
 
 /**
@@ -717,7 +717,7 @@ async function updateOrderStatus(orderRef, newStatus, env) {
 }
 
 /* ============================================================================
-   4. Cloudflare D1 Users & Access Handlers
+   4. Edge D1 Users & Access Handlers
    ============================================================================ */
 
 /**

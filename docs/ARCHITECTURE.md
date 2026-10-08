@@ -6,17 +6,17 @@ This document outlines the complete architectural design, data flow, component d
 
 ## 1. High-Level Architecture Topology
 
-Mobile Gallery is engineered as an ultra-fast, edge-first, serverless e-commerce platform hosted globally on Cloudflare's network with zero cold-start latency.
+Mobile Gallery is engineered as an ultra-fast, edge-first, serverless e-commerce platform hosted globally on edge network infrastructure with zero cold-start latency.
 
 ```mermaid
 graph TD
     Client["Visitor / Admin Browser\n(HTML5, CSS3, Vanilla JS)"]
     
-    subgraph Cloudflare Global Edge Network
-        Pages["Cloudflare Pages Static Assets\n(Static HTML, CSS, JS)"]
-        Router["Cloudflare Pages Functions\n(functions/api/[[path]].js & _api.js)"]
-        D1[("Cloudflare D1 SQL Database\n(database/schema.sql)")]
-        R2[("Cloudflare R2 Storage\n(mobile-gallery-photos)")]
+    subgraph Global Edge Network
+        Pages["Pages Static Assets\n(Static HTML, CSS, JS)"]
+        Router["Pages Functions\n(functions/api/[[path]].js & _api.js)"]
+        D1[("D1 SQL Database\n(database/schema.sql)")]
+        R2[("R2 Storage\n(mobile-gallery-photos)")]
     end
     
     subgraph Client-Side Dual Layer
@@ -36,14 +36,14 @@ graph TD
 
 ---
 
-## 2. Infrastructure & Cloudflare Components
+## 2. Infrastructure & Edge Components
 
 | Component | Technology | Role & Responsibility |
 | :--- | :--- | :--- |
-| **Frontend CDN** | Cloudflare Pages Static Assets | Global distribution of static HTML, design token stylesheets, and obfuscated production scripts. |
-| **API Layer** | Cloudflare Pages Functions | Serverless Edge REST and Action API (`functions/api/[[path]].js` & `functions/api/_api.js`). |
-| **Primary Database** | Cloudflare D1 (`database/schema.sql`) | Serverless relational SQLite database storing structured records for `users`, `products`, and `orders`. |
-| **Media Storage** | Cloudflare R2 (`mobile-gallery-photos`) | S3-compatible, zero-egress object storage for optimized product photos with public edge cache headers. |
+| **Frontend CDN** | Pages Static Assets | Global distribution of static HTML, design token stylesheets, and obfuscated production scripts. |
+| **API Layer** | Pages Functions | Serverless Edge REST and Action API (`functions/api/[[path]].js` & `functions/api/_api.js`). |
+| **Primary Database** | D1 Database (`database/schema.sql`) | Serverless relational SQLite database storing structured records for `users`, `products`, and `orders`. |
+| **Media Storage** | R2 Bucket (`mobile-gallery-photos`) | S3-compatible, zero-egress object storage for optimized product photos with public edge cache headers. |
 | **Client-Side Cache** | Browser `localStorage` | Instant rendering layer providing optimistic UI updates, zero perceived latency, and offline resilience. |
 
 ---
@@ -51,7 +51,7 @@ graph TD
 ## 3. Data Flow & Transaction Lifecycles
 
 ### 3.1 Storefront Product Browsing Flow
-1. **Initial Load**: Client requests `index.html`. Browser loads design system `style.css` and scripts from Cloudflare edge.
+1. **Initial Load**: Client requests `index.html`. Browser loads design system `style.css` and scripts from edge CDN.
 2. **Cache Check**: `SheetEndpoint.fetchProducts()` retrieves local catalogue instantly from `localStorage` (`mg.products.v1`).
 3. **Edge Synchronization**: In parallel, client queries `GET /api/products` (or POST `{ action: 'get_products' }`).
 4. **D1 Query**: Pages Function executes `SELECT * FROM products ORDER BY rowid DESC`, parses JSON columns (`images`, `tags`), and returns product entities.
@@ -76,7 +76,7 @@ graph TD
 
 ---
 
-## 4. Database Schema Design (Cloudflare D1)
+## 4. Database Schema Design (D1 Database)
 
 ```mermaid
 erDiagram
@@ -145,7 +145,7 @@ erDiagram
    - Fixed Administrator authentication (`admin@mobilegallery.com` / `admin123`) verified with session storage flags.
    - Real-time customer access status checks (`Active`, `Inactive`, `Suspended`). Inactive or suspended accounts are rejected at the edge.
 2. **SQL Injection Defense**:
-   - 100% of Cloudflare D1 database operations use prepared statements with strict parameter binding (`env.DB.prepare(...).bind(...)`).
+   - 100% of D1 database operations use prepared statements with strict parameter binding (`env.DB.prepare(...).bind(...)`).
 3. **Bot & Spam Mitigation**:
    - Honeypot form fields (`website_url`, `_hp`) silently trap automated scrapers and spammers.
 4. **CORS Governance**:

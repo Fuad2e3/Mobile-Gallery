@@ -7,7 +7,7 @@ This document establishes the mandatory engineering standards, architectural inv
 ## 1. Architectural Invariants
 
 1. **Pure Vanilla Core**: No heavyweight client frameworks (React, Vue, Angular). All UI logic must be implemented using modern Vanilla ES6+ JavaScript, native DOM APIs, and CSS Design Tokens.
-2. **Edge-First Backend**: All server logic must be compatible with the Cloudflare Pages Functions edge runtime (V8 isolates without Node.js native dependencies).
+2. **Edge-First Backend**: All server logic must be compatible with the Pages Functions edge runtime (V8 isolates without Node.js native dependencies).
 3. **Dual-Layer Cache Resilience**: Storefront operations must function smoothly even during network drops by utilizing optimistic browser `localStorage` fallbacks.
 
 ---
@@ -23,7 +23,7 @@ This document establishes the mandatory engineering standards, architectural inv
   - `src/js/data.js` — Static fallback catalog and device color palettes.
   - `src/js/optimization.js` — In-browser WebP canvas compression engine.
   - `src/js/orders.js` — Order history and status timeline viewer.
-  - `src/js/sheet-endpoint.js` — Cloudflare Edge API and fallback client wrapper.
+  - `src/js/sheet-endpoint.js` — Edge API and fallback client wrapper.
   - `src/js/ui.js` — Modal management, toasts, theme toggler, and customer auth.
 
 ### 2.2 Production Compilation (`assets/js/`)
@@ -36,7 +36,7 @@ This document establishes the mandatory engineering standards, architectural inv
 
 ---
 
-## 3. Database & SQL Governance (Cloudflare D1)
+## 3. Database & SQL Governance (D1 Database)
 
 1. **Prepared Statements Only**:
    - Every database query must use parameterized prepared statements:
@@ -54,10 +54,10 @@ This document establishes the mandatory engineering standards, architectural inv
 
 ---
 
-## 4. Media & Photo Storage Rules (Cloudflare R2)
+## 4. Media & Photo Storage Rules (R2 Storage)
 
 1. **Mandatory In-Browser Compression**:
-   - Any image selected by an admin must pass through `Optimization.photo()` or `Optimization.batch()` before transmission to Cloudflare R2.
+   - Any image selected by an admin must pass through `Optimization.photo()` or `Optimization.batch()` before transmission to R2 storage.
    - Resulting photos must be 720×720 WebP with an average file size under **60 KB**.
 2. **Clean URL Persistence**:
    - The database must store clean edge URLs (`/api/images/products/mg_...webp`), never large raw Base64 data strings.
@@ -82,13 +82,13 @@ This document establishes the mandatory engineering standards, architectural inv
 
 ## 6. Pre-Commit Quality Assurance
 
-Before pushing changes to GitHub or deploying to Cloudflare, you must execute:
+Before pushing changes to GitHub or deploying to production, you must execute:
 ```bash
 npm test
 ```
 The test suite validates:
 1. All HTML pages link to valid production assets and contain no duplicate IDs.
 2. Storefront catalogue and cart subtotal calculation logic.
-3. `SheetEndpoint` / `CloudflareEndpoint` client wrapper contracts.
-4. Cloudflare Pages Functions API routes, D1 database queries, and R2 photo storage simulation.
+3. `SheetEndpoint` / `EdgeEndpoint` client wrapper contracts.
+4. Pages Functions API routes, D1 database queries, and R2 photo storage simulation.
 5. Documentation integrity and architecture contracts.
