@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Categories &amp; Catalogue — Mobile Gallery</title>
+<meta name="description" content="Browse all categories, smartphones, tablets, laptops and gadgets in Bangladesh. Filter by price, brand and condition.">
+<meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%234f46e5'/><rect x='34' y='18' width='32' height='64' rx='8' fill='white'/><rect x='44' y='72' width='12' height='4' rx='2' fill='%234f46e5'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+<a class="skip-link" href="#browse">Skip to products</a>
+
+<!-- ══════════════════════════════════════════════════════════ header ══ -->
+<header class="header">
+  <div class="topbar">
+    <div class="wrap topbar__inner">
+      <span class="topbar__dot"></span>
+      <span><b>Free delivery</b> on every order over ৳30,000 — cash on delivery available nationwide.</span>
+    </div>
+  </div>
+
+  <div class="wrap nav">
+    <a class="logo" href="index.html" aria-label="Mobile Gallery home">
+      <span class="logo__mark">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>
+        </svg>
+      </span>
+      <span class="logo__text">Mobile Gallery<small>Shop · Gadget Store</small></span>
+    </a>
+
+    <nav class="nav__links" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="categories.html" class="is-active">Categories</a>
+      <a href="orders.html">Orders</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+
+    <span class="nav__spacer"></span>
+
+    <div class="nav__actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle theme"></button>
+      <button class="icon-btn has-badge" id="favToggle" aria-label="Show wishlist only">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20.5 4.7 13.2a4.6 4.6 0 0 1 6.5-6.5l.8.8.8-.8a4.6 4.6 0 1 1 6.5 6.5z"/>
+        </svg>
+        <span class="fav-count" id="favCount">0</span>
+      </button>
+      <button class="icon-btn has-badge" id="cartBtn" aria-label="Open cart" data-icon="cart">
+        <span class="fav-count" id="cartCount" style="background:var(--brand-600)">0</span>
+      </button>
+      <div id="userAuthNav"></div>
+      <button class="icon-btn burger" id="burger" aria-label="Open menu" data-icon="menu"></button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" role="dialog" aria-label="Menu">
+  <div class="drawer__panel">
+    <div class="drawer__head">
+      <b>Menu</b>
+      <button class="icon-btn" data-close aria-label="Close menu" data-icon="close"></button>
+    </div>
+    <a href="index.html">Home</a>
+    <a href="categories.html">Categories</a>
+    <a href="orders.html">My orders</a>
+    <a href="admin.html">Admin panel</a>
+  </div>
+</div>
+
+<main>
+<!-- ══════════════════════════════════════════════════════ categories header ══ -->
+<section class="section section--tight" style="padding-top:32px;padding-bottom:12px">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Explore Categories</span>
+        <h2>Products Catalogue</h2>
+        <p>Select a category or filter by budget, brand and condition. Products load automatically as you scroll.</p>
+      </div>
+      <button class="btn btn--ghost" data-cat="all">View everything</button>
+    </div>
+
+    <div class="cat-rail reveal" id="catRail"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ browse ══ -->
+<section class="section" id="browse" style="padding-top:16px">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">All Items</span>
+        <h2>Explore Products</h2>
+      </div>
+      <button class="btn btn--ghost filter-toggle" id="filterToggle" data-icon="filter">Filters</button>
+    </div>
+
+    <div class="browse">
+      <!-- ─────────────────────────── filters ─────────────────────────── -->
+      <aside class="filters" aria-label="Filter products">
+        <div class="filters__head">
+          <h3>Filters</h3>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="link-btn" id="resetFilters">Reset</button>
+            <button class="icon-btn filters__mobile-close" id="filterClose" aria-label="Close filters" data-icon="close" style="width:34px;height:34px"></button>
+          </div>
+        </div>
+
+        <div class="fgroup">
+          <h4>Category</h4>
+          <div class="seg" id="catSeg">
+            <button class="is-on" data-cat="all">All</button>
+            <button data-cat="phone">Phones</button>
+            <button data-cat="tablet">Tablets</button>
+            <button data-cat="laptop">Laptops</button>
+            <button data-cat="watch">Watches</button>
+            <button data-cat="audio">Audio</button>
+            <button data-cat="gaming">Gaming</button>
+            <button data-cat="accessory">Accessories</button>
+          </div>
+        </div>
+
+        <div class="fgroup">
+          <h4>Max budget</h4>
+          <div class="range-out">
+            <span>Up to</span>
+            <b id="priceOut">৳2,00,000+</b>
+          </div>
+          <input type="range" id="priceRange" min="3000" max="200000" step="1000" value="200000" aria-label="Maximum price">
+        </div>
+
+        <div class="fgroup">
+          <h4>Brand</h4>
+          <div id="brandFilters"></div>
+        </div>
+
+        <div class="fgroup">
+          <h4>Condition</h4>
+          <div id="condFilters"></div>
+        </div>
+
+        <div class="fgroup">
+          <h4>Availability</h4>
+          <label class="check">
+            <input type="checkbox" id="inStockOnly">
+            <span>In stock only</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="onSaleOnly">
+            <span>On sale</span>
+          </label>
+        </div>
+      </aside>
+
+      <!-- ─────────────────────────── results ─────────────────────────── -->
+      <div>
+        <div class="results__bar">
+          <h3><span id="resultCount">0</span> <span class="muted">products</span></h3>
+          <span class="nav__spacer"></span>
+          <div class="seg" role="group" aria-label="Layout">
+            <button class="is-on" data-view="grid" aria-label="Grid view" data-icon="grid" data-icon-size="16"></button>
+            <button data-view="list" aria-label="List view" data-icon="list" data-icon-size="16"></button>
+          </div>
+          <select class="select" id="sortSelect" aria-label="Sort products">
+            <option value="relevant">Sort: Recommended</option>
+            <option value="newest">New arrivals</option>
+            <option value="price-a">Price: low to high</option>
+            <option value="price-d">Price: high to low</option>
+            <option value="discount">Biggest discount</option>
+            <option value="popular">Most popular</option>
+          </select>
+        </div>
+
+        <div class="active-chips" id="activeChips" hidden></div>
+
+        <div class="grid-cards" id="grid"></div>
+
+        <div style="text-align:center;margin-top:34px">
+          <button class="btn btn--ghost btn--lg" id="loadMore" hidden>Show more products</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════ recently viewed ══ -->
+<section class="section section--tight" id="recentSection" hidden>
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:22px">
+      <div>
+        <span class="eyebrow">Picked up where you left off</span>
+        <h2 style="font-size:clamp(1.3rem,2.6vw,1.7rem)">Recently viewed</h2>
+      </div>
+    </div>
+    <div class="related__row" id="recentRow"></div>
+  </div>
+</section>
+</main>
+
+<!-- ══════════════════════════════════════════════════════════ footer ══ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <a class="logo" href="index.html" aria-label="Mobile Gallery home">
+          <span class="logo__mark">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>
+            </svg>
+          </span>
+          <span class="logo__text">Mobile Gallery<small>Shop · Gadget Store</small></span>
+        </a>
+        <p>An online store for phones, tablets, laptops and gadgets in Bangladesh — honest condition grades,
+        warranty backed, with cash on delivery nationwide.</p>
+        <div class="socials">
+          <a class="icon-btn" href="#" aria-label="Facebook" data-icon="facebook"></a>
+          <a class="icon-btn" href="#" aria-label="X" data-icon="twitter"></a>
+          <a class="icon-btn" href="#" aria-label="Instagram" data-icon="instagram"></a>
+          <a class="icon-btn" href="#" aria-label="YouTube" data-icon="youtube"></a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="categories.html">All products</a></li>
+          <li><a href="categories.html">Categories</a></li>
+          <li><a href="checkout.html">Your cart</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="orders.html">Track Order</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="orders.html">My orders</a></li>
+          <li><a href="admin.html">Admin portal</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>© <span id="year">2026</span> Mobile Gallery. A demo store — products and orders are sample data.</span>
+      <span>Made with care in Bangladesh 🇧🇩</span>
+    </div>
+  </div>
+</footer>
+
+<!-- detail modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Listing details">
+  <div class="modal__box" style="position:relative"></div>
+</div>
+
+<!-- cart panel -->
+<div class="cart" id="cartPanel" role="dialog" aria-label="Shopping cart">
+  <div class="cart__panel">
+    <div class="cart__head">
+      <h3>Your cart</h3>
+      <button class="icon-btn" data-cart-close aria-label="Close cart" data-icon="close"></button>
+    </div>
+    <div class="cart__body" id="cartBody"></div>
+    <div class="cart__foot" id="cartFoot" hidden></div>
+  </div>
+</div>
+
+<!-- Scroll to Top floating button -->
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top" title="Scroll to top">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 15l-6-6-6 6"/>
+  </svg>
+</button>
+
+<script src="assets/js/sheet-endpoint.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const rail = document.getElementById('catRail');
+    if (rail) {
+      rail.innerHTML = CATEGORIES.map(c => `
+        <button class="cat-card" data-cat="${c.id}">
+          <span class="cat-card__ic">${icon(c.icon, 24)}</span>
+          <b>${c.name}</b><span>${c.note}</span>
+        </button>`).join('');
+    }
+  });
+</script>
+</body>
+</html>

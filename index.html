@@ -17,7 +17,7 @@
 <noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
 </head>
 <body>
-<a class="skip-link" href="#browse">Skip to products</a>
+<a class="skip-link" href="#featured">Skip to featured products</a>
 
 <!-- ══════════════════════════════════════════════════════════ header ══ -->
 <header class="header">
@@ -39,8 +39,8 @@
     </a>
 
     <nav class="nav__links" aria-label="Main">
-      <a href="index.html#browse" class="is-active">Home</a>
-      <a href="index.html#categories">Categories</a>
+      <a href="index.html" class="is-active">Home</a>
+      <a href="categories.html">Categories</a>
       <a href="orders.html">Orders</a>
       <a href="admin.html">Admin</a>
     </nav>
@@ -70,8 +70,8 @@
       <b>Menu</b>
       <button class="icon-btn" data-close aria-label="Close menu" data-icon="close"></button>
     </div>
-    <a href="index.html#browse">Home</a>
-    <a href="index.html#categories">Categories</a>
+    <a href="index.html">Home</a>
+    <a href="categories.html">Categories</a>
     <a href="orders.html">My orders</a>
     <a href="admin.html">Admin panel</a>
   </div>
@@ -180,101 +180,24 @@
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════════════════ browse ══ -->
-<section class="section" id="browse" style="padding-top:20px">
+<!-- ════════════════════════════════════════════════════ featured deals ══ -->
+<section class="section" id="featured" style="padding-top:20px">
   <div class="wrap">
     <div class="section-head reveal">
       <div>
-        <span class="eyebrow">Our catalogue</span>
-        <h2>Everything currently in stock</h2>
+        <span class="eyebrow">🔥 Hot Deals &amp; Trending</span>
+        <h2>Featured Gadgets</h2>
+        <p>Hand-picked trending devices in stock today. Explore all categories for full catalog.</p>
       </div>
-      <button class="btn btn--ghost filter-toggle" id="filterToggle" data-icon="filter">Filters</button>
+      <a class="btn btn--primary" href="categories.html">View All Categories &amp; Products ↗</a>
     </div>
 
-    <div class="browse">
-      <!-- ─────────────────────────── filters ─────────────────────────── -->
-      <aside class="filters" aria-label="Filter products">
-        <div class="filters__head">
-          <h3>Filters</h3>
-          <div style="display:flex;align-items:center;gap:10px">
-            <button class="link-btn" id="resetFilters">Reset</button>
-            <button class="icon-btn filters__mobile-close" id="filterClose" aria-label="Close filters" data-icon="close" style="width:34px;height:34px"></button>
-          </div>
-        </div>
+    <div class="grid-cards" id="featuredGrid"></div>
 
-        <div class="fgroup">
-          <h4>Category</h4>
-          <div class="seg" id="catSeg">
-            <button class="is-on" data-cat="all">All</button>
-            <button data-cat="phone">Phones</button>
-            <button data-cat="tablet">Tablets</button>
-            <button data-cat="laptop">Laptops</button>
-            <button data-cat="watch">Watches</button>
-            <button data-cat="audio">Audio</button>
-            <button data-cat="gaming">Gaming</button>
-            <button data-cat="accessory">Accessories</button>
-          </div>
-        </div>
-
-        <div class="fgroup">
-          <h4>Max budget</h4>
-          <div class="range-out">
-            <span>Up to</span>
-            <b id="priceOut">৳2,00,000+</b>
-          </div>
-          <input type="range" id="priceRange" min="3000" max="200000" step="1000" value="200000" aria-label="Maximum price">
-        </div>
-
-        <div class="fgroup">
-          <h4>Brand</h4>
-          <div id="brandFilters"></div>
-        </div>
-
-        <div class="fgroup">
-          <h4>Condition</h4>
-          <div id="condFilters"></div>
-        </div>
-
-        <div class="fgroup">
-          <h4>Availability</h4>
-          <label class="check">
-            <input type="checkbox" id="inStockOnly">
-            <span>In stock only</span>
-          </label>
-          <label class="check">
-            <input type="checkbox" id="onSaleOnly">
-            <span>On sale</span>
-          </label>
-        </div>
-      </aside>
-
-      <!-- ─────────────────────────── results ─────────────────────────── -->
-      <div>
-        <div class="results__bar">
-          <h3><span id="resultCount">0</span> <span class="muted">products</span></h3>
-          <span class="nav__spacer"></span>
-          <div class="seg" role="group" aria-label="Layout">
-            <button class="is-on" data-view="grid" aria-label="Grid view" data-icon="grid" data-icon-size="16"></button>
-            <button data-view="list" aria-label="List view" data-icon="list" data-icon-size="16"></button>
-          </div>
-          <select class="select" id="sortSelect" aria-label="Sort products">
-            <option value="relevant">Sort: Recommended</option>
-            <option value="newest">New arrivals</option>
-            <option value="price-a">Price: low to high</option>
-            <option value="price-d">Price: high to low</option>
-            <option value="discount">Biggest discount</option>
-            <option value="popular">Most popular</option>
-          </select>
-        </div>
-
-        <div class="active-chips" id="activeChips" hidden></div>
-
-        <div class="grid-cards" id="grid"></div>
-
-        <div style="text-align:center;margin-top:34px">
-          <button class="btn btn--ghost btn--lg" id="loadMore" hidden>Show more products</button>
-        </div>
-      </div>
+    <div style="text-align:center;margin-top:36px">
+      <a class="btn btn--primary btn--lg" href="categories.html">
+        Explore All Categories &amp; Products (24+) →
+      </a>
     </div>
   </div>
 </section>

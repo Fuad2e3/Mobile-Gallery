@@ -29,6 +29,8 @@ gantt
 ### ✅ Milestone 1: Core Storefront & 3D Design System
 - [x] Responsive layout with sticky topbar, category rail, and footer.
 - [x] Renamed primary storefront navigation link from "Shop" to "Home".
+- [x] Dedicated Categories & Catalogue page (`categories.html`) with full sidebar filters and auto infinite scroll.
+- [x] Clean Home page experience (`index.html`) featuring Hero search, Category Cards, and Featured Hot Deals grid.
 - [x] Streamlined navigation by removing "Why us" and "Help" buttons and their associated content sections.
 - [x] 3D perspective physics, spring easing, and dynamic device color palettes (`PALETTES`).
 - [x] Real-time multi-attribute live search (filtering titles, brands, processors).
