@@ -1,0 +1,17 @@
+{
+  "name": "Mobile Gallery — Smartphone & Gadget Store",
+  "short_name": "MobileGallery",
+  "description": "Buy smartphones, tablets, laptops and gadgets in Bangladesh with official warranty and cash on delivery.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0b12",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%234f46e5'/><rect x='34' y='18' width='32' height='64' rx='8' fill='white'/><rect x='44' y='72' width='12' height='4' rx='2' fill='%234f46e5'/></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

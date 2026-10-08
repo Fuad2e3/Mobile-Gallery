@@ -797,6 +797,15 @@ function initScrollTopBtn() {
   });
 }
 
+function initServiceWorker() {
+  if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => {
+      const swUrl = window.location.pathname.includes('/assets/') ? '../sw.js' : '/sw.js';
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    });
+  }
+}
+
 function initShell() {
   initTheme();
   initHeader();
@@ -808,6 +817,7 @@ function initShell() {
   initInstantRouter();
   initLenis();
   initScrollTopBtn();
+  initServiceWorker();
   document.body.addEventListener('click', e => {
     const btn = e.target.closest('#recentNavBtn');
     if (btn) handleRecentViewClick(e);

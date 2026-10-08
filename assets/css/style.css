@@ -3921,4 +3921,10 @@ input[type="range"]::-moz-range-thumb {
   border-radius: var(--r-full);
 }
 
+/* ---------------------------------------------------- content-visibility --- */
+.section--tight, .footer, .related__row {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 300px;
+}
+
 
