@@ -29,6 +29,8 @@ gantt
 ### ✅ Milestone 1: Core Storefront & 3D Design System
 - [x] Responsive layout with sticky topbar, category rail, and footer.
 - [x] Renamed primary storefront navigation link from "Shop" to "Home".
+- [x] Instant SPA Router (`initInstantRouter()`) with link prefetching on hover/touch for 0ms ultra-fast page transitions.
+- [x] Removed artificial `setTimeout` skeleton delays for immediate 0ms data rendering.
 - [x] Root directory organization with `index.html` as the primary entry point and secondary pages (`categories.html`, `admin.html`, `checkout.html`, `orders.html`, `404.html`) relocated into `assets/`.
 - [x] Smart Glassmorphic Control Hub on `assets/categories.html` featuring horizontal categories, budget range pill, brand & condition select dropdowns, chip toggles (`In Stock`, `On Sale`), and sort/view controls.
 - [x] Dedicated Categories & Catalogue page (`assets/categories.html`) with auto infinite scroll.

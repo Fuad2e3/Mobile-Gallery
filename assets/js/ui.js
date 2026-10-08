@@ -562,6 +562,88 @@ function initUserAuthUI() {
   window.closeAuthModal = closeAuthModal;
   window.paintUserAuthNav = paintUserAuthNav;
 }
+const pageCache = new Map();
+async function fetchPageHtml(url) {
+  if (pageCache.has(url)) return pageCache.get(url);
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const html = await res.text();
+    pageCache.set(url, html);
+    return html;
+  } catch (_) {
+    return null;
+  }
+}
+function prefetchLink(url) {
+  if (!url || url.startsWith('\x23') || url.startsWith('\x6a\x61\x76\x61\x73\x63\x72\x69\x70\x74\x3a') || url.startsWith('\x68\x74\x74\x70')) return;
+  fetchPageHtml(url);
+}
+async function navigateInstant(targetUrl) {
+  const cleanUrl = targetUrl.split('\x23')[0];
+  const hash = targetUrl.includes('\x23') ? targetUrl.split('\x23')[1] : '';
+  const html = await fetchPageHtml(cleanUrl);
+  if (!html) {
+    window.location.href = targetUrl;
+    return;
+  }
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, '\x74\x65\x78\x74\x2f\x68\x74\x6d\x6c');
+  const newMain = doc.querySelector('\x6d\x61\x69\x6e');
+  const currentMain = document.querySelector('\x6d\x61\x69\x6e');
+  if (!newMain || !currentMain) {
+    window.location.href = targetUrl;
+    return;
+  }
+  document.title = doc.title || document.title;
+  currentMain.innerHTML = newMain.innerHTML;
+  const targetPath = new URL(targetUrl, window.location.href).pathname;
+  document.querySelectorAll('\x2e\x6e\x61\x76\x5f\x5f\x6c\x69\x6e\x6b\x73\x20\x61\x2c\x20\x2e\x64\x72\x61\x77\x65\x72\x20\x61').forEach(a => {
+    const aPath = new URL(a.getAttribute('\x68\x72\x65\x66'), window.location.href).pathname;
+    if (aPath === targetPath) {
+      a.classList.add('\x69\x73\x2d\x61\x63\x74\x69\x76\x65');
+    } else {
+      a.classList.remove('\x69\x73\x2d\x61\x63\x74\x69\x76\x65');
+    }
+  });
+  window.history.pushState(null, '', targetUrl);
+  if (hash) {
+    const targetEl = document.getElementById(hash);
+    if (targetEl) targetEl.scrollIntoView({ behavior: '\x73\x6d\x6f\x6f\x74\x68' });
+  } else {
+    window.scrollTo({ top: 0, behavior: '\x69\x6e\x73\x74\x61\x6e\x74' });
+  }
+  const drawer = document.getElementById('\x64\x72\x61\x77\x65\x72');
+  if (drawer) drawer.classList.remove('\x69\x73\x2d\x6f\x70\x65\x6e');
+  if (typeof initHome === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initHome();
+  if (typeof initAdmin === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initAdmin();
+  if (typeof initCheckout === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initCheckout();
+  if (typeof initOrders === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') initOrders();
+  if (typeof paintUserAuthNav === '\x66\x75\x6e\x63\x74\x69\x6f\x6e') paintUserAuthNav();
+}
+function initInstantRouter() {
+  document.body.addEventListener('\x6d\x6f\x75\x73\x65\x6f\x76\x65\x72', e => {
+    const a = e.target.closest('\x61\x5b\x68\x72\x65\x66\x5d');
+    if (a) prefetchLink(a.getAttribute('\x68\x72\x65\x66'));
+  });
+  document.body.addEventListener('\x74\x6f\x75\x63\x68\x73\x74\x61\x72\x74', e => {
+    const a = e.target.closest('\x61\x5b\x68\x72\x65\x66\x5d');
+    if (a) prefetchLink(a.getAttribute('\x68\x72\x65\x66'));
+  }, { passive: true });
+  document.body.addEventListener('\x63\x6c\x69\x63\x6b', e => {
+    const a = e.target.closest('\x61\x5b\x68\x72\x65\x66\x5d');
+    if (!a) return;
+    const href = a.getAttribute('\x68\x72\x65\x66');
+    if (!href || href.startsWith('\x68\x74\x74\x70') || href.startsWith('\x2f\x2f') || href.startsWith('\x6d\x61\x69\x6c\x74\x6f\x3a') || href.startsWith('\x74\x65\x6c\x3a') || a.hasAttribute('\x74\x61\x72\x67\x65\x74')) {
+      return;
+    }
+    e.preventDefault();
+    navigateInstant(href);
+  });
+  window.addEventListener('\x70\x6f\x70\x73\x74\x61\x74\x65', () => {
+    navigateInstant(window.location.href);
+  });
+}
 function initShell() {
   initTheme();
   initHeader();
@@ -570,6 +652,7 @@ function initShell() {
   initReveal();
   initCounters();
   initUserAuthUI();
+  initInstantRouter();
   const y = document.getElementById('\x79\x65\x61\x72');
   if (y) y.textContent = new Date().getFullYear();
 }
