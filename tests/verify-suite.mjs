@@ -118,10 +118,10 @@ try {
 
 // Test 4: Check HTML and Assets
 console.log('\n4. Checking HTML and Assets...');
-const htmlPages = ['index.html', 'checkout.html', 'orders.html', 'admin.html', '404.html'];
+const htmlPages = ['index.html', 'assets/checkout.html', 'assets/orders.html', 'assets/admin.html', 'assets/404.html', 'assets/categories.html'];
 for (const p of htmlPages) {
   const content = fs.readFileSync(path.join(rootDir, p), 'utf8');
-  assert(content.includes('assets/css/style.css'), `${p} links to assets/css/style.css`);
+  assert(content.includes('style.css'), `${p} links to style.css`);
   assert(content.includes('<!doctype html>') || content.includes('<!DOCTYPE html>'), `${p} has valid HTML5 doctype`);
 }
 

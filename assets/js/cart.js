@@ -115,7 +115,7 @@ function renderCart() {
       <div class="cart-sum cart-sum--total">
         <span>Total</span><b>${money(sub + fee)}</b>
       </div>
-      <a class="btn btn--primary btn--block btn--lg" id="proceedCheckoutBtn" href="checkout.html">Proceed to checkout</a>
+      <a class="btn btn--primary btn--block btn--lg" id="proceedCheckoutBtn" href="${window.location.pathname.includes('/assets/') ? '' : 'assets/'}checkout.html">Proceed to checkout</a>
       <button class="btn btn--ghost btn--block btn--sm" data-cart-close>Continue shopping</button>`;
   }
 }

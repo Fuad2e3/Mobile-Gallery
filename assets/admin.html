@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="css/style.css">
 <script>
   try {
     if (sessionStorage.getItem('mg.admin.auth.v1') === 'true') {
@@ -78,7 +78,7 @@
 <body>
 <header class="header">
   <div class="wrap nav">
-    <a class="logo" href="index.html" aria-label="Mobile Gallery home">
+    <a class="logo" href="../index.html" aria-label="Mobile Gallery home">
       <span class="logo__mark">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>
@@ -88,7 +88,7 @@
     </a>
 
     <nav class="nav__links" aria-label="Main">
-      <a href="index.html">Home</a>
+      <a href="../index.html">Home</a>
       <a href="categories.html">Categories</a>
       <a href="orders.html">Orders</a>
       <a href="admin.html" class="is-active">Admin</a>
@@ -119,7 +119,7 @@
       <b>Menu</b>
       <button class="icon-btn" data-close aria-label="Close menu" data-icon="close"></button>
     </div>
-    <a href="index.html">Home</a>
+    <a href="../index.html">Home</a>
     <a href="categories.html">Categories</a>
     <a href="orders.html">My orders</a>
     <a href="admin.html">Admin panel</a>
@@ -173,7 +173,7 @@
         </div>
 
         <div style="display:flex;align-items:center;gap:10px">
-          <a class="btn btn--ghost btn--sm" href="index.html#browse" target="_blank">View Shop ↗</a>
+          <a class="btn btn--ghost btn--sm" href="categories.html" target="_blank">View Shop ↗</a>
           <button class="btn btn--soft btn--sm" id="adminLogoutBtn" type="button" onclick="adminLogout()">Log Out</button>
         </div>
       </div>
@@ -600,7 +600,7 @@
   <div class="wrap">
     <div class="footer__bottom" style="border:0;padding-top:0">
       <span>© <span id="year">2026</span> Mobile Gallery. Admin Portal.</span>
-      <a href="index.html" style="color:var(--brand-600);font-weight:700">Back to shop</a>
+      <a href="../index.html" style="color:var(--brand-600);font-weight:700">Back to shop</a>
     </div>
   </div>
 </footer>
@@ -617,11 +617,11 @@
   </div>
 </div>
 
-<script src="assets/js/sheet-endpoint.js?v=20260912_5"></script>
-<script src="assets/js/data.js?v=20260912_5"></script>
-<script src="assets/js/ui.js?v=20260912_5"></script>
-<script src="assets/js/cart.js?v=20260912_5"></script>
-<script src="assets/js/optimization.js?v=20260912_5"></script>
-<script src="assets/js/admin.js?v=20260912_5"></script>
+<script src="js/sheet-endpoint.js?v=20260912_5"></script>
+<script src="js/data.js?v=20260912_5"></script>
+<script src="js/ui.js?v=20260912_5"></script>
+<script src="js/cart.js?v=20260912_5"></script>
+<script src="js/optimization.js?v=20260912_5"></script>
+<script src="js/admin.js?v=20260912_5"></script>
 </body>
 </html>

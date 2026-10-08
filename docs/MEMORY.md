@@ -64,6 +64,17 @@ This document serves as the persistent memory, architectural history, Architectu
   - Cleaner, focused navigation header (`Home`, `Categories`, `Orders`, `Admin`).
   - Reduced page scrolling depth and lighter DOM tree for improved FCP/TTI performance.
 
+### ADR-006: Root Directory Optimization & Assets Folder HTML Page Organization
+- **Status**: Implemented & Verified.
+- **Context**: Keeping all HTML pages in the root folder creates clutter and obscures `index.html` as the primary web application entry point.
+- **Decision**: 
+  1. Retain ONLY `index.html` in the root directory.
+  2. Relocate secondary HTML pages (`categories.html`, `admin.html`, `checkout.html`, `orders.html`, `404.html`) into the `assets/` directory.
+  3. Update all relative paths across HTML headers, footers, drawers, and JavaScript modules (`app.js`, `cart.js`, `ui.js`).
+- **Consequences**:
+  - Extremely clean root directory layout.
+  - Seamless navigation between root `index.html` and secondary pages in `assets/`.
+
 ---
 
 ## 3. Persistent Constants & Keys

@@ -17,17 +17,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-const htmlFiles = fs.readdirSync(rootDir).filter(f => f.endsWith('.html'));
+const rootHtmlFiles = fs.readdirSync(rootDir).filter(f => f.endsWith('.html')).map(f => path.join(rootDir, f));
+const assetsDir = path.join(rootDir, 'assets');
+const assetHtmlFiles = fs.existsSync(assetsDir) ? fs.readdirSync(assetsDir).filter(f => f.endsWith('.html')).map(f => path.join(assetsDir, f)) : [];
+const htmlFiles = [...rootHtmlFiles, ...assetHtmlFiles];
 let errors = 0;
 
 console.log('======================================================');
 console.log('  PROJECT HTML & STATIC ASSETS VALIDATION');
 console.log('======================================================');
 
-for (const file of htmlFiles) {
-  const filePath = path.join(rootDir, file);
+for (const filePath of htmlFiles) {
+  const relName = path.relative(rootDir, filePath);
   const content = fs.readFileSync(filePath, 'utf8');
-  console.log(`\n--- Checking ${file} ---`);
+  const baseDir = path.dirname(filePath);
+  console.log(`\n--- Checking ${relName} ---`);
 
   // 1. Check script tags
   const scriptRegex = /<script[^>]+src=["']([^"']+)["']/gi;
@@ -36,9 +40,9 @@ for (const file of htmlFiles) {
     const rawSrc = match[1];
     const src = rawSrc.split('?')[0];
     if (src.startsWith('http') || src.startsWith('//')) continue;
-    const resolved = path.resolve(rootDir, src);
+    const resolved = path.resolve(baseDir, src);
     if (!fs.existsSync(resolved)) {
-      console.error(`  [FAIL script] ${file} -> ${rawSrc} NOT FOUND`);
+      console.error(`  [FAIL script] ${relName} -> ${rawSrc} NOT FOUND`);
       errors++;
     } else {
       console.log(`  [OK script] ${rawSrc}`);
@@ -51,12 +55,12 @@ for (const file of htmlFiles) {
     const rawHref = match[1];
     const href = rawHref.split('?')[0];
     if (href.startsWith('http') || href.startsWith('data:') || href.includes('fonts.googleapis') || href.startsWith('//')) continue;
-    const resolved = path.resolve(rootDir, href);
+    const resolved = path.resolve(baseDir, href);
     if (!fs.existsSync(resolved)) {
-      console.error(`  [FAIL link] ${file} -> ${href} NOT FOUND`);
+      console.error(`  [FAIL link] ${relName} -> ${rawHref} NOT FOUND`);
       errors++;
     } else {
-      console.log(`  [OK link] ${href}`);
+      console.log(`  [OK link] ${rawHref}`);
     }
   }
 

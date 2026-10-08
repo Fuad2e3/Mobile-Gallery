@@ -460,10 +460,10 @@ function paintUserAuthNav() {
               <small style="color:var(--muted-2);font-size:11px">${esc(user.phone || '')}</small>
             </div>
           </div>
-          <a href="orders.html">
+          <a href="${window.location.pathname.includes('/assets/') ? '' : 'assets/'}orders.html">
             ${icon('box', 16)} My Orders
           </a>
-          <a href="checkout.html">
+          <a href="${window.location.pathname.includes('/assets/') ? '' : 'assets/'}checkout.html">
             ${icon('cart', 16)} Checkout & Cart
           </a>
           <button type="button" class="is-danger" id="logoutBtn">
