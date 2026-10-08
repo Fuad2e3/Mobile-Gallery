@@ -371,8 +371,8 @@ function paintRecent() {
   const section = document.getElementById('\x72\x65\x63\x65\x6e\x74\x53\x65\x63\x74\x69\x6f\x6e');
   if (!section) return;
   const recent = getRecent().slice(0, 6);
-  section.hidden = recent.length < 2;
-  if (recent.length < 2) return;
+  section.hidden = recent.length < 1;
+  if (recent.length < 1) return;
   document.getElementById('\x72\x65\x63\x65\x6e\x74\x52\x6f\x77').innerHTML = recent.map(p => `
     <button class="related__item" data-open="${esc(p.id)}">
       <span class="related__art">${deviceArt(p, 74)}</span>

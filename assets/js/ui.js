@@ -434,6 +434,29 @@ function createAuthModal_() {
     }
   });
 }
+function handleRecentViewClick(e) {
+  if (e) e.preventDefault();
+  const recentSec = document.getElementById('recentSection');
+  if (recentSec) {
+    if (typeof paintRecent === 'function') paintRecent();
+    const recentItems = typeof getRecent === 'function' ? getRecent() : [];
+    if (!recentItems || recentItems.length === 0) {
+      toast('No recently viewed devices yet. Explore our products!', 'eye');
+      return;
+    }
+    recentSec.hidden = false;
+    if (window.lenis) {
+      window.lenis.scrollTo(recentSec, { offset: -80 });
+    } else {
+      recentSec.scrollIntoView({ behavior: 'smooth' });
+    }
+  } else {
+    const isAssetDir = window.location.pathname.includes('/assets/');
+    const targetUrl = (isAssetDir ? 'categories.html' : 'assets/categories.html') + '#recentSection';
+    window.location.href = targetUrl;
+  }
+}
+
 function paintUserAuthNav() {
   const container = document.getElementById('\x75\x73\x65\x72\x41\x75\x74\x68\x4e\x61\x76');
   if (!container) return;
@@ -463,6 +486,9 @@ function paintUserAuthNav() {
           <a href="${window.location.pathname.includes('/assets/') ? '' : 'assets/'}orders.html">
             ${icon('box', 16)} My Orders
           </a>
+          <a href="#" class="dropdown-recent-link">
+            ${icon('clock', 16)} Recently Viewed
+          </a>
           <a href="${window.location.pathname.includes('/assets/') ? '' : 'assets/'}checkout.html">
             ${icon('cart', 16)} Checkout & Cart
           </a>
@@ -479,6 +505,13 @@ function paintUserAuthNav() {
         dropdown.hidden = !dropdown.hidden;
       });
       document.addEventListener('\x63\x6c\x69\x63\x6b', () => { dropdown.hidden = true; });
+    }
+    const recentLink = container.querySelector('.dropdown-recent-link');
+    if (recentLink) {
+      recentLink.addEventListener('click', e => {
+        if (dropdown) dropdown.hidden = true;
+        handleRecentViewClick(e);
+      });
     }
     const logoutBtn = document.getElementById('\x6c\x6f\x67\x6f\x75\x74\x42\x74\x6e');
     if (logoutBtn) {
@@ -512,6 +545,7 @@ function paintUserAuthNav() {
             </button>
           </div>
           <div style="border-top:1px solid var(--line-soft);padding:4px 8px;display:flex;flex-direction:column;gap:2px">
+            <a href="#" class="dropdown-recent-link" style="font-size:.84rem">${icon('clock', 15)} Recently Viewed</a>
             <a href="orders.html" style="font-size:.84rem">${icon('box', 15)} Track My Orders</a>
             <a href="admin.html" style="font-size:.84rem">${icon('settings', 15)} Admin Portal</a>
           </div>
@@ -525,6 +559,13 @@ function paintUserAuthNav() {
         dropdown.hidden = !dropdown.hidden;
       });
       document.addEventListener('\x63\x6c\x69\x63\x6b', () => { dropdown.hidden = true; });
+    }
+    const recentLink = container.querySelector('.dropdown-recent-link');
+    if (recentLink) {
+      recentLink.addEventListener('click', e => {
+        if (dropdown) dropdown.hidden = true;
+        handleRecentViewClick(e);
+      });
     }
     const regBtn = document.getElementById('\x64\x72\x6f\x70\x64\x6f\x77\x6e\x43\x72\x65\x61\x74\x65\x41\x63\x63\x42\x74\x6e');
     if (regBtn) {
@@ -714,6 +755,10 @@ function initShell() {
   initUserAuthUI();
   initInstantRouter();
   initLenis();
+  document.body.addEventListener('click', e => {
+    const btn = e.target.closest('#recentNavBtn');
+    if (btn) handleRecentViewClick(e);
+  });
   const y = document.getElementById('\x79\x65\x61\x72');
   if (y) y.textContent = new Date().getFullYear();
 }
