@@ -75,21 +75,7 @@
 </div>
 
 <main>
-<!-- ══════════════════════════════════════════════════════ categories header ══ -->
-<section class="section section--tight" style="padding-top:32px;padding-bottom:12px">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div>
-        <span class="eyebrow">Explore Categories</span>
-        <h2>Products Catalogue</h2>
-        <p>Select a category or filter by budget, brand and condition. Products load automatically as you scroll.</p>
-      </div>
-      <button class="btn btn--ghost" data-cat="all">View everything</button>
-    </div>
 
-    <div class="cat-rail reveal" id="catRail"></div>
-  </div>
-</section>
 
 <!-- ══════════════════════════════════════════════════════════ browse ══ -->
 <section class="section" id="browse" style="padding-top:16px">
@@ -289,17 +275,5 @@
 <script src="js/ui.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/app.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const rail = document.getElementById('catRail');
-    if (rail) {
-      rail.innerHTML = CATEGORIES.map(c => `
-        <button class="cat-card" data-cat="${c.id}">
-          <span class="cat-card__ic">${icon(c.icon, 24)}</span>
-          <b>${c.name}</b><span>${c.note}</span>
-        </button>`).join('');
-    }
-  });
-</script>
 </body>
 </html>
