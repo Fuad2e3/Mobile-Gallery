@@ -729,6 +729,30 @@ function initLenis() {
   }
 }
 
+function initScrollTopBtn() {
+  const btn = document.getElementById('scrollTopBtn');
+  if (!btn) return;
+
+  const onScroll = () => {
+    if (window.scrollY > 280) {
+      btn.classList.add('is-visible');
+    } else {
+      btn.classList.remove('is-visible');
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  btn.addEventListener('click', () => {
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { duration: 1.2 });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+}
+
 function initShell() {
   initTheme();
   initHeader();
@@ -739,6 +763,7 @@ function initShell() {
   initUserAuthUI();
   initInstantRouter();
   initLenis();
+  initScrollTopBtn();
   document.body.addEventListener('click', e => {
     const btn = e.target.closest('#recentNavBtn');
     if (btn) handleRecentViewClick(e);
